@@ -1,0 +1,94 @@
+<template>
+	<div>
+		<div class="row nav-center">
+		    <div class="col-xs-2 backBtn">
+		      	<a href="javascript:history.back(-1)">
+					<i class="iconfont-yzg icon-yzg-back"></i>
+				</a>
+		    </div>
+		    <div class="col-xs-8 loginTitle">提现</div>
+		    <div class="col-xs-2"></div>
+		</div>
+		<div class="cashIndex row">
+			<table>
+				<tr>
+					<td>
+						可提现金额<br/><span class="redColor availMoney">￥329.00</span>
+					</td>
+					<td>提现
+						<i class="iconfont-yzg icon-yzg-arrow"></i>
+					</td>
+				</tr>
+				<tr>
+					<td>已结算收入</td>
+					<td>
+						<span class="redColor">￥188.43</span>
+						<i class="iconfont-yzg icon-yzg-arrow"></i>
+					</td>
+				</tr>
+				<tr>
+					<td>未结算收入</td>
+					<td>
+						<span class="redColor">￥188.43</span>
+						<i class="iconfont-yzg icon-yzg-arrow"></i>
+					</td>
+				</tr>
+				<tr>
+					<td>提现记录</td>
+					<td>
+						<i class="iconfont-yzg icon-yzg-arrow"></i>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="cashIndex row">
+			<table>
+				<tr>
+					<td>绑定银行卡</td>
+					<td>
+						<router-link :to="{ path:'/bankBind'}">
+						去设置 <i class="iconfont-yzg icon-yzg-arrow"></i>
+						</router-link>
+					</td>
+				</tr>
+				<tr>
+					<td>绑定支付宝</td>
+					<td>
+						<router-link :to="{ path:'/alipayBind'}">
+						去设置 <i class="iconfont-yzg icon-yzg-arrow"></i>
+						</router-link>
+					</td>
+				</tr>
+				<tr>
+					<td>绑定微信</td>
+					<td>
+						<router-link :to="{ path:'/weChatBind'}">
+							<span class="blueColor">已成功绑定</span>
+						</router-link>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>	
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      nowMoney: '',
+      commiAccount: []
+    }
+  }
+}
+</script>
+
+<style>
+	.availMoney{ font-size:18px; font-weight: bold; padding-top:5px; display:inline-block; }
+	.blueColor{ color:#09902d; }
+	.cashIndex{ margin-top:50px;  background: #fff; padding:10px;}
+	.cashIndex table{ width:100%;}
+	.cashIndex table td{ padding:12px 5px; vertical-align: bottom; border-bottom:1px solid #f1f1f1; }
+	.cashIndex table td:first-child{ width:50%; text-align: left; padding-right:5px; }
+	.cashIndex table td:last-child{ width:50%; text-align: right; padding-right:5px; }
+</style>
