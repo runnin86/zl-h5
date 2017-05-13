@@ -11,10 +11,10 @@
       </a>
     </div>
     <div class="col-xs-8 shop-name">
-      <span>{{goodData.goods.goods_name}}</span>
+      <span v-if="main">{{main.productName}}</span>
     </div>
     <div class="col-xs-2 shop-bag">
-      <router-link :to="{ name: 'Index',path: '/index'}">
+      <router-link :to="{ name: 'Category',path: '/category'}">
         <span class="iconfont-yzg icon-yzg-goods"></span>
       </router-link>
     </div>
@@ -24,42 +24,39 @@
     <div style="position:relative">
       <div class="detail-img">
         <wv-swipe class="demo-swipe" :height="300" :auto="4000">
-          <wv-swipe-item class="demo-swipe-item" v-for="imgUrl in goodData.goods_img" :key="imgUrl.goods_img">
-            <img :src="imgBase64" :style="{backgroundImage: 'url(' + goodData.img_domain + imgUrl.goods_img + ')'}">
+          <wv-swipe-item class="demo-swipe-item" v-for="img in photo" :key="img.id">
+            <img :src="imgBase64"
+              :style="{backgroundImage: 'url(' + img_domain + img.resource + ')'}">
           </wv-swipe-item>
         </wv-swipe>
       </div>
     </div>
     <div class="row" style="margin:0px">
-      <div class="col-xs-12 goodsTitle">
-        <p>{{goodData.goods.goods_name}}
-          <span>
-              <!-- <a style="  padding-top:33px; font-size:12px;" href="javascript:void(0);" data-toggle="modal" data-target=".bs-example-modal-sm"  class="app_share">分享</a> -->
-          </span>
+      <div class="col-xs-12 goodsTitle" v-if="main">
+        <p>
+          {{main.productName}}
         </p>
         <div class="shop_price">
-          {{goodUpc.shop_price}}
-          <span class="shop_price_span_add">京东价{{goodUpc.market_price}}</span>
+          {{main.price}}
+          <span class="shop_price_span_add">
+            市场价￥{{main.marketPrice}}
+          </span>
         </div>
       </div>
     </div>
-    <div class="row">
-      <span class="dTimer">
-          <span v-html="countDownTime"></span>
-        </span>
-    </div>
+    <hr/>
     <div class="row goodsProp">
       <div class="col-xs-12">
         <span class="color">颜色：</span>
-        <div>
-          <a title="无色" class="redBg">{{goodUpc.color_name}}</a>&nbsp;
+        <div v-if="main">
+          <a class="redBg">{{main.colors}}</a>&nbsp;
         </div>
       </div>
       <div class="col-xs-12">
-        <span class="color">尺寸：</span>
-        <div>
-          <a title="通用" class="redBg">{{goodUpc.size_name}}</a>&nbsp;
-        </div>
+        <span class="color">备注：</span>
+        <span class="color" v-if="main" style="font-size: 12px;">
+          {{main.comments}}
+        </span>
       </div>
       <div class="col-xs-12">
         <span class="color">数量：</span>
@@ -140,6 +137,10 @@ export default {
   },
   data() {
     return {
+      attr: null,
+      main: null,
+      photo: null,
+      img_domain: 'http://img.zulibuy.com/images/',
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=',
       goodNumber: '1', // 购买数量
       goodsCount: null, // 商品总数
@@ -169,23 +170,27 @@ export default {
   },
   methods: {
     loadGood() {
-      this.$http.get('/goods.php', {
-        params: {
-          id: this.$route.query.gid,
-          page: this.pagenum
-        }
-      })
-      .then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
+      // 获取数据
+      let p = {
+        pid: this.$route.query.gid
+      }
+      this.$http.post('product/productDetail', qs.stringify(p))
+      .then(({data: {data, code, msg}}) => {
+        if (code === 1) {
           console.log(data)
-          this.goodBrief = data.goods.goods_desc_m
-          this.cartCount = data.cart_goods_count
-          this.surplus = data.upc.number
-          this.goodsCount = data.upc.number
+          this.attr = data.attr
+          this.main = data.main
+          this.photo = data.photo
           this.goodData = data
-          this.goodUpc = data.upc
+          // this.goodBrief = data.goods.goods_desc_m
+          this.cartCount = data.cart_goods_count
+          if (data.upc) {
+            this.surplus = data.upc.number
+            this.goodsCount = data.upc.number
+            this.goodUpc = data.upc
+          }
         } else {
-          console.log(msg)
+          $.toast(msg, 'forbidden')
           console.error('获取商品列表失败:' + msg)
         }
         this.load = false

@@ -7,7 +7,7 @@
     </transition>
 
     <wv-tabbar v-if="showIndex" style="position: fixed;table-layout: fixed;border-top: 1px solid #ddd;">
-      <wv-tabbar-item to="/index" :is-on="$route.path==='/index' || $route.path==='/category'">
+      <wv-tabbar-item to="/category" :is-on="$route.path==='/category'">
         <span slot="icon" style="display: inline-block; position: relative; height:34px">
           <!-- <img class="weui-tabbar__icon" src="static/weui/images/icon_nav_search_bar.png" slot="icon"> -->
           <i class="iconfont-yzg icon-yzg-goods" style="font-size:26px"></i>

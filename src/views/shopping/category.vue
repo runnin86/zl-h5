@@ -35,7 +35,7 @@
       infinite-scroll-disabled="busy"
       infinite-scroll-distance="30">
       <a v-for="g in goods_list" class="sub-goods_list">
-        <router-link :to="{ name: 'Goods',path: '/shopping/goods', query: { gid: g.upc_id }}">
+        <router-link :to="{ name: 'Goods',path: '/shopping/goods', query: { gid: g.productId }}">
           <!-- <div class="goods-img progressive">
             <img class="preview"
               v-progressive="g.master_img?img_domain+g.master_img:'/static/images/no_picture.jpg'"
