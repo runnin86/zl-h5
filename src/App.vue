@@ -162,6 +162,7 @@ export default {
 .viewScroll {
   position: absolute;
   overflow: auto;
+  background-color: #edf0f2;
 }
 
 html,
@@ -209,7 +210,7 @@ img {
 .yzg-title{
   height:44px;
   line-height:44px;
-  background:#d6244f;
+  background:#009ad9;
   color:#fff;
   font-size:18px;
   position: fixed;

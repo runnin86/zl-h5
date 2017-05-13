@@ -2,27 +2,28 @@
 <div class="container container-content">
   <div class="row yzg-title">
     <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
+      <!-- <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
+      </a> -->
     </div>
     <div class="col-xs-8 shop-name">
       <span>{{title_name}}</span>
     </div>
     <div class="col-xs-2 shop-bag">
-      <router-link :to="{ name: 'Index',path: '/index'}">
+      <!-- <router-link :to="{ name: 'Index',path: '/index'}">
         <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
-      </router-link>
+      </router-link> -->
     </div>
   </div>
   <div class="row navbar-location" v-show="parent_cat.length>0">
     <div class="navbar-yzg-default navbar-category">
       <ul id='activeMenu' class="ul-slider">
-        <li v-for="cat in parent_cat" class="slider-item" :class="cat.cat_id===cid?'active':''">
-          <a @click="changeCid(cat.cat_id)">{{cat.cat_name}}</a>
+        <li class="slider-item" :class="cid===-1?'active':''">
+          <a @click="changeCid(-1)">全部商品</a>
         </li>
-        <li class="slider-item" :class="cid===0?'active':''">
-          <a @click="changeCid(0)">全部商品</a>
+        <li v-for="cat in parent_cat" class="slider-item"
+          v-if="cat.cat_id>-1" :class="cat.cat_id===cid?'active':''">
+          <a @click="changeCid(cat.cat_id)">{{cat.cat_name}}</a>
         </li>
       </ul>
     </div>
@@ -43,11 +44,15 @@
           </div> -->
           <div class="goods-img">
             <img :src="imgBase64"
-              :style="{backgroundImage: 'url(' + (g.master_img?img_domain+g.master_img:'/static/images/no_picture.jpg') + ')'}">
+              :style="{backgroundImage: 'url(' + (g.img?img_domain+g.img:'/static/images/no_picture.jpg') + ')'}">
           </div>
         </router-link>
-        <div class="goods-title" v-html="g.goods_name+'('+g.size_name+')'"></div>
-        <div class="goods-price">{{g.shop_price}}</div>
+        <div class="goods-title2" v-html="g.productName"></div>
+        <div class="goods-title" v-html="g.productDesc"></div>
+        <div class="goods-price">
+          ￥{{g.price}}
+          <span class="good_price_original">￥{{g.marketPrice}}</span>
+        </div>
       </a>
     </div>
   </div>
@@ -56,14 +61,14 @@
     <span class="weui-loadmore__tips">正在加载</span>
   </div>
   <div class="weui-loadmore weui-loadmore_line" v-if="pagenum===-1">
-    <span class="weui-loadmore__tips">暂无数据</span>
+    <span class="weui-loadmore__tips">暂无商品</span>
   </div>
 </div>
 </template>
 
 <script>
 import $ from 'zepto'
-import weui from 'weui.js'
+import qs from 'qs'
 import Touchslider from 'touchslider'
 // import Vue from 'vue'
 // import progressive from './../../directives/progressive-image'
@@ -78,11 +83,32 @@ export default {
   data () {
     return {
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=',
-      parent_cat: [],
+      parent_cat: [{
+        cat_id: -1,
+        cat_name: '全部商品'
+      }, {
+        cat_id: 0,
+        cat_name: '光伏发电'
+      }, {
+        cat_id: 1,
+        cat_name: '汽车'
+      }, {
+        cat_id: 2,
+        cat_name: '太阳能'
+      }, {
+        cat_id: 3,
+        cat_name: '居家生活'
+      }, {
+        cat_id: 4,
+        cat_name: '特色产品'
+      }, {
+        cat_id: 5,
+        cat_name: '其他'
+      }],
       goods_list: [],
-      img_domain: '',
-      title_name: '',
-      cid: null,
+      img_domain: 'http://img.zulibuy.com/images/',
+      title_name: '全部商品',
+      cid: -1,
       pagenum: 0,
       showLoading: false,
       busy: true
@@ -131,6 +157,8 @@ export default {
      * 分类点击
      */
     changeCid (cid) {
+      // this.title_name = this.parent_cat[value = cid]
+      this.title_name = this.parent_cat[cid + 1].cat_name
       this.cid = cid
       this.pagenum = 0
       this.goods_list = []
@@ -150,27 +178,25 @@ export default {
           return
         }
         // 获取数据
-        this.$http.get('category.php', {
-          params: {
-            id: this.cid,
-            page: this.pagenum
-          }
-        }).then(({data: {data, errcode, msg}}) => {
-          if (errcode === 0) {
+        let p = {
+          type: this.cid,
+          pagenum: this.pagenum,
+          pagesize: 10
+        }
+        this.$http.post('product/productList', qs.stringify(p))
+        .then(({data: {code, data, msg}}) => {
+          if (code === 1) {
             // console.log(data)
-            this.parent_cat = data.parent_cat
-            this.img_domain = data.img_domain
-            this.title_name = data.title_name
-            if (data.goods_list.length === 0) {
+            if (data.length === 0) {
               // 返回数据长度为0时,设置页码为-1
               this.pagenum = -1
               return
             }
-            for (let m of data.goods_list) {
+            for (let m of data) {
               this.goods_list.push(m)
             }
           } else {
-            weui.toast(msg, 2000)
+            $.toast(msg, 'forbidden')
             console.error('获取商品列表失败:' + msg)
           }
           this.busy = this.showLoading = false
