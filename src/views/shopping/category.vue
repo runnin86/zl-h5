@@ -50,7 +50,7 @@
         <div class="goods-title" v-html="g.productName+'('+g.productDesc+')'"></div>
         <div class="goods-price">
           ￥{{g.price}}
-          <span class="good_price_original">￥{{g.marketPrice}}</span>
+          <span class="shop_price_span_add">￥{{g.marketPrice}}</span>
         </div>
       </a>
     </div>

@@ -244,7 +244,7 @@ export default {
         let zhis = this
         weui.dialog({
           title: '当前用户缓存',
-          content: JSON.stringify(this.userInfo) + window.localStorage.getItem('seller_id_nhh'),
+          content: JSON.stringify(this.userInfo) + window.localStorage.getItem('zlToken'),
           className: 'custom-classname',
           buttons: [{
             label: '关闭',

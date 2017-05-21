@@ -55,10 +55,8 @@ export default {
       .then(function({data: {data, errcode, msg}}) {
         if (errcode === 0) {
           zhis.$store.commit('SET_USER', data.user)
-          // 设置卖家ID为user_id
-          zhis.$store.commit('SET_SELLER_ID', data.user.user_id)
-          window.location.href = window.location.origin + '/index?seller_id=' + data.user.user_id
-          // zhis.$router.push({path: '/index'})
+          // 跳转至列表页
+          zhis.$router.push({path: '/category'})
         } else {
           $('.pacman').hide()
           $.toast(msg, 'forbidden')

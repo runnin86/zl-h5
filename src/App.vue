@@ -49,7 +49,6 @@
 <script>
 import $ from 'zepto'
 import wx from 'weixin-js-sdk'
-// import weui from 'weui.js'
 import {mapGetters} from 'vuex'
 import thumbSmall from 'static/weui/images/icon_tabbar.png'
 import * as config from './config'
@@ -182,11 +181,6 @@ export default {
       // 进入详情页时需要记录滚动条距离头部距离
       if (from.path === '/category') {
         this.scrollTop = $('.container').scrollTop()
-      }
-      // weui.topTips(to.query.seller_id + '->' + this.$store.getters.sellerId)
-      // 设置卖家ID
-      if (to.query.seller_id && this.$store.getters.sellerId && to.query.seller_id !== this.$store.getters.sellerId) {
-        this.$store.commit('SET_SELLER_ID', to.query.seller_id)
       }
       // 默认全局分享
       let desc = '【南华汇】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【南华汇】逛逛，你就out了！'

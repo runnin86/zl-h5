@@ -4,13 +4,13 @@
 import util from './../../utils'
 
 const state = {
-  user: util.getStore('user_nhh')
+  user: util.getStore('zlUser')
 }
 
 // getters
 const getters = {
-  userInfo: state => JSON.parse(util.getStore('user_nhh')),
-  sellerId: state => util.getStore('seller_id_nhh')
+  userInfo: state => JSON.parse(util.getStore('zlUser')),
+  token: state => util.getStore('zlToken')
 }
 
 // actions(异步)
@@ -28,17 +28,17 @@ const actions = {
 // mutations(同步)
 const mutations = {
   REMOVE_USER (state) {
-    util.removeStore('user_nhh')
+    util.removeStore('zlUser')
   },
 
   SET_USER (state, userData) {
     // 将用户信息存储至localStorage
-    util.setStore('user_nhh', userData)
+    util.setStore('zlUser', userData)
   },
 
-  SET_SELLER_ID (state, sid) {
+  SET_TOKEN (state, token) {
     // 将卖家ID存储至localStorage
-    util.setStore('seller_id_nhh', sid)
+    util.setStore('zlToken', token)
   }
 }
 

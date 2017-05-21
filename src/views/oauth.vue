@@ -15,7 +15,7 @@ export default {
   },
   beforeMount () {
     // 模板编译之前
-    if (!this.userInfo) {
+    if (!this.userInfo && this.is_weixn()) {
       /*
        * 微信鉴权
        * 051G0HDC1guKk00QzKDC1xlHDC1G0HDR
@@ -39,16 +39,25 @@ export default {
       '#wechat_redirect'
       window.location.href = oauthUrl
     } else {
-      // 设置卖家ID为user_id
-      this.$store.commit('SET_SELLER_ID', this.userInfo.user_id)
-      window.location.href += 'index?seller_id=' + this.userInfo.user_id
-      // this.$router.push({path: 'index'})
+      // 未登录或者非微信浏览器则默认跳转至列表页
+      this.$router.push({path: 'category'})
     }
   },
   mounted () {
     // 模板编译之后，代替了之前的ready*
   },
   methods: {
+    /**
+     * 判断是否是微信浏览器
+     */
+    is_weixn() {
+      let ua = window.navigator.userAgent.toLowerCase()
+      if (ua.indexOf('micromessenger') !== -1) {
+        return true
+      } else {
+        return false
+      }
+    }
   }
 }
 </script>
