@@ -11,9 +11,8 @@
       </a>
     </div>
     <div class="col-xs-8 shop-name">
-      <!-- <span>{{goodData.goods.goods_name}}</span> -->
       <span class="double_title buyer_comment">商品详情</span>
-      <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: goodData.id}}" class="double_title">买家评论</router-link>
+      <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: pid}}" class="double_title">买家评论</router-link>
     </div>
     <div class="col-xs-2 shop-bag">
       <router-link :to="{name: 'Category',path: '/category'}">
@@ -27,8 +26,7 @@
       <div class="detail-img">
         <wv-swipe class="demo-swipe" :height="300" :auto="4000">
           <wv-swipe-item class="demo-swipe-item" v-for="img in photo" :key="img.id">
-            <img :src="imgBase64"
-              :style="{backgroundImage: 'url(' + img_domain + img.resource + ')'}">
+            <img :src="imgBase64" :style="{backgroundImage: 'url(' + img_domain + img.resource + ')'}">
           </wv-swipe-item>
         </wv-swipe>
       </div>
@@ -37,9 +35,6 @@
       <div class="col-xs-12 goodsTitle" v-if="main">
         <p>
           {{main.productName}}
-          <span>
-              <!-- <a style="  padding-top:33px; font-size:12px;" href="javascript:void(0);" data-toggle="modal" data-target=".bs-example-modal-sm"  class="app_share">分享</a> -->
-          </span>
         </p>
         <div class="shop_price">
           ￥{{main.price}}
@@ -47,24 +42,24 @@
             市场价￥{{main.marketPrice}}
           </span>
           <div class="goodNum">
-            <a class="add" href="javascript:void(0);" @click="numberChange('del')">-</a>
+            <a class="add" @click="numberChange('del')">-</a>
             <input type="text" v-model="buyNum" />
-            <a class="delete" href="javascript:void(0);" style="cursor:pointer" @click="numberChange('add')">+</a>
+            <a class="delete" style="cursor:pointer" @click="numberChange('add')">+</a>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="row info_goods">
-      <div class="col-xs-4" style="text-align:left">
-        <img src="/static/images/zheng.png">&nbsp;正品保证
-      </div>
-      <div class="col-xs-4" style="text-align:center;">
-        <img src="/static/images/qu.png">&nbsp;全球直采
-      </div>
-      <div class="col-xs-4" style="text-align:right;">
-        <img src="/static/images/bao.png">&nbsp;满99包邮
-      </div>
+    <div class="col-xs-4" style="text-align:left">
+      <img src="/static/images/zheng.png">&nbsp;正品保证
+    </div>
+    <div class="col-xs-4" style="text-align:center;">
+      <img src="/static/images/qu.png">&nbsp;全球直采
+    </div>
+    <div class="col-xs-4" style="text-align:right;">
+      <img src="/static/images/bao.png">&nbsp;满99包邮
+    </div>
   </div>
   <div class="goodsTxt">
     <p class="redColor">#商品详情#</p>
@@ -73,86 +68,67 @@
   <span class="red-dot"></span>
   <div class="cartBottom">
     <div class="cartImg clearfix">
+      <!-- 购物车图标 -->
       <router-link :to="'/cart'">
-        <a href="javascript:void(0);" class="cart_png addCartPng">
+        <a class="cart_png addCartPng">
           <span class="iconfont-yzg icon-yzg-msnui-cart"></span>
-          <span class="quantity redBgColor" v-show="goodData.cart_goods_count>0">{{goodData.cart_goods_count}}</span>
+          <span class="quantity redBgColor" v-show="$store.getters.cartBadge>0">
+            {{$store.getters.cartBadge}}
+          </span>
         </a>
       </router-link>
-      <a href="javascript:void(0);" @click="collect(goodData.id)" class="cart_png">
-        <span v-bind:class="['iconfont-yzg', goodData.is_collect ? 'icon-yzg-shoucang' : 'icon-yzg-shouc_no']"></span>
+      <!-- 收藏图标 -->
+      <a @click="collect(pid)" class="cart_png">
+        <span v-if="main" :class="['iconfont-yzg', main.isSale === '上架' ? 'icon-yzg-shoucang' : 'icon-yzg-shouc_no']"></span>
       </a>
     </div>
     <div class="clearfix" style=" padding-left:40%;">
       <div class="tbl-cell">
-        <a class="btn-cart redBgColor" href="javascript:void(0);" @click="addCart('0')">
+        <a class="btn-cart redBgColor" @click="addCart()">
           <span class="iconfont-yzg icon-yzg-msnui-cart"></span>加入购物车
         </a>
       </div>
-      <!-- <div class="tbl-cell">
-        <router-link :to="{ path: '/orderfill', query: { one_step_buy: 1 }}" class="btn-buy">
-          <a href="javascript:void(0)" @click="addCart('1')" class="redBgColor">
-            <span class="iconfont-yzg icon-yzg-goumai"></span>立即购买
-          </a>
-        </router-link>
-      </div> -->
     </div>
   </div>
   <!--底部导航结束-->
-  <div class="loading" v-if = "load">
+  <div class="loading" v-if="load">
     <i class="weui-loading"></i>
   </div>
 </div>
 </template>
 
-<style scoped>
-@import '/static/style/goods.css';
-.container-content{ background: #fff}
-.demo-swipe-item{
-  text-align: center;
-}
-</style>
-
 <script>
 import qs from 'qs'
 import $ from 'zepto'
 import weui from 'weui.js'
-// var refreshMsg
 
 export default {
   init() {
     // console.log('初始化')
   },
   created() {
-    // refreshMsg = setInterval(this.GetRTime, 0)
   },
   beforeDestroy() {
-    // window.clearInterval(refreshMsg)
   },
   activated() {
+    this.pid = this.$route.query.gid
     this.loadGood()
     this.$store.commit('CHANGE_IS_INDEX', false)
-    $('.red-dot').css({'left': this.startX + 'px', 'bottom': this.moveY + 'px'})
+    $('.red-dot').css({
+      'left': this.startX + 'px',
+      'bottom': this.moveY + 'px'
+    })
   },
   data() {
     return {
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=',
+      pid: null,
       main: null,
       photo: null,
       img_domain: 'http://img.zulibuy.com/images/',
       buyNum: '1', // 购买数量
       goodsCount: null, // 商品总数
-      cartCount: null, // 购物车总数
-      goodBrief: null, // 详情
       surplus: null, // 剩余数量
-      goodData: {
-        goods: {
-          goods_name: ''
-        }
-      },
-      goodUpc: [],
-      countDownTime: '',
-      commendText: '加为本店推荐',
       startX: '',
       clientX: '',
       centerX: '',
@@ -163,20 +139,20 @@ export default {
       timer: 20,
       delTimer: null,
       addTimer: null,
-      load: true   // 是否显示加载动画
+      load: true // 是否显示加载动画
     }
   },
   methods: {
     loadGood() {
       this.$http.post('product/productDetail', qs.stringify({
-        pid: this.$route.query.gid
+        pid: this.pid
       })).then(({data: {data, code, msg}}) => {
         if (code === 1) {
-          console.log(data)
+          // console.log(data)
           this.main = data.main
           this.photo = data.photo
           // 微信分享初始化->(title, desc, imgUrl, link)
-          let desc = '【南华汇】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【南华汇】逛逛，你就out了！'
+          let desc = '分享内容描述写在这里'
           this.$parent.initWechatShare(
             '分享标题123',
             desc,
@@ -189,7 +165,7 @@ export default {
         this.load = false
       }, (response) => {
         // error callback
-        console.log(response)
+        console.error(response)
       })
     },
     numberChange(opaeratType) { // 购买商品数量
@@ -208,77 +184,38 @@ export default {
         }
       }
     },
-    addCart(buyobj) {
+    addCart() {
       let _this = this
       let gd = {
         goods: JSON.stringify({
           'quick': 0,
           'spec': [],
-          'goods_id': this.goodData.id,
+          'goods_id': this.pid,
           'number': this.buyNum,
-          'parent': 0,
-          'upc_id': this.goodUpc.upc_id
+          'parent': 0
         }),
-        one_step_buy: buyobj,
         buy_type: 0,
         group_no: 0,
         seller_id: this.$store.getters.sellerId
       }
       this.$http.post('/flow.php?step=add_to_cart', qs.stringify(gd))
-      .then(function({data: {data, errcode, msg}}) {
-        if (errcode === 0) {
-          if (buyobj === '0') {
-            _this.moveCart()
-            _this.goodData.cart_goods_count = data.cart_goods_count
-          } else {
-            console.log(data)
-          }
+      .then(function({data: {data, code, msg}}) {
+        if (code === 1) {
+          _this.moveCart()
         } else {
           weui.alert(msg)
         }
       })
       .catch(function(error) {
-        console.log(error)
+        console.error(error)
       })
     },
     collect() {
-      let _this = this
-      this.$http.get('/user.php', {
-        params: {
-          act: 'collect',
-          id: this.goodData.id
-        }
-      })
-      .then(function({data: {data, errcode, msg}}) {
-        console.log('收藏' + msg)
-        _this.goodData.is_collect = true
-        weui.toast(msg, 2000)
-      })
-      .catch(function(error) {
-        console.log('catch' + error)
-      })
-    },
-    addRecomend() {
-      let _this = this
-      this.$http.post('/goods_union.php', {
-        params: {
-          act: 'push',
-          id: this.goodData.id
-        }
-      })
-      .then(function({data: {data, errcode, msg}}) {
-        console.log('推荐' + msg)
-        _this.goodData.is_in_store = true
-        _this.commendText = '已为本店推荐商品'
-        weui.toast(msg, 2000)
-      })
-      .catch(function(error) {
-        console.log('catch' + error)
-      })
+      $.toast('敬请期待')
     },
     /*
-    * 加入购物车动画效果
-    */
+     * 加入购物车动画效果
+     */
     moveCart() {
       this.startX = ($('.btn-cart').width() / 2) + $('.btn-cart').offset().left
       this.clientX = this.startX
@@ -291,13 +228,20 @@ export default {
       clearTimeout(this.delTimer)
       this.startX = this.clientX
       this.moveY = 20
-      $('.red-dot').css({'left': this.startX + 'px', 'bottom': this.moveY + 'px', 'display': 'block'})
+      $('.red-dot').css({
+        'left': this.startX + 'px',
+        'bottom': this.moveY + 'px',
+        'display': 'block'
+      })
       this.addMove()
     },
     delMove() {
       this.startX -= this.vx
       this.moveY -= this.vy
-      $('.red-dot').css({'left': this.startX + 'px', 'bottom': this.moveY + 'px'})
+      $('.red-dot').css({
+        'left': this.startX + 'px',
+        'bottom': this.moveY + 'px'
+      })
       if ((this.startX - $('body').offset().left) >= this.stopX) {
         this.delTimer = setTimeout(this.delMove, this.timer)
       } else {
@@ -311,55 +255,28 @@ export default {
     addMove() {
       this.startX -= this.vx
       this.moveY += this.vy
-      $('.red-dot').css({'left': this.startX + 'px', 'bottom': this.moveY + 'px'})
+      $('.red-dot').css({
+        'left': this.startX + 'px',
+        'bottom': this.moveY + 'px'
+      })
       if (this.startX <= this.centerX) {
         clearTimeout(this.delTimer)
         this.delMove()
       } else {
         this.addTimer = setTimeout(this.addMove, this.timer)
       }
-    },
-    // 倒计时JS
-    GetRTime() {
-      var StartTime = new Date('2017/03/26 12:00:00') // 活动开始时间
-      var NowTime = new Date()
-      var t = StartTime.getTime() - NowTime.getTime() // 计算是否到轰动开始
-      var textD // 剩余天数
-      var textH // 剩余小时
-      var textM // 剩余分钟
-      var textS // 剩余秒
-      var textInner // 提示
-      // 若t 小于0，则活动已开始
-      if (t < 0) {
-        textInner = '离活动结束还有：'
-        // 计算结束时间
-        var EndTime = new Date('2017/05/19 12:00:00') // 活动结束时间
-        t = EndTime.getTime() - NowTime.getTime()
-        // 若 t 小于0，则活动已结束
-        if (t < 0) {
-          textInner = '活动已结束'
-        }
-      } else {
-        textInner = '活动即将开始：'
-      }
-      // 计算开始或结束时间
-      if (t > 0) {
-        var d = Math.floor(t / 1000 / 60 / 60 / 24)
-        var h = Math.floor(t / 1000 / 60 / 60 % 24)
-        var m = Math.floor(t / 1000 / 60 % 60)
-        var s = Math.floor(t / 1000 % 60)
-        textD = d + '天 '
-        textH = h + '时 '
-        textM = m + '分 '
-        textS = s + '秒 '
-      } else {
-        textD = ''
-        textH = ''
-        textM = ''
-        textS = ''
-      }
-      this.countDownTime = textInner + textD + textH + textM + textS
     }
   }
 }
 </script>
+
+<style scoped>
+@import '/static/style/goods.css';
+.container-content {
+  background: #fff
+}
+
+.demo-swipe-item {
+  text-align: center;
+}
+</style>
