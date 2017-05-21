@@ -1,5 +1,5 @@
 <template>
-  <div class="ucenter" @click="clearStorage">
+  <div class="ucenter ucenter_buyer" @click="clearStorage">
     <div class="row">
       <div class="col-xs-12 ucenter-top ">
         <a @click="linkChange">
@@ -10,7 +10,6 @@
                 <span v-if="storeinfo">{{storeinfo.store_name}}</span>
                 <span v-else>{{info.nickname}}</span>
               </p>
-              <!-- <i class="iconfont-yzg icon-yzg-shezhi"></i> -->
               <p class="self_sign">
                 个性签名:
                 <span v-if="storeinfo.signature">{{storeinfo.signature}}</span>
@@ -19,71 +18,6 @@
             </div>
           </div>
         </a>
-      </div>
-    </div>
-    <div class="ucenter_seller" v-if="is_shop">
-      <div class="row month-income">
-        <router-link to="/userCenter/sellerIncome">
-          <span>{{incomeObj.commission_total}}</span>
-          <p>累计收入</p>
-          <i class="iconfont-yzg icon-yzg-arrow"></i>
-        </router-link>
-      </div>
-      <div class="row month-order">
-        <div class="col-xs-4">
-          <span v-if="incomeObj.month_self_support_total_amount">{{incomeObj.month_self_support_total_amount}}</span>
-          <span v-else>0.00</span>
-          <p>本月销售额</p>
-        </div>
-        <div class="col-xs-4">
-          <span>{{incomeObj.count_order}}</span>
-          <p>本月订单数</p>
-        </div>
-        <div class="col-xs-4">
-          <span v-if="incomeObj.month_self_support_amount">{{incomeObj.month_self_support_amount}}</span>
-          <span v-else>0.00</span>
-          <p>本月收入</p>
-        </div>
-      </div>
-      <div class="row iconroom">
-        <div class="col-xs-4">
-          <router-link to="/userCenter/sellerIncome">
-            <i class="iconfont-yzg icon-yzg-shouru"></i>
-            <span>我的收入</span>
-          </router-link>
-        </div>
-        <div class="col-xs-4">
-          <router-link to="/userCenter/orderManage">
-            <i class="iconfont-yzg icon-yzg-sellerOrder"></i>
-            <span>订单管理</span>
-          </router-link>
-        </div>
-        <div class="col-xs-4">
-          <router-link to="/userCenter/goodsShare">
-            <i class="iconfont-yzg icon-yzg-share"></i>
-            <span>商品分享</span>
-          </router-link>
-        </div>
-        <div class="col-xs-4">
-          <router-link to="/userCenter/personnelsManage">
-            <i class="iconfont-yzg icon-yzg-customer-mgr"></i>
-            <span>客户管理</span>
-          </router-link>
-        </div>
-        <div class="col-xs-4" @click="building()">
-          <!-- <router-link to="/userCenter/withdrawIndex"> -->
-          <a href="javascript:void(0);">
-            <i class="iconfont-yzg icon-yzg-yongjin"></i>
-            <span>佣金提现</span>
-          </a>
-          <!-- </router-link> -->
-        </div>
-        <div class="col-xs-4" @click="building()">
-          <router-link to="">
-            <i class="iconfont-yzg icon-yzg-xin"></i>
-            <span>新手必读</span>
-          </router-link>
-        </div>
       </div>
     </div>
     <div class="row ucenter_buyer">
@@ -145,16 +79,9 @@
         </ul>
       </div>
     </div>
-    <div class="row ucenter_buyer" v-if="!is_shop">
-      <div class="set-shop">
-        <a href="javascript:void(0)" @click="transformLink()">
-          <img src="static/images/lc-bg.png">
-        </a>
-      </div>
-    </div>
-    <div class="row quit" style="margin-top:15px;display:none;">
+    <div class="row quit" style="margin-top:15px;">
       <div class="col-xs-12">
-        <a href="/user.php?act=logout" class="btn">退出当前账号</a>
+        <a @click="logout()" class="btn">退出当前账号</a>
       </div>
     </div>
   </div>
@@ -174,13 +101,12 @@ export default {
   },
   activated() {
     this.counter = 0
-    if (this.userInfo !== null) {
+    if (!this.userInfo) {
       // 获取用户收入
       this.loadIncome()
     } else {
-      // 进入鉴权页面
-      this.$router.push('/')
-      // this.$router.push('login')
+      // 进入登录页面
+      this.$router.push('login')
     }
   },
   data () {
@@ -237,6 +163,27 @@ export default {
       } else {
         this.$router.push('/nhhDetail')
       }
+    },
+    /*
+     * 退出
+     */
+    logout () {
+      let token = this.$store.getters.token
+      this.$http.delete('user/logout', {
+        headers: {
+          'x-token': token
+        }
+      })
+      .then(({data: {data, code, msg}}) => {
+        console.log(code, data, msg)
+        if (code === 1) {
+          this.$store.commit('LOGOUT')
+          this.$router.push({path: '/category', replace: true})
+        }
+        $.toast(msg)
+      }).catch((e) => {
+        console.error('用户退出失败:' + e)
+      })
     },
     clearStorage () {
       this.counter += 1

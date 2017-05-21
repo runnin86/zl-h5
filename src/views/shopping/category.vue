@@ -2,9 +2,9 @@
 <div class="container container-content">
   <div class="row yzg-title" style="position:relative;width:auto;">
     <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
+      <!-- <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
+      </a> -->
     </div>
     <div class="col-xs-8 shop-name">
       <span>{{title_name}}</span>
@@ -50,7 +50,7 @@
         <div class="goods-title" v-html="g.productName+'('+g.productDesc+')'"></div>
         <div class="goods-price">
           ￥{{g.price}}
-          <span class="shop_price_span_add">￥{{g.marketPrice}}</span>
+          <span class="market_price_span_add">￥{{g.marketPrice}}</span>
         </div>
       </a>
     </div>
@@ -247,5 +247,11 @@ export default {
 }
 .recommend-goods {
   padding-top:0;
+}
+.market_price_span_add {
+  color: #777;
+  text-decoration: line-through;
+  font-size: 12px;
+  padding-left: 5px;
 }
 </style>

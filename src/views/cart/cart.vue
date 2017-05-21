@@ -120,7 +120,7 @@ export default {
   activated () {
     // 去获取购物车数据
     this.getCarts()
-    this.$store.commit('CHANGE_IS_INDEX', false)
+    // this.$store.commit('CHANGE_IS_INDEX', false)
   },
   /*
    * 页面取消激活

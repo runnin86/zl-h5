@@ -4,7 +4,8 @@
 import util from './../../utils'
 
 const state = {
-  user: util.getStore('zlUser')
+  user: null,
+  token: null
 }
 
 // getters
@@ -27,8 +28,10 @@ const actions = {
 
 // mutations(同步)
 const mutations = {
-  REMOVE_USER (state) {
+  LOGOUT (state) {
+    state = null
     util.removeStore('zlUser')
+    util.removeStore('zlToken')
   },
 
   SET_USER (state, userData) {
