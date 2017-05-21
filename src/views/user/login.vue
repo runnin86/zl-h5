@@ -21,7 +21,7 @@
             class="form-control form-control_add" placeholder="手机号">
         </li>
         <li style="position:relative">
-          <input type="password" v-model="password"
+          <input type="password" v-model="userPwd"
             class="form-control form-control_add" placeholder="密码">
         </li>
         <li>
@@ -156,11 +156,12 @@ export default {
     return {
       loginState: 'login',
       userPhone: window.localStorage.getItem('localPhone') ? window.localStorage.getItem('localPhone') : '',
-      password: '',
+      userPwd: null,
       submit: false
     }
   },
   activated() {
+    this.userPwd = null
     // 不显示底部的菜单栏
     this.$store.commit('CHANGE_IS_INDEX', false)
   },
@@ -170,14 +171,14 @@ export default {
     },
     loginFun() {
       window.localStorage.setItem('localPhone', this.userPhone)
-      if (!this.userPhone || !this.password) {
+      if (!this.userPhone || !this.userPwd) {
         $.toast('请输入用户名或密码', 'forbidden')
         return
       }
 
       let loginParam = {
         'uphone': this.userPhone,
-        'upass': this.password,
+        'upass': this.userPwd,
         'code': '123'
       }
       this.$http.post('user/login', qs.stringify(loginParam))
@@ -187,9 +188,9 @@ export default {
             $.toast('账户暂时不可用', 'cancel')
           } else if (data.user.status === 1) {
             $.toast('登录成功')
-            this.$store.commit('SET_USER', JSON.stringify(data.user))
-            this.$store.commit('SET_TOKEN', data.token)
-            this.$router.push({path: '/userCenter'})
+            window.localStorage.setItem('zlUser', JSON.stringify(data.user))
+            window.localStorage.setItem('zlToken', data.token)
+            this.$router.replace({path: '/userCenter'})
           }
         } else {
           $.toast(msg, 'forbidden')

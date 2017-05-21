@@ -6,18 +6,43 @@
           <img class="pull-left" src="static/images/store/user_pa.jpg"/>
           <div class="pull-left top-title clearfix">
             <div class="title clearfix" style=" color:#fff; position:relative;">
-              <p>
-                <span v-if="storeinfo">{{storeinfo.store_name}}</span>
-                <span v-else>{{info.nickname}}</span>
+              <p v-if="userInfo">
+                <span v-if="userInfo.name">{{userInfo.name}}</span>
+                <span v-else>{{userInfo.phone}}</span>
               </p>
               <p class="self_sign">
                 个性签名:
                 <span v-if="storeinfo.signature">{{storeinfo.signature}}</span>
-                <span v-else>开店后可点击头像设置自己的个性签名哦</span>
+                <span v-else>点击头像设置自己的个性签名哦</span>
               </p>
             </div>
           </div>
         </a>
+      </div>
+    </div>
+    <div class="ucenter_seller" v-if="accountInfo">
+      <div class="row month-order">
+        <router-link to="/userCenter/sellerIncome">
+          <div class="col-xs-4">
+            <span v-if="parseFloat(accountInfo.advance) > 0">{{accountInfo.advance}}</span>
+            <span v-else>0.00</span>
+            <p>预付款</p>
+          </div>
+        </router-link>
+        <router-link to="/userCenter/sellerIncome">
+          <div class="col-xs-4">
+            <span v-if="parseFloat(accountInfo.brokerage) > 0">{{accountInfo.brokerage}}</span>
+            <span v-else>0.00</span>
+            <p>佣金</p>
+          </div>
+        </router-link>
+        <router-link to="/userCenter/sellerIncome">
+          <div class="col-xs-4">
+            <span v-if="parseFloat(accountInfo.point) > 0">{{accountInfo.point}}</span>
+            <span v-else>0.00</span>
+            <p>积分</p>
+          </div>
+        </router-link>
       </div>
     </div>
     <div class="row ucenter_buyer">
@@ -89,21 +114,16 @@
 
 <script>
 import $ from 'zepto'
-import {mapGetters} from 'vuex'
 import weui from 'weui.js'
 
 export default {
-  computed: {
-    ...mapGetters({
-      // 键为在当前页面展示,值为modules中getters中定义的键
-      userInfo: 'userInfo'
-    })
-  },
   activated() {
     this.counter = 0
-    if (!this.userInfo) {
-      // 获取用户收入
-      this.loadIncome()
+    this.userInfo = JSON.parse(window.localStorage.getItem('zlUser'))
+    if (this.userInfo) {
+      let token = window.localStorage.getItem('zlToken')
+      // 获取账户
+      this.getUseAccount(token)
     } else {
       // 进入登录页面
       this.$router.push('login')
@@ -111,6 +131,8 @@ export default {
   },
   data () {
     return {
+      userInfo: null,
+      accountInfo: null,
       storeinfo: '',
       incomeObj: '',
       info: '',
@@ -125,26 +147,23 @@ export default {
         this.counter = 0
       }.bind(this))
     },
-    loadIncome () {
-      this.$http.get('/user.php', {
-        params: {
-          act: 'default'
+    /*
+     * 获取用户账户
+     */
+    getUseAccount (token) {
+      this.$http.get('user/account', {
+        headers: {
+          'x-token': token
         }
-      })
-      .then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
-          this.incomeObj = data
-          this.is_shop = data.is_shop
-          this.storeinfo = data.storeinfo
-          this.info = data.info
-          this.is_paid = data.is_paid
-          // console.log(data)
+      }).then(({data: {code, data, msg}}) => {
+        if (code === 1) {
+          console.log(data)
+          this.accountInfo = data
         } else {
           $.toast(msg, 'forbidden')
-          console.warn(errcode, msg, data)
         }
-      }, (response) => {
-        console.error(response)
+      }).catch((e) => {
+        console.error('获取账户盈利失败:' + e)
       })
     },
     linkChange () {
@@ -152,7 +171,7 @@ export default {
         this.$router.push('/userCenter/accountManage')
       } else {
         this.$router.push('')
-        weui.alert('您还未开店，无法进行设置', function() {
+        weui.alert('功能开发中...', function() {
           this.counter = 0
         }.bind(this))
       }
@@ -177,7 +196,8 @@ export default {
       .then(({data: {data, code, msg}}) => {
         console.log(code, data, msg)
         if (code === 1) {
-          this.$store.commit('LOGOUT')
+          window.localStorage.removeItem('zlUser')
+          window.localStorage.removeItem('zlToken')
           this.$router.push({path: '/category', replace: true})
         }
         $.toast(msg)
