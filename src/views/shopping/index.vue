@@ -2,52 +2,48 @@
   <div class="container container-content">
 
     <div class="row index-title">
-      <div class="col-xs-12">
-        <div class="shop-name" v-if="storeinfo">{{alias}}</div>
-        <div class="shop-name_unshop" v-else>南华汇商城</div>
-        <div class="shop-detail clearfix" v-if="storeinfo">
-          <div class="user-img">
-            <a href="javascript:void(0)">
-              <img :src="imgBase64" :style="{backgroundImage: 'url(' + (storeinfo.avatar ? storeinfo.avatar : 'static/images/store/user_pa.jpg') + ')'}">
-            </a>
-          </div>
-          <div class="shop-info">
-            <span class="info">个性签名({{storeinfo.signature}})</span>
-            <span class="info">店主客服电话：{{storeinfo.mobile}}</span>
-            <router-link to="/searchGoods" class="search-icon">
-              <span class="iconfont-yzg icon-yzg-sousuo-sousuo"></span>
-            </router-link>
-          </div>
+      <div class="shop-name" v-if="storeinfo">{{store_detail.store_name}}</div>
+      <div class="shop-name" v-else>南华汇商城</div>
+      <div class="shop-detail clearfix" v-if="storeinfo">
+        <div class="user-img">
+          <img :src="imgBase64" :style="{backgroundImage: 'url(' + (storeinfo.avatar ? storeinfo.avatar : 'static/images/store/user_pa.jpg') + ')'}">
+        </div>
+        <div class="shop-info">
+          <span class="info">个性签名({{storeinfo.signature}})</span>
+          <span class="info">店主客服电话：{{storeinfo.mobile}}</span>
+          <router-link to="/searchGoods" class="search-icon">
+            <span class="iconfont-yzg icon-yzg-sousuo-sousuo"></span>
+          </router-link>
         </div>
       </div>
     </div>
 
-    <div class="row navbar-location" style="background:#fff">
-      <div class="navbar-yzg-default" :class="storeinfo ? 'index-navbar_box' : null" :style="{width: (parent_cat.length+1)*108+'px'}">
+    <div class="row navbar-location">
+      <div class="navbar-yzg-default" :style="{width: (parent_cat.length+1)*108+'px'}">
         <ul id='activeMenu' style="width:100%;overflow:hidden;transition:none;touch-action:pan-y;">
           <li v-for="cat in parent_cat" style="width:108px;float: left; display: inline;">
-            <router-link :to="{ name: 'Category',path: '/category', params: { cid: cat.cat_id }}">{{cat.cat_name}}</router-link>
+            <router-link :to="{ name: 'Category',path: '/category', params: {cid: cat.cat_id}}">
+              {{cat.cat_name}}
+            </router-link>
           </li>
-          <li v-if="this.is_shopkeeper" style="width:108px;float: left; display: inline;">
+          <!-- <li v-if="this.is_shopkeeper" style="width:108px;float: left; display: inline;">
             <a href="#">店铺推荐</a>
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
     <!--轮播图-->
     <div class="row slider-box">
-      <div :class="storeinfo ? 'slider-content' : 'slider-content_unshop'">
-        <wv-swipe class="demo-swipe" :height='280' :auto="4000">
-          <wv-swipe-item class="demo-swipe-item"  v-for="bn in turnsInfo" :key="bn.banner">
-            <router-link :to="bn.turns_link">
-              <img :src="img_domain + bn.banner">
-            </router-link>
-          </wv-swipe-item>
-        </wv-swipe>
-      </div>
+      <wv-swipe class="demo-swipe" :height='280' :auto="4000">
+        <wv-swipe-item class="demo-swipe-item"  v-for="bn in turnsInfo" :key="bn.banner">
+          <router-link :to="bn.turns_link">
+            <img :src="img_domain + bn.banner">
+          </router-link>
+        </wv-swipe-item>
+      </wv-swipe>
     </div>
     <!--tel-->
-    <div class="row tel_phone">
+    <!-- <div class="row tel_phone">
       <div class="col-xs-6">
         <span class="sqzx">售前咨询:</span>
         <a href="tel:055163458808">055163458808</a>
@@ -56,14 +52,35 @@
         <span class="shfw">售后服务:</span>
         <a href="tel:4009696855">4009696855</a>
       </div>
+    </div> -->
+    <!--早8点-->
+    <div class="row eight-morning">
+      <div class="goods-banner">
+        <img :src="img_domain + banner"/>
+      </div>
+      <div class="goods-lists clearfix">
+        <div class="sub-goods_list" v-for="n in add_new_list">
+          <router-link :to="{name: 'Goods', path: '/shopping/goods', query: {gid: n.upc_id}} " class="list-link">
+            <div class="goods-img">
+              <img :src="imgBase64" :style="{backgroundImage: 'url(' + (n.master_img ? img_domain + n.master_img : '/static/images/no_picture.jpg') + ')'}">
+            </div>
+            <div class="goods-brief">{{n.goods_brief}}</div>
+            <div class="goods-title">{{n.goods_name}}</div>
+            <div class="goods-price">
+              {{n.shop_price}}
+              <span class="goods-price_origin">{{n.market_price}}</span>
+            </div>
+          </router-link>
+        </div>
+      </div>
     </div>
     <!--今日特卖-->
     <div class="row">
       <div class="hot-sale_box">
         <div class="hot-sale_title">今日特卖 · 每日上新</div>
-        <a href="javascript:void(0)" class="hot-sale_goods" v-for="t in active" @click="linkChange(t.act_range_ext)">
+        <a href="javascript:void(0)" class="hot-sale_goods" v-for="t in active" @click="linkChange(t.act_range_ext, t.act_id)">
           <div class="hot-sale_img">
-            <img :src="imgBase64" :style="{backgroundImage: 'url(' + (img_domain+t.banner) + ')'}">
+            <img :src="img_domain + t.banner">
           </div>
           <div class="hot-sale_info">
             <div class="goods_info">
@@ -90,7 +107,7 @@
         <img src="static/images/nutrition.jpg">
       </a>
       <div class="goods-lists clearfix">
-        <router-link class="sub-goods_list" v-for="g in nutrition" :key="g.goods_id" :to="{name: 'Goods', path: '/shopping/goods', query: {gid: g.goods_id}}">
+        <router-link class="sub-goods_list" v-for="g in nutrition" :key="g.goods_id" :to="{name: 'Goods', path: '/shopping/goods', query: {gid: g.upc_id}}">
           <div class="goods-img">
             <img :src="imgBase64" :style="{backgroundImage: 'url(' + (g.goods_img?img_domain+g.goods_img:'/static/images/no_picture.jpg') + ')'}">
           </div>
@@ -120,7 +137,7 @@
         <img src="static/images/quality_life.jpg">
       </a>
       <div class="goods-lists clearfix">
-        <router-link class="sub-goods_list" v-for="g in qualityLife" :key="g.goods_id" :to="{name: 'Goods', path: '/shopping/goods', query: {gid: g.goods_id}}">
+        <router-link class="sub-goods_list" v-for="g in qualityLife" :key="g.goods_id" :to="{name: 'Goods', path: '/shopping/goods', query: {gid: g.upc_id}}">
           <div class="goods-img">
             <img :src="imgBase64" :style="{backgroundImage: 'url(' + (g.goods_img?img_domain+g.goods_img:'/static/images/no_picture.jpg') + ')'}">
           </div>
@@ -149,7 +166,7 @@
 
 <script type="text/babel">
 import $ from 'zepto'
-import touchslider from 'touchslider'
+import touchslider from 'static/js/touchslider.js'
 
 export default {
   data () {
@@ -163,9 +180,10 @@ export default {
       qualityLife: [],
       turnsInfo: [],
       img_domain: '',
+      banner: '',
       is_shopkeeper: 1,
-      storeinfo: [],
-      alias: ''
+      storeinfo: null,
+      store_detail: null
     }
   },
   init () {
@@ -176,6 +194,13 @@ export default {
   },
   mounted () {
     // 模板编译之后，代替了之前的ready*
+    // 微信分享初始化->(title, desc, imgUrl, link)
+    let desc = '【南华汇】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【南华汇】逛逛，你就out了！'
+    this.$parent.initWechatShare(
+      '南华汇商城首页',
+      desc,
+      'imgUrl',
+      window.location.href)
   },
   updated () {
     // 组件更新完毕
@@ -189,52 +214,92 @@ export default {
       mouse: true, // 是否启用鼠标拖拽
       fullsize: false // 是否全屏幻灯（false为自由尺寸幻灯）
     })
+    // ts.on('dragEnd', function () {
+    //   // console.log(ts.style.width)
+    //   let t = $('#activeMenu').offset().left
+    //   console.log(t)
+    //   if (t < -300) {
+    //     // console.log('ss')
+    //     $('#activeMenu').css('left', '-300px!important')
+    //   }
+    // })
   },
   activated () {
-    // 获取数据
-    this.$http.get('store_index.php')
-    .then(({data: {data, errcode, msg}}) => {
-      if (errcode === 0) {
-        this.goods_list = data.goods_list
-        this.active = data.active
-        this.add_new_list = data.add_new_list
-        this.nutrition = data.yinyang
-        this.qualityLife = data.shenghuo
-        this.turnsInfo = data.turns_info
-        this.img_domain = data.img_domain
-        this.storeinfo = data.storeinfo
-        this.alias = data.alias
-        // console.log(data)
-      } else {
-        $.toast(msg, 'forbidden')
-        console.warn(errcode, msg, data)
-      }
-    }, (response) => {
-      // error callback
-      console.log(response)
-    })
-    this.$http.get('get_category.php')
-    .then(({data: {data, errcode, msg}}) => {
-      if (errcode === 0) {
-        this.parent_cat = data.parent_cat
-        // console.log(data)
-      } else {
-        $.toast(msg, 'forbidden')
-        console.warn(errcode, msg, data)
-      }
-    }, (response) => {
-      // error callback
-      console.log(response)
+    this.loadData()
+    $(document).ready(function () {
+      $('.navbar-location').css({'position': 'relative', 'width': 'auto'})
+      $('.container').scroll(function () {
+        let scrollT = $('.container').scrollTop()
+        if (scrollT < 44) {
+          $('.navbar-location').css({'position': 'relative', 'width': 'auto'})
+        } else {
+          $('.navbar-location').css({'position': 'fixed', 'width': '100%'})
+        }
+      })
     })
   },
   methods: {
-    linkChange (len) {
+    linkChange (len, act_id) {
       if (len.split(',').length === 1) {
-        this.$router.push({name: 'Goods', path: '/shopping/goods', query: {gid: len}})
+        // this.$router.push({name: 'Goods', path: '/shopping/goods', query: {gid: len}})
+        this.$http.get('favourable_goods.php', {
+          params: {
+            id: act_id
+          }
+        })
+        .then(({data: {data, errcode, msg}}) => {
+          if (errcode === 0) {
+            console.log(data.goods_list[0].upc_id)
+            this.$router.push({name: 'Goods', path: '/shopping/goods', query: {gid: data.goods_list[0].upc_id}})
+          } else {
+            console.error('获取商品列表失败:' + msg)
+          }
+        }, (response) => {
+          // error callback
+          console.log(response)
+        })
       }
       if (len.split(',').length > 1) {
         this.$router.push({name: 'PanicBuy', path: 'index/panicBuy', query: {id: this.active[len.split(',').length - 1].act_id}})
       }
+    },
+    loadData () {
+      // 获取数据
+      this.$http.get('store_index.php')
+      .then(({data: {data, errcode, msg}}) => {
+        if (errcode === 0) {
+          this.goods_list = data.goods_list
+          this.active = data.active
+          this.add_new_list = data.add_new_list
+          this.nutrition = data.yinyang
+          this.qualityLife = data.shenghuo
+          this.turnsInfo = data.turns_info
+          this.img_domain = data.img_domain
+          this.banner = data.banner
+          this.storeinfo = data.storeinfo
+          this.store_detail = data.store_detail
+          // console.log(data)
+        } else {
+          $.toast(msg, 'forbidden')
+          console.warn(errcode, msg, data)
+        }
+      }, (response) => {
+        // error callback
+        console.log(response)
+      })
+      this.$http.get('get_category.php')
+      .then(({data: {data, errcode, msg}}) => {
+        if (errcode === 0) {
+          this.parent_cat = data.parent_cat
+          // console.log(data)
+        } else {
+          $.toast(msg, 'forbidden')
+          console.warn(errcode, msg, data)
+        }
+      }, (response) => {
+        // error callback
+        console.log(response)
+      })
     }
   },
   watch: {
@@ -243,7 +308,9 @@ export default {
 </script>
 
 <style scoped>
-.slider-content img{
+/*轮播图*/
+
+.demo-swipe-item img{
   width:100%;
 }
 /*逛逛图标*/
@@ -259,6 +326,10 @@ export default {
 /*每日早8点*/
 .eight-morning img{
   width:100%;
+  -webkit-background-size: cover;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .eight-morning{
   margin-top:10px;
@@ -269,8 +340,8 @@ export default {
   position: absolute;
   width:100%;
   height:2px;
-  bottom:-6px;
-  background:#d6244f;
+  bottom:-11px;
+  background:#ed3366;
 }
 /*end*/
 /*咨询电话*/
@@ -300,12 +371,12 @@ export default {
   background-size: 16px;
   padding-left: 18px;
 }
-.slider-content_unshop{
-  padding-top:88px;
+.navbar-yzg-default ul li a:hover{
+  color:#353a40;
+  font-weight: bold;
 }
-.shop-name_unshop{
-  height:44px;
-  line-height:44px;
-  text-align: center;
+.navbar-location{ background: #f6f6f6 }
+.goods-lists .sub-goods_list {
+  margin-top:0;
 }
 </style>

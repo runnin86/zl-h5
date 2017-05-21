@@ -11,7 +11,7 @@
         <div class="col-xs-8 shop-name">
             <input type="text" name="" class="seaCont" placeholder="爱仕达" v-model="searchContent">
         </div>
-        <div class="col-xs-2 shop-bag">
+        <div class="col-xs-2 shop-bag" style="padding-left:0">
             <router-link :to="{ path: '/showSearch', query: {searchCont: searchContent}}" class="searchBtn">
                 <a @click="searchGood(searchContent)" style="color:#fff">搜索</a>
             </router-link>
@@ -61,13 +61,11 @@
   border:1px solid #f1f1f1;
   border-radius:20px;
   margin:6px 10px;
-  background:#f1f1f1;
+  background:#f8f8f8;
 }
-.searchTitle .yzg-title,.searchResult .yzg-title{ background: #f1f1f1; }
+/*.searchTitle .yzg-title,.searchResult .yzg-title{ background: #f1f1f1; }*/
 .searchResult{ display:none; }
 .seaCont{ display:block; border:none; border-bottom:1px solid #999; height:30px; width:100%; background:none; font-size: 12px; padding-left:10px; margin-top:10px; margin-left:-10px; outline: none; color:#333;}
-.shop-name{ padding:0; }
-.shop-bag{ padding:0; padding-left:10px;}
 .searchBtn{background: -webkit-gradient(linear,0 0,0 100%,from(#d6244f),to(#D23AA2)); width:48px; height:28px; line-height: 28px; border-radius:10px; display: block; color:#fff; text-align: center; font-size:12px; margin-top:8px;}
 .yzg-title .iconfont-yzg{ font-size: 22px; color:#333; }
 </style>

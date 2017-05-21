@@ -3,15 +3,27 @@ body{}
 p{ margin:0; }
 a{ color:#333; }
 li{ list-style: none; }
-.nav-center{ height: 44px;line-height: 44px;background: #d6244f; position: fixed;max-width: 640px;min-width: 320px; width: 100%;top: 0;padding: 0;z-index: 99;}
-.loginTitle{ height:44px; overflow:hidden; text-align: center; font-size: 18px; color: #fff;}
-.backBtn .iconfont-yzg{ font-size: 24px; color:#fff; }
+.nav-center{ height: 44px;line-height: 44px;background: #f8f8f8; position: fixed;max-width: 640px;min-width: 320px; width: 100%;top: 0;padding: 0;z-index: 99;}
+.loginTitle{ height:44px; overflow:hidden; text-align: center; font-size: 18px; color: #333;}
+.backBtn .iconfont-yzg{ font-size: 24px; color:#333; }
 .loginBtn{ margin:0 auto; background: #d6244f; display: block;}
-.shop-bag .iconfont-yzg{font-size: 24px; color:#fff;}
-.shop-name span{ font-size: 16px }
+.shop-bag .iconfont-yzg{font-size: 24px; color:#ed3366;}
+.shop-name span{ font-size: 14px }
 .loading{ position:fixed; top:30%; left:50%; margin-left:-40px; }
 .loading .weui-loading{ width:80px; height:80px; }
-
+.yzg-title{  height:44px;  line-height:44px; color:#333;  font-size:18px;  position: fixed;  width:100%;  max-width:640px;  min-width:320px;  z-index:100;background:#f8f8f8}
+.yzg-title .shop-name .double_title{ padding:0 5px; color:#777; }
+.yzg-title .shop-name .goods_detail{  display: inline-block;  color:#ed3366;  border-bottom:2px solid #ed3366; height:44px;}
+.yzg-title .shop-name .buyer_comment{  color:#ed3366;  border-bottom:2px solid #ed3366;  display: inline-block; height:44px;}
+.shop-name{ padding:0; text-align: center }
+.shop-bag{ padding:0; padding-left:10px;}
+/*商城主色调*/
+.redColor{color:#ed3366;}
+.redBgColor{ background: #ed3366; color:#fff; }
+.redBorderColor{ border-bottom:1px solid #ed3366; }
+.redBorColAll{ border-bottom:1px solid #ed3366 !important; color:#ed3366 !important;}
+.redAllBorCol{ border:1px solid #ed3366 !important; color:#ed3366 !important; }
+.grayBgColor{ background:#f8f8f8  }
 /*bootsrap.css相关文件*/
 .container{ padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto}
 :after, :before{box-sizing:border-box;}

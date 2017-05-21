@@ -1,15 +1,23 @@
 <template>
 	<div>
-		<div class="row nav-center">
+    <div class="row yzg-title">
       <div class="col-xs-2 backBtn">
-      	<a href="javascript:history.back(-1)"><i class="iconfont-yzg icon-yzg-back" style=""></i></a>
+        <a @click="$parent.back()">
+          <i class="iconfont-yzg icon-yzg-back"></i>
+        </a>
       </div>
-      <div  class="col-xs-8 loginTitle">购物订单列表</div>
-			<div class="col-xs-2"></div>
+      <div class="col-xs-8 shop-name">
+        <span>购物订单列表</span>
+      </div>
+      <div class="col-xs-2 shop-bag">
+        <router-link :to="{ name: 'Index',path: '/index' }">
+          <span class="iconfont-yzg icon-yzg-goods"></span>
+        </router-link>
+      </div>
     </div>
 		<div class="weui_tab orderTitle row"  id="orderTab"
 		  style="height:44px;top:44px;margin-bottom:44px;z-index:0;">
-				<div class="weui_navbar" style="height:44px;">
+				<div class="weui_navbar" style="height:44px; border-top:1px solid #ddd; background:#f4f4f4">
 						<div class="weui_navbar_item" @click="orderType('order_all')"
 						  :class="orderAct === 'order_all' ? 'tab-green' : ''">
 								全部订单
@@ -20,11 +28,11 @@
 						</div>
 						<div class="weui_navbar_item" @click="orderType('order_payed')"
 						  :class="orderAct === 'order_payed' ? 'tab-green' : ''">
-								已付款
+								待发货
 						</div>
 						<div class="weui_navbar_item" @click="orderType('order_done')"
 						  :class="orderAct === 'order_done' ? 'tab-green' : ''">
-								已完成
+								待收货
 						</div>
 						<div class="weui_navbar_item" @click="orderType('order_cancel')"
 						  :class="orderAct === 'order_cancel' ? 'tab-green' : ''">
@@ -40,14 +48,14 @@
     		<li v-for="order in orderList">
     			<table>
     				<tr>
-    					<td colspan="3" class="stateTitle" style=" background:#fff">订单状态：{{order.order_status}}</td>
+    					<td colspan="3" class="stateTitle">订单状态：{{order.order_status}}</td>
     				</tr>
     				<tr>
     					<td style="width:80px">
     						<img :src="order.master_img">
     					</td>
     					<td class="orderCode">
-                <router-link :to="{path:'/userCenter/orderList/shopOrdDet', query:{orderId: order.order_id}}">
+                <router-link :to="{path:'/shopOrdDet', query:{orderId: order.order_id}}">
       						<p>
                     <span>订单编号：</span>{{order.order_sn}}
                   </p>
@@ -101,7 +109,9 @@ export default {
       this.orderList = []
       this.pagenum = 0
     }
-    this.queryList()
+    if (this.$parent.fromPath !== '/shopOrdDet' || this.orderList.length === 0) {
+      this.queryList()
+    }
     // $('#orderTab').tab({defaultIndex: 0, activeClass: 'tab-green'})
   },
   methods: {
@@ -156,11 +166,12 @@ export default {
 	.orderTitle .col-xs-2{ width:20%; margin-top:44px; text-align: center; height:40px; line-height: 40px; background: #fcfcfc; position:relative; padding:0; cursor: pointer;}
 	.orderTitle .col-xs-2:before{ position:absolute; content: ""; width:1px; height:24px; right:0; top:8px; background: #eee }
 	.orderTitle .col-xs-2:last-child:before{ background: #fcfcfc }
+  .orderDisplay{ background: #eee }
 	.orderDisplay li{ margin-top:10px; }
-	.orderDisplay table{ width:100%;}
+	.orderDisplay table{ width:100%; border-collapse: collapse; text-align: left}
 	.orderDisplay table td{ background: #fcfcfc; padding:8px; }
 	.orderDisplay table img{ width:80px; height:80px;}
-	.orderDisplay table .stateTitle{ background: #fff;color:#999; padding:10px; }
+	.orderDisplay table .stateTitle{ background: #fff;color:#999; padding:10px;  border-bottom:1px solid #eee; }
 	.orderDisplay table td .icon-yzg-arrow{ font-size: 20px }
   .orderDisplay table .orderCode{ padding:0; line-height: 22px }
 	.orderCode span{ color:#999; }

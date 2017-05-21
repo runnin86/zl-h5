@@ -76,15 +76,16 @@ router.beforeEach((to, from, next) => {
   const tLength = toPath.replace(/[^/]/g, '').length
   const fLength = fromPath.replace(/[^/]/g, '').length
 
-  let pushTopUrl = ['/login', '/searchGoods']
+  let pushUrl = ['/login', '/searchGoods']
+  let bounceUrl = ['/goods', '/shopOrdDet', '/nhhDetail']
   // 页面切换效果
-  if (tLength > fLength || toPath === '/goods') {
+  if (tLength > fLength || bounceUrl.includes(toPath)) {
     router.options.transitionName = 'bounce'
-  } else if (tLength < fLength || fromPath === '/goods') {
+  } else if (tLength < fLength || bounceUrl.includes(fromPath)) {
     router.options.transitionName = 'bounceOut'
-  } else if (pushTopUrl.includes(toPath)) {
+  } else if (pushUrl.includes(toPath)) {
     router.options.transitionName = 'pushtop'
-  } else if (pushTopUrl.includes(fromPath)) {
+  } else if (pushUrl.includes(fromPath)) {
     router.options.transitionName = 'pushtopOut'
   } else {
     router.options.transitionName = 'fade'
@@ -92,7 +93,14 @@ router.beforeEach((to, from, next) => {
 
   // 是否隐藏底部菜单
   let showIndexUrl = ['/category', '/index', '/userCenter']
-  let hideIndexUrl = ['/welcome', '/searchGoods', '/userCenter/accountManage', '/userCenter/addressList']
+  let hideIndexUrl = [
+    '/welcome',
+    '/searchGoods',
+    '/userCenter/accountManage',
+    '/userCenter/addressList',
+    '/shopOrdDet',
+    '/nhhDetail'
+  ]
   if (tLength > fLength || hideIndexUrl.includes(toPath)) {
     store.commit('CHANGE_IS_INDEX', false)
   } else if (tLength < fLength || showIndexUrl.includes(toPath)) {
@@ -105,11 +113,10 @@ router.beforeEach((to, from, next) => {
 })
 
 // // 注册一个全局的 after 钩子
-// router.afterEach((route) => {
-//   console.log(989)
-//   // 更新store中的route状态
-//   // store.commit([ROUTE_UPDATE_ROUTE], route)
-// })
+router.afterEach((route) => {
+  // 更新store中的route状态
+  // store.commit([ROUTE_UPDATE_ROUTE], route)
+})
 
 // Filters
 Vue.filter('dateFilter', filters.dateFilter)

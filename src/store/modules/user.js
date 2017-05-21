@@ -9,7 +9,8 @@ const state = {
 
 // getters
 const getters = {
-  userInfo: state => JSON.parse(util.getStore('user_nhh'))
+  userInfo: state => JSON.parse(util.getStore('user_nhh')),
+  sellerId: state => util.getStore('seller_id_nhh')
 }
 
 // actions(异步)
@@ -33,6 +34,11 @@ const mutations = {
   SET_USER (state, userData) {
     // 将用户信息存储至localStorage
     util.setStore('user_nhh', userData)
+  },
+
+  SET_SELLER_ID (state, sid) {
+    // 将卖家ID存储至localStorage
+    util.setStore('seller_id_nhh', sid)
   }
 }
 

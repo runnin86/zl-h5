@@ -39,7 +39,10 @@ export default {
       '#wechat_redirect'
       window.location.href = oauthUrl
     } else {
-      this.$router.push('index')
+      // 设置卖家ID为user_id
+      this.$store.commit('SET_SELLER_ID', this.userInfo.user_id)
+      window.location.href += 'index?seller_id=' + this.userInfo.user_id
+      // this.$router.push({path: 'index'})
     }
   },
   mounted () {

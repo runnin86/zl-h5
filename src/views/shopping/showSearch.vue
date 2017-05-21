@@ -24,7 +24,7 @@
             <router-link :to="{ name: 'Goods',path: '/shopping/goods', query: { gid: g.goods_id }}">
               <div class="goods-img">
                 <img :src="imgBase64"
-                  :style="{backgroundImage: 'url(' + (g.goods_img?img_domain+g.goods_img:'/static/images/no_picture.jpg') + ')'}">
+                  :style="{backgroundImage: 'url(' + (g.master_img?img_domain+g.master_img:'/static/images/no_picture.jpg') + ')'}">
               </div>
             </router-link>
             <div class="goods-title" v-html="g.goods_name"></div>
@@ -71,8 +71,6 @@
 }
 .searchTitle .yzg-title,.searchResult .yzg-title{ background: #f1f1f1; }
 .seaCont{ display:block; border:none; border-bottom:1px solid #999; height:30px; width:100%; background:none; font-size: 12px; padding-left:10px; margin-top:10px; margin-left:-10px; outline: none; color:#333;}
-.shop-name{ padding:0; }
-.shop-bag{ padding:0; padding-left:10px;}
 .searchBtn{background: -webkit-gradient(linear,0 0,0 100%,from(#d6244f),to(#D23AA2)); width:48px; height:28px; line-height: 28px; border-radius:10px; display: block; color:#fff; text-align: center; font-size:12px; margin-top:8px;}
 .yzg-title .iconfont-yzg{ font-size: 22px; color:#333; }
 </style>

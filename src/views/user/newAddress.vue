@@ -1,13 +1,19 @@
 <template>
 <div>
-  <div class="row nav-center">
+  <div class="row yzg-title">
     <div class="col-xs-2 backBtn">
-      <a href="javascript:history.back(-1)">
+      <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
       </a>
     </div>
-    <div class="col-xs-8 loginTitle">{{titleName}}</div>
-    <div class="col-xs-2"></div>
+    <div class="col-xs-8 shop-name">
+      <span>{{titleName}}</span>
+    </div>
+    <div class="col-xs-2 shop-bag">
+      <router-link :to="{ name: 'Index',path: '/index'}">
+        <span class="iconfont-yzg icon-yzg-goods"></span>
+      </router-link>
+    </div>
   </div>
   <div class="row mainContent">
     <div class="receiverInfor">
@@ -39,7 +45,7 @@
           </tr>
         </table>
         <div class="saveNew">
-          <a @click="savenew">保存收货地址</a>
+          <a @click="savenew" class="redBgColor">保存收货地址</a>
         </div>
       </div>
     </div>
@@ -164,6 +170,6 @@ body {
   color: #3a3a3a;
   font-size: 14px
 }
-.saveNew{ width:100px; height:38px; background: #d6244f; text-align: center; color:#fff; margin:30px auto 20px; border-radius:4px; cursor: pointer;}
+.saveNew{ width:100px; height:38px; text-align: center; margin:30px auto 20px; border-radius:4px; cursor: pointer;}
 .saveNew a{ color:#fff; display: block; height:38px; line-height: 38px; }
 </style>

@@ -47,7 +47,7 @@
               <div class="product-content">
                 <div class="product-box">
                   <div class="product-pic">
-                    <img src="static/images/no_picture.jpg" alt="">
+                    <img :src="img_domain + pro.goods_thumb" alt="">
                   </div>
                   <div class="product-con">
                     <span class="product-title">{{pro.goods_name}}</span>
@@ -93,7 +93,7 @@
           <label class="weui-cell weui-check__label">
             <div class="weui-cell__hd">
               <input type="checkbox" class="weui-check" v-model="this.is_select_all"
-                v-on:click="selectCarts(null, 2, $event)">
+                @change="selectCarts(null, 2, $event)">
               <i class="weui-icon-checked"></i>
             </div>
             <div class="weui-cell__bd">
@@ -102,7 +102,7 @@
           </label>
         </div>
         <div class="checkout-info" v-html="this.shopping_money"></div>
-        <a class="btn btn-checkout" @click="checkoutCart()">去结算({{total.real_goods_count}})</a>
+        <a class="btn btn-checkout redBgColor" @click="checkoutCart()">去结算({{total.real_goods_count}})</a>
       </div>
     </div>
   </div>
@@ -134,7 +134,8 @@ export default {
       is_select_all: false,
       total: [],
       shopping_money: '',
-      showTips: false
+      showTips: false,
+      img_domain: ''
     }
   },
   methods: {
@@ -161,6 +162,7 @@ export default {
           this.total = data.total
           this.is_select_all = data.is_select_all
           this.shopping_money = data.shopping_money
+          this.img_domain = data.img_domain
         } else {
           console.error('获取购物车失败:' + msg)
         }
@@ -351,7 +353,7 @@ export default {
 </script>
 
 <style>
-.red{color:#d6244f;}
+.red{color:#ed3366;}
 .goods-alert_title{
   text-align: center;
 }
@@ -376,7 +378,7 @@ export default {
   font-size: 16px;
   line-height: 40px;
 }
-.cart-contain { padding-top: 44px;}
+.cart-contain { margin-top: 44px; background: #eee}
 .goods-box {}
 .goods-box .goods-box_title { background: #f6f6f6;margin-top:10px; }
 .goods-box .goods-box_body { position: relative; }
@@ -390,8 +392,8 @@ export default {
 .goods-box .goods-box_body .product-list_wrap .product-box { display: -webkit-flex; display: flex;}
 .goods-box .goods-box_body .product-list_wrap .product-pic { margin-right: 10px; }
 .goods-box .goods-box_body .product-list_wrap .product-pic img { width: 80px; }
-.goods-box .goods-box_body .product-list_wrap .product-con .product-title { display: block; height: 34px; overflow: hidden; font-size: 13px; }
-.goods-box .goods-box_body .product-list_wrap .product-con .cell-price { padding-top: 25px; margin-bottom: 0; font-size: 13px; color: #ef0021; }
+.goods-box .goods-box_body .product-list_wrap .product-con .product-title { display: block; height: 40px; overflow: hidden; font-size: 13px; }
+.goods-box .goods-box_body .product-list_wrap .product-con .cell-price { padding-top: 20px; margin-bottom: 0; font-size: 13px; color: #ef0021; }
 .goods-box .goods-box_body .product-list_wrap .product-option .product-del { position: absolute; right: 0; top: 0; }
 .goods-box .goods-box_body .product-list_wrap .product-option .product-del img { width: 34px; }
 .goods-box .goods-box_body .product-list_wrap .product-option .product-num { position: absolute; right: 15px; bottom: 10px; }
@@ -401,15 +403,16 @@ export default {
 .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-add:before { content: ""; display: inline-block; width: 15px; height: 20px; background: url(/static/images/icon_detail.png) -86px -28px no-repeat; background-size: 100px 100px; }
 .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-value { float: left; border: 0; width: 40px; font-size: 15px; color: #333; line-height: 30px; height: 30px; text-align: center; }
 .cart-footer{position: fixed;bottom:0;width:100%;max-width: 640px;min-width: 320px;}
-.layout-footer{display: -webkit-flex;display: flex;height:45px;line-height: 45px;background:#fff;}
+.layout-footer{display: -webkit-flex;display: flex;height:45px;line-height: 45px;background:#f8f8f8; padding-right: 0; }
 .layout-footer .checkAll{margin-right:10px;margin-top:0;align-self: center;}
 .layout-footer label{ position: relative;margin-bottom:0;padding:0; }
 .layout-footer .checkout-info{-webkit-flex:1;flex:1;}
-.layout-footer .checkout-info .price{color:#d6244f;font-weight: 700;font-size:15px;}
-.layout-footer .btn-checkout{display: block;background: #d6244f;color:#fff;align-self:center;}
+.layout-footer .checkout-info .price{color:#ed3366;font-weight: 700;font-size:15px;}
+.layout-footer .btn-checkout{display: block;background: #ed3366;color:#fff;align-self:center;}
+.btn-checkout{ padding: 0 12px; border-radius:0;}
 .weui-cells_checkbox .weui-icon-checked:before{font-size:18px;}
 .goods-box .weui-cell__bd p,.layout-footer .weui-cell__bd p{font-size:14px; padding-top: 2px;}
-.cart-contain .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before,.layout-footer .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{color:#d6244f;}
+.cart-contain .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before,.layout-footer .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{color:#ed3366;}
 .goods-box .goods-box_body .product-list_wrap .product-list_checkbox{align-self: center;margin-top:0;}
 .goods-box .goods-box_body .product-list_checkbox label{padding:0;}
 .cart-contain .weui-check__label:active,.layout-footer .weui-check__label:active{background:none;}

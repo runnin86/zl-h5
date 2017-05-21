@@ -7,11 +7,10 @@
         </a>
       </div>
       <div class="col-xs-8 shop-name">
-    <!--     <router-link :to="{ name: 'Goods',path: '/shopping/goods', query: { gid: this.comment_list[0].id_value }}" 
+        <router-link :to="{ name: 'Goods',path: '/shopping/goods', query: { gid: this.goods_id }}" 
           class="double_title">
           商品详情
-        </router-link> -->
-        <a href="javascript:void(0)" class="double_title">商品详情</a>
+        </router-link>
         <span class="double_title buyer_comment">买家评论</span>
       </div>
       <div class="col-xs-2"></div>
@@ -171,22 +170,7 @@ export default {
 </script>
 
 <style>
-.yzg-title .shop-name .double_title{
-  padding:0 5px;
-  color:#fefefe;
-}
-.yzg-title .shop-name .goods_detail{
-  display: inline-block;
-  color:#fff;
-  border-bottom:2px solid #fff;
-  height:44px;
-}
-.yzg-title .shop-name .buyer_comment{
-  color:#fff;
-  border-bottom:2px solid #fff;
-  display: inline-block;
-  height:44px;
-}
+
 .comment-navigation{text-align: center;font-size:12px;padding-top: 10px}
 .comment-navigation .navigation-list{
   background: #fff;

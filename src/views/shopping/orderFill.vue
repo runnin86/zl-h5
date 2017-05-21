@@ -116,7 +116,7 @@
         <tr v-for="good in goodsDetail.cart_goods_list">
           <td class="imgDetails">
             <a href="#">
-              <img :src="good.goods_thumb" />
+              <img :src="goodsDetail.img_path + good.goods_thumb" />
             </a>
           </td>
           <td class="subDetails">
@@ -136,10 +136,19 @@
       <p class="title_p">订单结算</p>
       <table>
         <tr>
-          <td>商品总价：{{goodsDetail.total.amount_formated}}</td>
+          <td>商品总价：￥{{goodsDetail.your_offset_total}}</td>
         </tr>
         <tr>
-          <td>应付款金额：{{goodsDetail.total.amount_formated}}</td>
+          <td>可用抵用金：￥{{goodsDetail.offset}}</td>
+        </tr>
+        <!-- <tr v-for = "shipping in goodsDetail.total.supplier_info">
+          <td>运费：￥{{shipping.shipping_fee}}</td>
+        </tr> -->
+        <tr>
+          <td>运费：￥{{goodsDetail.total.shipping_fee}}</td>
+        </tr>
+        <tr>
+          <td>应付款金额：￥{{goodsDetail.order_price}}</td>
         </tr>
         <tr>
           <td>满99元包邮</td>
@@ -159,9 +168,9 @@
             <ul>
                 <li style="position: relative">
                     <label>
-                        <input type="radio" name="paymentSel" value="alipay" checked="true" style="opacity:0"/>支付宝支付
+                        <input type="radio" name="paymentSel" value="alipay" checked="true" style="opacity:0"/>微信支付
                     </label>
-                    <i class="iconfont-yzg icon-yzg-duihao selectSign"></i>
+                    <i class="iconfont-yzg icon-yzg-zhifufangshi-weixinzhifu selectSign"></i>
                 </li>
             </ul>
         </div>
@@ -174,12 +183,15 @@
                     <td>订单总额：{{item.total_fee}}</td>
                 </tr>
                 <tr>
+                    <td>已优惠：￥{{item.order.offset}}</td>
+                </tr>
+                <tr>
                     <td>还需支付：{{item.total.amount_formated}}</td>
                 </tr>
                 <tr>
                     <td>
                     <router-link :to="{ name: 'ShopOrdDet',path: '/shopOrdDet', query: { orderId: item.order.order_id}}">
-                      <a>查看详细信息</a>
+                      <span class="redColor">查看详细信息</span>
                     </router-link>
                     </td>
                 </tr>
@@ -189,7 +201,7 @@
             <p>总金额：<span>{{orderInfor.summoney}}</span></p>
         </div>
         <div class="placeOrder">
-            <input type="submit" value="立即支付" class="btn btn-danger loginBtn" @click = "payNow"/>
+          <a @click="payNow" class="weui-btn weui-btn_primary">微信支付</a>
         </div>
     </div>
     <div v-if = "orderSuccess === 'errormsg'" class="errWarning">
@@ -242,7 +254,8 @@ export default {
       originalAddress: {}, // 保存初始地址 供提交订单时改变地址所用
       goodsDetail: {
         total: [{
-          amount_formated: ''
+          amount_formated: '',
+          supplier_info: []
         }]
       },  // 购买商品种类列表
       requestAddress: {}, // 提交订单请求地址参数
@@ -352,7 +365,6 @@ export default {
     },
     // 保存并下一步
     saveNext() {
-      console.log(this.checkState)
       let validResult = ''
       if (this.checkState === 'add') {
         validResult = this.dataValid(this.newAddName, this.newAddProvince, this.newAddDetail, this.newAddTel)
@@ -389,22 +401,27 @@ export default {
         }
       }
       if (validResult) {
-        this.editState = false
         let dataState = this.dataItems[this.checkState]
         let changeAdd = {
           country: 1,
           province: dataState.province_name,
           city: dataState.city_name,
           district: dataState.district_name,
-          pcd: dataState.region,
+          pcd: dataState.province_name + '-' + dataState.city_name + '-' + dataState.district_name,
           shipping: 4,
           is_pc: 1,
           one_step_buy: this.oneBuyType
         }
         this.$http.post('flow.php?step=change_address', qs.stringify(changeAdd))
         .then(function({data: {data, errcode, msg}}) {
-          console.log(data)
-        })
+          if (errcode === 0) {
+            this.goodsDetail.total = data.total
+            this.goodsDetail.order_price = data.order_price
+            this.editState = false
+          } else {
+            $.toast(msg, 'forbidden')
+          }
+        }.bind(this))
         .catch(function(error) {
           console.log('catch' + error)
         })
@@ -476,7 +493,8 @@ export default {
         payment: '',
         enterprise_discount: '',
         shipping: '4',
-        shipping_address: hidAddress.address_id
+        shipping_address: hidAddress.address_id,
+        offset: this.goodsDetail.offset
       }
       let totalParam = $.extend(orderParam, this.requestAddress, this.originalAddress)  // 合并参数列表
       this.$http.post('flow.php?step=done', qs.stringify(totalParam))
@@ -486,7 +504,7 @@ export default {
           _this.orderInfor = data    // 获取订单信息
           _this.titleName = data.title_name  //  更改title
         } else {
-          weui.toast(msg, 3000)
+          $.toast(msg, 'forbidden')
         }
       })
       .catch(function(error) {
@@ -510,28 +528,36 @@ export default {
       }
       let payParams = {
         str: orderList,
-        pay_id: 1
+        pay_id: '3'
       }
+      let zhis = this
       this.$http.post('flow.php?step=make_big', qs.stringify(payParams))
       .then(function({data: {data, errcode, msg}}) {
+        console.log(data)
         if (errcode === 0) {
-          if (data.error !== 1) {
-            var pay_type = data.pay_type
-            if (pay_type === 'web_alipay') {
-              window.location.href = 'https://mapi.alipay.com/gateway.do?' + data.message + '&sign_type=MD5'
-            } else if (pay_type === 'm_alipay') {
-              window.location.href = '/user.php?act=alipay_sub&did=' + data.message
-            } else if (pay_type === 'wx') {
-              window.location.href = '/flow.php?step=wx_pay&did_sn=' + data.message
-            } else if (pay_type === 'wx_qr') {
-              window.location.href = '/flow.php?step=wx_qr_pay&did_sn=' + data.message
-            }
-          } else {
-            alert(data.message)
+          if (data.jsApiParameters) {
+            window.WeixinJSBridge.invoke('getBrandWCPayRequest', JSON.parse(data.jsApiParameters),
+            function(res) {
+              // err_code,err_desc,err_msg
+              if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+                // zhis.$router.push({path: '/userCenter/setStore'})
+                $.toast('支付成功')
+                setTimeout(() => {
+                  zhis.$router.push({name: 'OrderList', params: {orderAct: 'order_payed'}})
+                }, 2000)
+              } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+                // 取消
+                $.toast('用户取消支付', 'cancel')
+              } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+                // 支付失败
+                $.toast(res.err_desc, 'forbidden')
+              }
+            })
           }
-          console.log(data.message)
         } else {
-          console.log(msg)
+          $.toast(msg, 'forbidden')
+          console.error(msg)
         }
       })
       .catch(function(error) {

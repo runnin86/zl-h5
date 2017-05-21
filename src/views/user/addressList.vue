@@ -1,13 +1,18 @@
 <template>
 <div>
-  <div class="row nav-center">
+  <div class="row yzg-title">
     <div class="col-xs-2 backBtn">
-      <a href="javascript:history.back(-1)">
-				<i class="iconfont-yzg icon-yzg-back"></i>
-			</a>
+      <a @click="$parent.back()">
+        <i class="iconfont-yzg icon-yzg-back"></i>
+      </a>
     </div>
-    <div class="col-xs-8 loginTitle">收货地址管理</div>
-    <div class="col-xs-2">
+    <div class="col-xs-8 shop-name">
+      <span>收货地址管理</span>
+    </div>
+    <div class="col-xs-2 shop-bag">
+      <router-link :to="{ name: 'Index',path: '/index'}">
+        <span class="iconfont-yzg icon-yzg-goods"></span>
+      </router-link>
     </div>
   </div>
   <div class="address" style="margin-top:54px">
@@ -23,7 +28,7 @@
 					{{address.mobile}}
 				</p>
         <div class="row">
-          <div class="col-xs-6" :class="defaultAddId === address.address_id ? 'setDefault' : ''" @click="setDefaultAdd(address.address_id)">
+          <div class="col-xs-6" :class="defaultAddId === address.address_id ? 'setDefault redColor' : ''" @click="setDefaultAdd(address.address_id)">
               <i class="iconfont-yzg icon-yzg-xuanzhong"></i> 设为默认地址
           </div>
           <div class="col-xs-6">
@@ -60,22 +65,25 @@
         <tr>
           <td>电　　话：</td>
           <td>
-						<input type="text" class="form-control" placeholder="请填写联系电话" v-model="address.mobile"/>
+						<input type="tel" class="form-control" placeholder="请填写联系电话" v-model="address.mobile"/>
 					</td>
         </tr>
         <tr>
           <td colspan="2" class="saveAdd">
-            <input type="button" class="form-control" value="保存" @click="saveAddress(address.address_id)"/>
-            <input type="button" class="form-control" value="取消" @click="cancelAdd(address.address_id)" />
+            <input type="button" class="form-control redAllBorCol" value="保存" @click="saveAddress(address.address_id)"/>
+            <input type="button" class="form-control redAllBorCol" value="取消" @click="cancelAdd(address.address_id)" />
           </td>
         </tr>
       </table>
     </div>
     <router-link :to="{path:'/userCenter/addressList/newAddress'}">
-      <a href="javascript:void(0);" class="btn loginBtn" style="margin-bottom:30px">新增收货地址</a>
+      <a href="javascript:void(0);" class="btn redBgColor" style="display:block; border-radius:0">新增收货地址</a>
     </router-link>
   </div>
   <citys-picker :city="data" :init-value="defaultVal" @confirm="confirmCP" ref="address"></citys-picker>
+  <div class="loading" v-if = "load">
+    <i class="weui-loading"></i>
+  </div>
 </div>
 </template>
 
@@ -109,7 +117,8 @@ export default {
         value: '340208'
       }],
       addressStr: null,
-      pickedId: null
+      pickedId: null,
+      load: true  // 是否显示加载动画
     }
   },
   activated() {
@@ -144,6 +153,7 @@ export default {
           this.addList = data.consignee_list
           this.addressEach('deleteNull')
           this.addressEach('getDefault')
+          this.load = false
         } else {
           $.toast('获取地址失败，请刷新重试', 'forbidden')
         }
@@ -325,7 +335,7 @@ body {
 
 .address>div {
   background: #fff;
-  padding: 15px 15px 0 15px;
+  padding: 15px 15px 0 15px; border-bottom:10px solid #f1f1f1;
 }
 
 .address .col-xs-6 {
@@ -353,7 +363,6 @@ body {
 .singleAddress a {
   color: #555;
 }
-.setDefault{ color:#d6244f; }
 .singleAddress table {
   margin-top: 10px;
   width: 100%;
@@ -378,8 +387,6 @@ body {
 }
 
 .saveAdd input {
-  border-color: #d6244f;
-  color: #d6244f;
   display: inline-block;
   width: 80px;
   margin: 0 10px;

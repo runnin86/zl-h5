@@ -11,10 +11,12 @@
       </a>
     </div>
     <div class="col-xs-8 shop-name">
-      <span v-if="main">{{main.productName}}</span>
+      <!-- <span>{{goodData.goods.goods_name}}</span> -->
+      <span class="double_title buyer_comment">商品详情</span>
+      <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: goodData.id}}" class="double_title">买家评论</router-link>
     </div>
     <div class="col-xs-2 shop-bag">
-      <router-link :to="{ name: 'Category',path: '/category'}">
+      <router-link :to="{name: 'Category',path: '/category'}">
         <span class="iconfont-yzg icon-yzg-goods"></span>
       </router-link>
     </div>
@@ -31,32 +33,44 @@
         </wv-swipe>
       </div>
     </div>
-    <div class="row" style="margin:0px">
+    <div class="row" style="margin:0px; margin-top:10px">
       <div class="col-xs-12 goodsTitle" v-if="main">
         <p>
           {{main.productName}}
+          <span>
+              <!-- <a style="  padding-top:33px; font-size:12px;" href="javascript:void(0);" data-toggle="modal" data-target=".bs-example-modal-sm"  class="app_share">分享</a> -->
+          </span>
         </p>
         <div class="shop_price">
           {{main.price}}
           <span class="shop_price_span_add">
             市场价￥{{main.marketPrice}}
           </span>
+          <div class="goodNum">
+            <a class="add" href="javascript:void(0);" @click="numberChange('del')">-</a>
+            <input type="text" v-model="goodNumber" name="number" />
+            <a class="delete" href="javascript:void(0);" style="cursor:pointer" @click="numberChange('add')">+</a>
+          </div>
         </div>
       </div>
     </div>
-    <hr/>
-    <div class="row goodsProp">
+    <!-- <div class="row" style="margin-left:0">
+      <span class="dTimer">
+          <span v-html="countDownTime"></span>
+        </span>
+    </div> -->
+    <!-- <div class="row goodsProp">
       <div class="col-xs-12">
         <span class="color">颜色：</span>
-        <div v-if="main">
-          <a class="redBg">{{main.colors}}</a>&nbsp;
+        <div>
+          <a title="无色" class="redBg redBgColor">{{goodUpc.color_name}}</a>&nbsp;
         </div>
       </div>
       <div class="col-xs-12">
-        <span class="color">备注：</span>
-        <span class="color" v-if="main" style="font-size: 12px;">
-          {{main.comments}}
-        </span>
+        <span class="color">尺寸：</span>
+        <div>
+          <a title="通用" class="redBg redBgColor">{{goodUpc.size_name}}</a>&nbsp;
+        </div>
       </div>
       <div class="col-xs-12">
         <span class="color">数量：</span>
@@ -67,39 +81,54 @@
               <a class="delete" href="javascript:void(0);" style="cursor:pointer" @click="numberChange('add')">+</a>
           </span>
         </div>
-        <!--隐藏加为本店推荐-->
-        <!-- <a href="javascript:void(0);" v-bind:class="['btn store_recommend', goodData.is_in_store ? 'store_recommended' : '']" @click="addRecomend()" v-html="commendText"></a> -->
+        <a href="javascript:void(0);" v-bind:class="['btn store_recommend', goodData.is_in_store ? 'store_recommended redBgColor' : '']" @click="addRecomend()" v-html="commendText"></a>
       </div>
-    </div>
-    <p class="detailTab"><span>商品详情</span></p>
-    <div class="goodsBrief" v-html="goodBrief"></div>
+    </div> -->
+    <!-- <p class="detailTab redBorderColor">
+      <span class="redBgColor">商品详情</span>
+    </p> -->
   </div>
+  <div class="row info_goods">
+      <div class="col-xs-4" style="text-align:left">
+        <img src="/static/images/zheng.png">&nbsp;正品保证
+      </div>
+      <div class="col-xs-4" style="text-align:center;">
+        <img src="/static/images/qu.png">&nbsp;全球直采
+      </div>
+      <div class="col-xs-4" style="text-align:right;">
+        <img src="/static/images/bao.png">&nbsp;满99包邮
+      </div>
+  </div>
+  <div class="goodsTxt">
+    <p class="redColor">#商品详情#</p>
+  </div>
+  <div class="goodsBrief" v-html="goodBrief"></div>
   <span class="red-dot"></span>
   <div class="cartBottom">
     <div class="cartImg clearfix">
       <router-link :to="'/cart'">
         <a href="javascript:void(0);" class="cart_png addCartPng">
           <span class="iconfont-yzg icon-yzg-msnui-cart"></span>
-          <span class="quantity" v-show="goodData.cart_goods_count>0">{{goodData.cart_goods_count}}</span>
+          <span class="quantity redBgColor" v-show="goodData.cart_goods_count>0">{{goodData.cart_goods_count}}</span>
         </a>
       </router-link>
       <a href="javascript:void(0);" @click="collect(goodData.id)" class="cart_png">
         <span v-bind:class="['iconfont-yzg', goodData.is_collect ? 'icon-yzg-shoucang' : 'icon-yzg-shouc_no']"></span>
       </a>
     </div>
-    <div class="clearfix" style=" padding-left:100px;">
+    <div class="clearfix" style=" padding-left:40%;">
       <div class="tbl-cell">
-        <a class="btn-cart" href="javascript:void(0);" @click="addCart('0')">
+        <a class="btn-cart redBgColor" href="javascript:void(0);" @click="addCart('0')">
           <span class="iconfont-yzg icon-yzg-msnui-cart"></span>加入购物车
         </a>
       </div>
-      <div class="tbl-cell">
+      <!-- <div class="tbl-cell">
         <router-link :to="{ path: '/orderfill', query: { one_step_buy: 1 }}" class="btn-buy">
-          <a href="javascript:void(0)" @click="addCart('1')">
+          <a href="javascript:void(0)" @click="addCart('1')" class="redBgColor">
             <span class="iconfont-yzg icon-yzg-goumai"></span>立即购买
           </a>
         </router-link>
-      </div>
+      </div> -->
     </div>
   </div>
   <!--底部导航结束-->
@@ -111,24 +140,27 @@
 
 <style scoped>
 @import '/static/style/goods.css';
-body { background: #fff;}
+.container-content{ background: #fff}
+.demo-swipe-item{
+  text-align: center;
+}
 </style>
 
 <script>
 import qs from 'qs'
 import $ from 'zepto'
 import weui from 'weui.js'
-var refreshMsg
+// var refreshMsg
 
 export default {
   init() {
     // console.log('初始化')
   },
   created() {
-    refreshMsg = setInterval(this.GetRTime, 0)
+    // refreshMsg = setInterval(this.GetRTime, 0)
   },
   beforeDestroy() {
-    window.clearInterval(refreshMsg)
+    // window.clearInterval(refreshMsg)
   },
   activated() {
     this.loadGood()
@@ -137,10 +169,6 @@ export default {
   },
   data() {
     return {
-      attr: null,
-      main: null,
-      photo: null,
-      img_domain: 'http://img.zulibuy.com/images/',
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=',
       goodNumber: '1', // 购买数量
       goodsCount: null, // 商品总数
@@ -170,27 +198,30 @@ export default {
   },
   methods: {
     loadGood() {
-      // 获取数据
-      let p = {
-        pid: this.$route.query.gid
-      }
-      this.$http.post('product/productDetail', qs.stringify(p))
-      .then(({data: {data, code, msg}}) => {
-        if (code === 1) {
+      this.$http.get('/goods.php', {
+        params: {
+          id: this.$route.query.gid,
+          page: this.pagenum
+        }
+      })
+      .then(({data: {data, errcode, msg}}) => {
+        if (errcode === 0) {
           console.log(data)
-          this.attr = data.attr
-          this.main = data.main
-          this.photo = data.photo
-          this.goodData = data
-          // this.goodBrief = data.goods.goods_desc_m
+          this.goodBrief = data.goods.goods_desc_m
           this.cartCount = data.cart_goods_count
-          if (data.upc) {
-            this.surplus = data.upc.number
-            this.goodsCount = data.upc.number
-            this.goodUpc = data.upc
-          }
+          this.surplus = data.upc.number
+          this.goodsCount = data.upc.number
+          this.goodData = data
+          this.goodUpc = data.upc
+          // 微信分享初始化->(title, desc, imgUrl, link)
+          let desc = '【南华汇】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【南华汇】逛逛，你就out了！'
+          this.$parent.initWechatShare(
+            data.page_title,
+            desc,
+            data.img_domain + data.goods_img[0].goods_thumb,
+            window.location.href)
         } else {
-          $.toast(msg, 'forbidden')
+          console.log(msg)
           console.error('获取商品列表失败:' + msg)
         }
         this.load = false
@@ -228,7 +259,8 @@ export default {
         }),
         one_step_buy: buyobj,
         buy_type: 0,
-        group_no: 0
+        group_no: 0,
+        seller_id: this.$store.getters.sellerId
       }
       this.$http.post('/flow.php?step=add_to_cart', qs.stringify(gd))
       .then(function({data: {data, errcode, msg}}) {
@@ -339,11 +371,11 @@ export default {
       if (t < 0) {
         textInner = '离活动结束还有：'
         // 计算结束时间
-        var EndTime = new Date('2017/04/19 12:00:00') // 活动结束时间
+        var EndTime = new Date('2017/05/19 12:00:00') // 活动结束时间
         t = EndTime.getTime() - NowTime.getTime()
         // 若 t 小于0，则活动已结束
         if (t < 0) {
-          textInner = ''
+          textInner = '活动已结束'
         }
       } else {
         textInner = '活动即将开始：'

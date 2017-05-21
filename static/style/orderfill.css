@@ -1,6 +1,6 @@
 
 .mainContent {
-  margin-top: 44px;
+  margin-top: 44px; background: #eee
 }
 
 .mainContent table {
@@ -19,8 +19,11 @@
 .receiverInfor {
   background: url(/static/images/icon_shoppingcat_mailer.png) no-repeat top center #fff;
   position: relative;
+  text-align: left;
 }
-
+.subDetails {
+  text-align: left;
+}
 .receiverInfor:after {
   position: absolute;
   content: "";
@@ -42,10 +45,6 @@
 
 .lastTd {
   width: 30px;
-}
-
-.redColor {
-  color: #d6244f;
 }
 
 .imgDetails {
@@ -80,8 +79,8 @@ input{ font-family: '微软雅黑' }
   padding: 20px; text-align: center;
 }
 
-.placeOrder .loginBtn {
-  height: 38px;
+.placeOrder input {
+  height: 38px; width:100%;
 }
 
 .goodsDetail table td {
@@ -131,13 +130,12 @@ input{ font-family: '微软雅黑' }
 /*提交订单成功页面*/
 .orderInfor{ padding:10px; background: #fff; margin-top:10px; }
 .orderInfor table td{ padding:5px 0; }
-.orderInfor a{ color:#d6244f; }
 .payment ul{ margin:0; }
 .payment ul li{ height:34px; line-height: 40px; }
 .selectSign{ color:#2ecc71; position:absolute; right:15px; top:0}
-.totalMoney span{ font-size:18px; color:#d6244f; font-weight: bold;}
+.totalMoney span{ color:#ed3366;}
 /*错误提示*/
-.errWarning{ margin:60px auto 20px; background: #fefcf0; padding: 30px 0 40px 0; border: 1px dotted #f5beb3; border-radius: 10px; text-align: center}
-.errWarning p{ color:#d6244f; font-size: 20px; margin-top:10px; }
-.errWarning a{ padding:5px 10px; display: inline-block; background: #d6244f; color:#fff; border:1px solid #d6244f; border-radius:4px; margin-top:15px; }
-.errWarning .icon-yzg-information{ font-size: 40px; color:#d6244f; }
+.errWarning{ margin:60px auto 20px; background: #fefcf0; padding: 30px 0 40px 0; border: 1px dotted #f5beb3; border-radius: 10px; text-align: center; color:#ed3366;}
+.errWarning p{ font-size: 20px; margin-top:10px; }
+.errWarning a{ padding:5px 10px; display: inline-block; border-radius:4px; margin-top:15px; color:#ed3366; }
+.errWarning .icon-yzg-information{ font-size: 40px; }

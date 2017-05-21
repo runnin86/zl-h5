@@ -62,7 +62,7 @@ export default new Router({
         require(['@/views/user/addressList'], resolve)
       }
     }, {
-      path: '/userCenter/nhhDetail',
+      path: '/nhhDetail',
       component(resolve) {
         require(['@/views/user/nhhDetail'], resolve)
       }
@@ -135,6 +135,12 @@ export default new Router({
         require(['@/views/shopping/category'], resolve)
       }
     }, {
+      path: '/categoryClassify',
+      name: 'CategoryClassify',
+      component(resolve) {
+        require(['@/views/shopping/categoryClassify'], resolve)
+      }
+    }, {
       path: '/shopping/goods',
       meta: {scrollToTop: true},
       name: 'Goods',
@@ -190,7 +196,7 @@ export default new Router({
         require(['@/views/shopping/orderSubmit'], resolve)
       }
     }, {
-      path: '/userCenter/orderList/shopOrdDet',
+      path: '/shopOrdDet',
       name: 'ShopOrdDet',
       component(resolve) {
         require(['@/views/user/shopOrdDet'], resolve)

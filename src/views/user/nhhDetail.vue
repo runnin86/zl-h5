@@ -54,8 +54,10 @@ export default{
               zhis.$router.push({path: '/userCenter/setStore'})
             } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
               // 取消取消
+              // $.toast(res.err_desc, 'cancel')
             } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
               // 支付失败
+              // $.toast(res.err_desc, 'forbidden')
             }
           })
           // window.WeixinJSBridge.invoke('getBrandWCPayRequest', {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row yzg-title">
+    <div class="row yzg-title" style="position:static">
         <div class="col-xs-2 backBtn">
           <a @click="$parent.back()">
             <i class="iconfont-yzg icon-yzg-back"></i>
@@ -41,58 +41,60 @@
           <td>店铺名称：</td>
           <td><input type="text" placeholder="请填写店铺名称" v-model="store_info.store_name" /></td>
         </tr>
-        <tr>
+       <!--  <tr>
           <td>店铺网址：</td>
           <td><input type="text" value="http://yy.yizhigou.cn" v-model="shop_url" readonly /></td>
-        </tr>
+        </tr> -->
         <tr>
           <td>我的等级：</td>
-          <td><input type="text" value="服务商" v-model="myRank" readonly /></td>
+          <td><input type="text" value="服务商" v-model="myRank" readonly @click="alertInfo()"/></td>
         </tr>
         <tr>
           <td>我的上级：</td>
-          <td><input type="text" value="服务商" v-model="myParentRank" readonly /></td>
+          <td><input type="text" value="服务商" v-model="myParentRank" readonly @click="alertInfo()" /></td>
         </tr>
         <tr>
           <td>上级电话：</td>
-          <td><input type="text" value="服务商" v-model="user_info.parent_phone" readonly /></td>
+          <td><input type="text" value="服务商" v-model="user_info.parent_phone" readonly @click="alertInfo()"/></td>
         </tr>
         <tr>
           <td>抵用金：</td>
           <td>
-            <span class="use-init_money">￥{{user_info.offset_money}}</span>
-            <router-link to="/userCenter/accountManage/sellerFundUse"  class="weui-btn weui-btn_mini weui-btn_warn">用途明细</router-link>
+            <span class="use-init_money" @click="alertInfo()">￥{{user_info.offset_money}}</span>
+            <router-link to="/userCenter/accountManage/sellerFundUse"  class="weui-btn weui-btn_mini redBgColor">用途明细</router-link>
           </td>
         </tr>
       </table>
-      <a class="rightCash" @click="set_config">确认设置</a>
+      <a class="btn redBgColor rightCash" @click="set_config">确认设置</a>
     </div>
   </div>
 </template>
 
-<style>
-  .weui-btn_warn{vertical-align: middle}
+<style scoped>
+  .redBgColor{vertical-align: middle}
+  .weui-btn{border-radius:0;}
   .use-init_money{width:50%;display:inline-block}
-  .setting{ padding-top:54px; background: #fff }
+  .setting{ background: #fff }
   .setting table{  width:100%; }
   .setting table td{ height:50px; line-height: 50px; border-bottom:1px solid #f1f1f1; text-align: left }
   .setting table td:first-child{ width:120px; text-align: right; padding-right:8px; }
   .setting table td input{ border:0; height:50px; line-height: 50px; width:100%; outline: none; }
   .setting table td .storeName{ width:100px; }
-  .rightCash{ display:block; background: #d6244f; width:100px; height:36px; line-height: 36px; color:#fff; margin:18px auto; text-align: center; border-radius:4px;}
+  .rightCash{ display:block; width:70%; margin:18px auto; height:36px; text-align: center; border-radius:0;}
   .rightCash:hover, .rightCash:active, .rightCash:visited, .rightCash:link{ color:#fff; }
 </style>
 
 <script>
 import qs from 'qs'
 import weui from 'weui.js'
+import $ from 'zepto'
 
 export default {
   data () {
     return {
       title_name: '账号管理',
       self_sign: '',
-      shop_url: '',
+      // shop_url: '',
       user_info: '',
       store_info: '',
       myRank: '',
@@ -100,6 +102,9 @@ export default {
     }
   },
   methods: {
+    alertInfo () {
+      $.toast('此信息不可设置', 'forbidden')
+    },
     set_config () {
       let kd = {
         logo_img: '',
@@ -131,7 +136,7 @@ export default {
       })
       .then(({data: {data, errcode, msg}}) => {
         if (errcode === 0) {
-          this.shop_url = data.shop_url
+          // this.shop_url = data.shop_url
           this.user_info = data.user_info
           this.store_info = data.store_info
           // console.log(data)
@@ -145,8 +150,8 @@ export default {
       })
     },
     rankCount () {
-      this.myRank = this.user_info.user_rank === '1' ? '服务商' : this.user_info.user_rank === '2' ? '合伙人' : this.user_info.user_rank === '3' ? '白金合伙人' : '董事'
-      this.myParentRank = this.user_info.parent_user_rank === '1' ? '南华汇（服务商）' : this.user_info.parent_user_rank === '2' ? '南华汇（合伙人）' : this.user_info.parent_user_rank === '3' ? '南华汇（白金合伙人）' : '南华汇（董事）'
+      this.user_info.user_rank === '1' ? this.myRank = '服务商' : this.user_info.user_rank === '2' ? this.myRank = '合伙人' : this.user_info.user_rank === '3' ? this.myRank = '白金合伙人' : this.myRank = '董事'
+      this.user_info.parent_user_rank === '1' ? this.myParentRank = '南华汇（服务商）' : this.user_info.parent_user_rank === '2' ? this.myParentRank = '南华汇（合伙人）' : this.user_info.parent_user_rank === '3' ? this.myParentRank = '南华汇（白金合伙人）' : this.user_info.parent_user_rank === '4' ? this.myParentRank = '南华汇（董事）' : this.myParentRank = ''
     }
   },
   activated () {

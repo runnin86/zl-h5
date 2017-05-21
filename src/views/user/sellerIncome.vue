@@ -27,9 +27,10 @@
               </tr>
               <tr>
                 <th>合计</th>
-                <td>￥{{incomeData.pay_commission_total}}</td>
-                <td>￥{{incomeData.shop_commission_total}}</td>
-                <td>￥{{incomeData.team_commission_total}}</td>
+                <td v-if="incomeData.pay_commission_total">￥{{incomeData.pay_commission_total}}</td>
+                <td v-else>￥0.00</td>
+                <td>￥{{incomeData.shop_commission_total ? incomeData.shop_commission_total : 0.00}}</td>
+                <td>￥{{incomeData.team_commission_total ? incomeData.team_commission_total : 0.00}}</td>
               </tr>
             </thead>
             <tbody v-for = " (t, itemIndex) in monthIncome">
@@ -172,4 +173,9 @@ export default{
 .noIncome{ text-align: center; padding:30px; color:#d6244f; }
 .noIncome .iconfont-yzg{ font-size: 60px }
 .noIncome p{ padding:10px; line-height: 1.8}
+.fund-title{ text-align: left; }
+.table .fund-title>td{ padding-left:15px;}
+.fund-box .fund-content .fund-title{
+  text-align: left;
+}
 </style>

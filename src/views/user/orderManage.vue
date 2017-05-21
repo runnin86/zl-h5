@@ -16,8 +16,8 @@
     <div class="row">
       <div class="order-list_box">
         <div class="order-list_title">
-          <span @click="toggleOrder(true)" :class="judge ? 'order_classify' : '' ">我的销售订单</span>
-          <span @click="toggleOrder(false)" :class="judge ? '' : 'order_classify' ">团队销售订单</span>
+          <span @click="toggleOrder(true)" :class="judge ? 'redBgColor' : '' ">我的销售订单</span>
+          <span @click="toggleOrder(false)" :class="judge ? '' : 'redBgColor' ">团队销售订单</span>
         </div>
         <div class="order-list_content">
           <div class="order-list_items" 
@@ -123,7 +123,7 @@ export default{
         }
       }).then(({data: {data, errcode, msg}}) => {
         if (errcode === 0) {
-          console.log(data)
+          // console.log(data)
           if (this.judge) {
             this.orderData = data.order_list
             for (let m of this.orderData) {
@@ -181,7 +181,6 @@ export default{
             }
           }
           if (judge) {
-            console.log(_this.orderData)
             for (let i = 0; i < _this.orderData.length; i++) {
               if (_this.orderData[i].add_time.slice(0, 10) === results.join('-')) {
                 sx_self.push(_this.orderData[i])
@@ -229,14 +228,9 @@ export default{
 .order-list_box .order-list_title span{
   border:1px solid #ccc;
   padding:6px;
-  border-radius:4px;
   cursor: pointer;
   flex:1;
   text-align: center;
-}
-.order-list_box .order-list_title .order_classify{
-  background: #d6244f;
-  color:#fff;
 }
 .icon-ajust-css{
   font-size:26px;

@@ -24,9 +24,9 @@
           </wv-count-down>
         </div>
         <div class="goods-lists clearfix">
-          <router-link class="sub-goods_list" v-for="g in goods_list" :key="g.goods_id" :to="{name: 'Goods', path: '/shopping/goods', query: {gid: g.goods_id}}">
+          <router-link class="sub-goods_list" v-for="g in goods_list" :key="g.upc_id" :to="{name: 'Goods', path: '/shopping/goods', query: {gid: g.upc_id}}">
             <div class="goods-img">
-              <img :src="imgBase64" :style="{backgroundImage: 'url(/static/images/no_picture.jpg)'}">
+              <img :src="imgBase64" :style="{backgroundImage: 'url(' + (g.master_img ? (img_domain + g.master_img) : '/static/images/no_picture.jpg') + ')'}">
             </div>
             <div class="goods-brief">{{g.goods_brief}}</div>
             <div class="goods-title">{{g.goods_name}}</div>

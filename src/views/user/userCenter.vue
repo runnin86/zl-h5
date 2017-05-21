@@ -1,9 +1,9 @@
 <template>
-  <div class="ucenter">
+  <div class="ucenter" @click="clearStorage">
     <div class="row">
       <div class="col-xs-12 ucenter-top ">
         <a @click="linkChange">
-          <img  class="pull-left" src="static/images/store/user_pa.jpg"/>
+          <img class="pull-left" src="static/images/store/user_pa.jpg"/>
           <div class="pull-left top-title clearfix">
             <div class="title clearfix" style=" color:#fff; position:relative;">
               <p>
@@ -70,13 +70,15 @@
             <span>客户管理</span>
           </router-link>
         </div>
-        <div class="col-xs-4">
-          <router-link to="/userCenter/withdrawIndex">
+        <div class="col-xs-4" @click="building()">
+          <!-- <router-link to="/userCenter/withdrawIndex"> -->
+          <a href="javascript:void(0);">
             <i class="iconfont-yzg icon-yzg-yongjin"></i>
             <span>佣金提现</span>
-          </router-link>
+          </a>
+          <!-- </router-link> -->
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-4" @click="building()">
           <router-link to="">
             <i class="iconfont-yzg icon-yzg-xin"></i>
             <span>新手必读</span>
@@ -100,47 +102,44 @@
         <div class="list_status">
           <ul>
             <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 'order_unpay'}}">
-              <a>
-                <img src="static/images/dfukuan.png">
-                <span>待付款</span>
-              </a>
+              <i class="iconfont-yzg icon-yzg-daifukuan"></i>
+              <span>待付款</span>
             </router-link>
             <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 'order_payed'}}">
-              <a>
-                <img src="static/images/dfahuo.png">
-                <span>待发货</span>
-              </a>
+              <i class="iconfont-yzg icon-yzg-plane"></i>
+              <span>待发货</span>
             </router-link>
             <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 'order_done'}}">
-              <a>
-                <img src="static/images/dshouhuo.png">
-                <span>待收货</span>
-              </a>
+              <i class="iconfont-yzg icon-yzg-icon83"></i>
+              <span>待收货</span>
             </router-link>
             <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 'order_cancel'}}">
-              <a>
-                <img src="static/images/shouhou.png">
-                <span>退款/售后</span>
-              </a>
+              <i class="iconfont-yzg icon-yzg-tuikuan"></i>
+              <span>退款/售后</span>
             </router-link>
           </ul>
         </div>
       </div>
       <div class="help-center my-shop">
         <ul>
-          <li class="receive-address">
+          <li>
+            <i class="iconfont-yzg icon-yzg-dizhiguanli"></i>
             <router-link to="/userCenter/addressList">地址管理</router-link>
           </li>
-          <li class="shop-pintuan">
+          <!-- <li>
+            <i class="iconfont-yzg icon-yzg-aaa"></i>
             <router-link to="">我的团购</router-link>
-          </li>
-          <li class="my-collect">
+          </li> -->
+          <li>
+            <i class="iconfont-yzg icon-yzg-shoucang1"></i>
             <router-link to="/userCenter/myCollect">我的收藏</router-link>
           </li>
-          <li class="shop-order">
+          <li @click="building()">
+            <i class="iconfont-yzg icon-yzg-guanyuwomen"></i>
             <router-link to="">关于我们</router-link>
           </li>
-          <li class="shop-order">
+          <li @click="building()">
+            <i class="iconfont-yzg icon-yzg-kefu"></i>
             <router-link to="">联系客服</router-link>
           </li>
         </ul>
@@ -174,11 +173,14 @@ export default {
     })
   },
   activated() {
+    this.counter = 0
     if (this.userInfo !== null) {
       // 获取用户收入
       this.loadIncome()
     } else {
-      this.$router.push('login')
+      // 进入鉴权页面
+      this.$router.push('/')
+      // this.$router.push('login')
     }
   },
   data () {
@@ -187,13 +189,21 @@ export default {
       incomeObj: '',
       info: '',
       is_shop: false,
-      is_paid: '0'
+      is_paid: '0',
+      counter: 0
     }
   },
   methods: {
+    building() {
+      weui.alert('建设中,敬请期待....', function() {
+        this.counter = 0
+      }.bind(this))
+    },
     loadIncome () {
-      this.$http.get('user.php', {
-        act: 'default'
+      this.$http.get('/user.php', {
+        params: {
+          act: 'default'
+        }
       })
       .then(({data: {data, errcode, msg}}) => {
         if (errcode === 0) {
@@ -202,7 +212,7 @@ export default {
           this.storeinfo = data.storeinfo
           this.info = data.info
           this.is_paid = data.is_paid
-          console.log(data)
+          // console.log(data)
         } else {
           $.toast(msg, 'forbidden')
           console.warn(errcode, msg, data)
@@ -216,14 +226,43 @@ export default {
         this.$router.push('/userCenter/accountManage')
       } else {
         this.$router.push('')
-        weui.alert('您还未开店，无法进行设置')
+        weui.alert('您还未开店，无法进行设置', function() {
+          this.counter = 0
+        }.bind(this))
       }
     },
     transformLink () {
       if (this.is_paid) {
         this.$router.push('/userCenter/setStore')
       } else {
-        this.$router.push('/userCenter/nhhDetail')
+        this.$router.push('/nhhDetail')
+      }
+    },
+    clearStorage () {
+      this.counter += 1
+      if (this.counter === 5) {
+        let zhis = this
+        weui.dialog({
+          title: '当前用户缓存',
+          content: JSON.stringify(this.userInfo) + window.localStorage.getItem('seller_id_nhh'),
+          className: 'custom-classname',
+          buttons: [{
+            label: '关闭',
+            type: 'default',
+            onClick: function () {
+              // cancel
+            }
+          }, {
+            label: '清除',
+            type: 'primary',
+            onClick: function () {
+              window.localStorage.clear()
+              // 进入鉴权页面
+              zhis.$router.push('/')
+            }
+          }]
+        })
+        this.counter = 0
       }
     }
   }
@@ -235,4 +274,5 @@ export default {
 .pull-left{float: left;}
 .self_sign{font-size:12px;height:36px;overflow: hidden}
 .self_sign span{font-size:12px;}
+.ucenter_buyer{ background: #f8f8f8 }
 </style>

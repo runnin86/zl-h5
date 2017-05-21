@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row yzg-title">
+    <div class="yzg-title" style="position:absolute; left:0">
       <div class="col-xs-2 backBtn">
         <a @click="$parent.back()">
           <i class="iconfont-yzg icon-yzg-back"></i>
@@ -10,26 +10,28 @@
         <span>{{title_name}}</span>
       </div>
       <div class="col-xs-2 shop-bag">
-        <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
+        <router-link :to="{ name: 'Index',path: '/index' }">
+          <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
+        </router-link>
       </div>
     </div>
     <div class="row setting">
       <table>
-        <tr>
+       <!--  <tr>
           <td>店铺设置：</td>
           <td><input type="text" placeholder="英文加数字五位" class="storeName" v-model="setWebsite"/>.yizhigou.cn</td>
-        </tr>
+        </tr> -->
         <tr>
           <td>店铺名称：</td>
           <td><input type="text" placeholder="例如：洋洋的店铺" v-model="setName"></td>
         </tr>
         <tr>
           <td>手机号：</td>
-          <td><input type="text" placeholder="请填写手机号" v-model="phone"/></td>
+          <td><input type="tel" placeholder="请填写手机号" v-model="phone"/></td>
         </tr>
         <tr>
           <td>推荐人手机号：</td>
-          <td><input type="text" placeholder="没有可不填" v-model="recPhone"/></td>
+          <td><input type="tel" placeholder="没有可不填" v-model="recPhone"/></td>
         </tr>
       </table>
       <a class="rightCash" @click="set_confirm">确认设置</a>
@@ -45,7 +47,7 @@ export default {
   data () {
     return {
       title_name: '店铺设置',
-      setWebsite: '',
+      // setWebsite: '',
       setName: '',
       phone: '',
       recPhone: ''
@@ -54,7 +56,7 @@ export default {
   methods: {
     set_confirm () {
       let kd = {
-        alias_code: this.setWebsite,
+        // alias_code: this.setWebsite,
         store_name: this.setName,
         mobile: this.phone,
         recommend_phone: this.recPhone

@@ -1,22 +1,22 @@
 <template>
 <div class="container container-content">
-  <div class="row yzg-title">
+  <div class="row yzg-title" style="position:relative;width:auto;">
     <div class="col-xs-2 backBtn">
-      <!-- <a @click="$parent.back()">
+      <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
-      </a> -->
+      </a>
     </div>
     <div class="col-xs-8 shop-name">
       <span>{{title_name}}</span>
     </div>
     <div class="col-xs-2 shop-bag">
-      <!-- <router-link :to="{ name: 'Index',path: '/index'}">
+      <router-link :to="{ name: 'Index',path: '/index'}">
         <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
-      </router-link> -->
+      </router-link>
     </div>
   </div>
   <div class="row navbar-location" v-show="parent_cat.length>0">
-    <div class="navbar-yzg-default navbar-category">
+    <div class="navbar-yzg-default" :style="{width: (parent_cat.length+1)*108+'px'}">
       <ul id='activeMenu' class="ul-slider">
         <li class="slider-item" :class="cid===-1?'active':''">
           <a @click="changeCid(-1)">全部商品</a>
@@ -28,7 +28,7 @@
       </ul>
     </div>
   </div>
-  <div class="row recommend-goods category-goods">
+  <div class="row recommend-goods">
     <div class="goods-lists clearfix"
       v-infinite-scroll="queryList"
       infinite-scroll-immediate-check="false"
@@ -47,8 +47,7 @@
               :style="{backgroundImage: 'url(' + (g.img?img_domain+g.img:'/static/images/no_picture.jpg') + ')'}">
           </div>
         </router-link>
-        <div class="goods-title2" v-html="g.productName"></div>
-        <div class="goods-title" v-html="g.productDesc"></div>
+        <div class="goods-title" v-html="g.productName+'('+g.productDesc+')'"></div>
         <div class="goods-price">
           ￥{{g.price}}
           <span class="good_price_original">￥{{g.marketPrice}}</span>
@@ -68,8 +67,9 @@
 
 <script>
 import $ from 'zepto'
-import qs from 'qs'
-import Touchslider from 'touchslider'
+import weui from 'weui.js'
+import Touchslider from 'static/js/touchslider.js'
+
 // import Vue from 'vue'
 // import progressive from './../../directives/progressive-image'
 //
@@ -120,6 +120,13 @@ export default {
       if (this.$parent.fromPath !== '/shopping/goods' || this.goods_list.length === 0) {
         // 非详情页或数据为空要加载数据
         this.queryList()
+        // 微信分享初始化->(title, desc, imgUrl, link)
+        let desc = '【南华汇】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【南华汇】逛逛，你就out了！'
+        this.$parent.initWechatShare(
+          '分类列表页',
+          desc,
+          'imgUrl',
+          window.location.href)
       }
     })
   },
@@ -151,6 +158,17 @@ export default {
       this.changeCid(this.$route.params.cid)
     }
     $('.container').scrollTop(this.$parent.scrollTop)
+    $(document).ready(function () {
+      $('.navbar-yzg-default').css({'position': 'relative', 'width': 'auto'})
+      $('.container').scroll(function () {
+        let scrollT = $('.container').scrollTop()
+        if (scrollT < 44) {
+          $('.navbar-yzg-default').css({'position': 'relative', 'width': 'auto'})
+        } else {
+          $('.navbar-yzg-default').css({'position': 'fixed', 'width': '100%', 'top': '0'})
+        }
+      })
+    })
   },
   methods: {
     /*
@@ -225,5 +243,8 @@ export default {
 }
 .shop-bag span {
   font-size: 26px;
+}
+.recommend-goods {
+  padding-top:0;
 }
 </style>

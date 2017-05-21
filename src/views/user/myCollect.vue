@@ -1,19 +1,21 @@
 <template>
-<div class="container container-content">
+<div class="container container-content" style="background:#eee">
   <div class="row yzg-title">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-        <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
+      <div class="col-xs-2 backBtn">
+        <a @click="$parent.back()">
+          <i class="iconfont-yzg icon-yzg-back"></i>
+        </a>
+      </div>
+      <div class="col-xs-8 shop-name">
+        <span>{{title_name}}</span>
+      </div>
+      <div class="col-xs-2 shop-bag">
+        <router-link :to="{ name: 'Index',path: '/index'}">
+          <span class="iconfont-yzg icon-yzg-goods"></span>
+        </router-link>
+      </div>
     </div>
-    <div class="col-xs-8 shop-name">
-      <span>{{title_name}}</span>
-    </div>
-    <div class="col-xs-2 shop-bag">
-      <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
-    </div>
-  </div>
-  <div class="row recommend-goods category-goods" style=" padding-top:44px">
+  <div class="row recommend-goods category-goods" style=" padding-top:44px; background:none">
     <div class="goods-lists clearfix"
       v-infinite-scroll="queryList"
       infinite-scroll-immediate-check="false"
@@ -95,10 +97,9 @@ export default {
         }
       }).then(({data: {data, errcode, msg}}) => {
         if (errcode === 0) {
-          console.log(data)
+          // console.log(data)
           this.img_domain = data.img_domain
           this.title_name = data.title_name
-          console.log(data.goods_list.length)
           if (data.goods_list.length === 0 || data.pager.page_count < this.pagenum) {
             // 返回数据长度为0时,设置页码为-1
             this.pagenum = -1
@@ -122,7 +123,6 @@ export default {
     */
     quitColById(id) {
       this.getId(id)
-      console.log('删除id' + this.delId)
       weui.confirm('是否确定删除当前所收藏商品', () => {
         this.$http.get('user.php?act=delete_collection', {
           params: {
@@ -131,7 +131,7 @@ export default {
         })
         .then(({data: {data, errcode, msg}}) => {
           if (errcode === 0) {
-            console.log(data)
+            // console.log(data)
             this.goods_list.splice(this.delId, 1)
             weui.toast('删除收藏成功')
           } else {
@@ -148,9 +148,7 @@ export default {
     getId(objId) {
       let _this = this
       this.goods_list.forEach(function(item, index) {
-        console.log('index:' + item)
         if (item.rec_id === objId) {
-          console.log('fs' + index)
           _this.delId = index
         }
       })

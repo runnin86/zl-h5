@@ -1,18 +1,23 @@
 <template>
 <div>
-  <div class="row nav-center">
+  <div class="row yzg-title">
     <div class="col-xs-2 backBtn">
-      <a href="javascript:history.back(-1)">
-				<i class="iconfont-yzg icon-yzg-back" style=""></i>
-			</a>
+      <a @click="$parent.back()">
+        <i class="iconfont-yzg icon-yzg-back"></i>
+      </a>
     </div>
-    <div class="col-xs-8 loginTitle">订单详情</div>
-    <div class="col-xs-2">
+    <div class="col-xs-8 shop-name">
+      <span>订单详情</span>
+    </div>
+    <div class="col-xs-2 shop-bag">
+      <router-link :to="{ name: 'Index',path: '/index' }">
+        <span class="iconfont-yzg icon-yzg-goods"></span>
+      </router-link>
     </div>
   </div>
-  <div class="mainDet">
+  <div class="mainDet row">
     <p class="title_p">订单信息</p>
-    <div class="shopDet row">
+    <div class="shopDet">
       <ul>
         <li>订单编号：{{orderDet.order.order_sn}}</li>
         <li v-if="this.$route.query.orderId">下单时间：{{orderDet.order.formated_add_time}}</li>
@@ -23,7 +28,7 @@
       </ul>
     </div>
     <p class="title_p">收货人信息</p>
-    <div class="shopDet row">
+    <div class="shopDet">
       <ul>
         <li>收货人姓名：{{orderDet.order.consignee}}</li>
         <li>详细地址：{{orderDet.order.address}}</li>
@@ -31,32 +36,33 @@
       </ul>
     </div>
     <p class="title_p">商品详情</p>
-    <div class="shopDet row" style="padding:0">
+    <div class="shopDet" style="padding:0">
       <table>
         <tr v-for="g in orderDet.goods_list">
           <td><img :src="g.master_img" /></td>
           <td>
-            <p class="g_name">{{g.goods_name}}</p> 
+            <p class="g_name">{{g.goods_name}}</p>
             <span class="g_number">数量:{{g.goods_number}}</span>
             <span class="g_price">{{g.goods_price}}</span>
           </td>
-          <td class="eval" v-if="evalChoose">
-            <router-link :to="{name: 'CommentGoods', path: '/commentGoods', query: {order_id: orderDet.order.order_id, goods_id: g.goods_id}}">评价</router-link>
+          <td class="eval" v-if="evalChoose" @click="com_def">
+            <a href="javascript:void(0)">评价</a>
           </td>
         </tr>
       </table>
     </div>
     <div v-if="this.$route.query.orderId">
       <p class="title_p">其他信息</p>
-      <div class="shopDet row">
+      <div class="shopDet">
         <ul>
           <li>支付方式：{{orderDet.order.pay_name}}</li>
           <li>配送方式：{{orderDet.order.shipping_name}}</li>
           <li>商品总价：{{orderDet.order.formated_goods_amount}}</li>
+          <li>已用优惠：￥{{orderDet.order.offset}}</li>
           <li>应付金额：{{orderDet.order.formated_order_amount}}</li>
         </ul>
       </div>
-      <div class="button-sp-area">
+      <div class="button-sp-area" v-if="orderDet.order.pay_status === '未付款'">
         <a @click="doWechatPay" class="weui-btn weui-btn_primary">微信支付</a>
       </div>
     </div>
@@ -66,13 +72,16 @@
 
 <script>
 import wx from 'weixin-js-sdk'
+import $ from 'zepto'
+import qs from 'qs'
 import * as config from './../../config'
 
 export default {
   data() {
     return {
       orderDet: [],
-      evalChoose: false
+      evalChoose: false,
+      orderId: this.$route.query.orderId
     }
   },
   /*
@@ -81,6 +90,7 @@ export default {
   activated() {
     // 获取数据
     this.loadDet()
+    this.orderId = this.$route.query.orderId
   },
   /*
    * 模板编译之前
@@ -128,21 +138,60 @@ export default {
         console.log(response)
       })
     },
+    // 评价判断
+    com_def () {
+      if (this.orderDet.order.pay_status === '已完成') {
+        this.$route.path({name: 'CommentGoods', path: '/commentGoods', query: {order_id: this.orderDet.order.order_id, goods_id: this.orderDet.goods_list.goods_id}})
+      } else {
+        $.toast('确认收货后才能评论', 'forbidden')
+      }
+    },
     /*
      * 发起微信支付
      */
     doWechatPay() {
-      console.log('微信支付')
-      wx.chooseWXPay({
-        timestamp: 0, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-        nonceStr: '', // 支付签名随机串，不长于 32 位
-        package: '', // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
-        signType: '', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-        paySign: '', // 支付签名
-        success: function (res) {
-            // 支付成功后的回调函数
+      // 发送请求
+      let postData = {
+        str: this.orderId, // 订单order_id：多个订单之间用','隔开
+        pay_id: '3' // 支付方式
+      }
+      let zhis = this
+      this.$http.post('flow.php?step=make_big', qs.stringify(postData))
+      .then(({data: {data, errcode, msg}}) => {
+        // console.log(JSON.parse(data.jsApiParameters).package)
+        if (data.jsApiParameters) {
+          window.WeixinJSBridge.invoke('getBrandWCPayRequest', JSON.parse(data.jsApiParameters),
+          function(res) {
+            // err_code,err_desc,err_msg
+            if (res.err_msg === 'get_brand_wcpay_request:ok') {
+              // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+              $.toast('支付成功')
+              setTimeout(() => {
+                zhis.$router.push({name: 'OrderList', params: {orderAct: 'order_payed'}})
+              }, 2000)
+            } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+              // 取消
+              $.toast('用户取消支付', 'cancel')
+            } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+              // 支付失败
+              $.toast(res.err_desc, 'forbidden')
+            }
+          })
         }
+      }, (response) => {
+        // error callback
+        console.log(response)
       })
+      // wx.chooseWXPay({
+      //   timestamp: 0, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+      //   nonceStr: '', // 支付签名随机串，不长于 32 位
+      //   package: '', // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+      //   signType: '', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+      //   paySign: '', // 支付签名
+      //   success: function (res) {
+      //       // 支付成功后的回调函数
+      //   }
+      // })
     }
   }
 }
@@ -150,8 +199,8 @@ export default {
 
 <style>
 .mainDet {
-  margin-top: 54px;
-  padding-bottom: 50px;
+  margin-top: 44px;
+  padding-bottom: 50px; background: #eee
 }
 
 .shopDet {
@@ -163,7 +212,6 @@ export default {
   background: #fff;
   height: 40px;
   line-height: 40px;
-  margin: 0 -15px;
   padding: 0 10px;
   border-bottom: 1px solid #eee;
   color: #999;
@@ -223,7 +271,7 @@ export default {
 
 .shopDet table tr .eval {
   width: 60px;
-  text-align: right;
+  text-align: left;
   vertical-align: middle;
   font-size:12px; padding:0;
 }
@@ -237,6 +285,6 @@ export default {
 }
 
 .button-sp-area {
-  margin-top: 20px;
+  margin-top: 20px; padding:20px;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="login" v-if="loginState=='login'">
-    <div class="row nav-center">
+    <div class="row yzg-title">
       <div class="col-xs-2 backBtn">
         <a @click="$parent.gotoAddress('index')">
 					<i class="iconfont-yzg icon-yzg-back" style=""></i>
@@ -43,7 +43,7 @@
     </form>
   </div>
   <div class="register" v-else-if="loginState=='register'">
-    <div class="row nav-center">
+    <div class="row yzg-title">
       <div class="col-xs-2 backBtn">
         <a href="javascript:history.back(-1)">
 					<i class="iconfont-yzg icon-yzg-back" style=""></i>
@@ -107,7 +107,7 @@
     </form>
   </div>
   <div class="passwordBack" v-else>
-    <div class="row nav-center">
+    <div class="row yzg-title">
       <div class="col-xs-2 backBtn">
         <a href="javascript:history.back(-1)">
 					<i class="iconfont-yzg icon-yzg-back" style=""></i>
