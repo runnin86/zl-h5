@@ -67,7 +67,8 @@
 
 <script>
 import $ from 'zepto'
-import weui from 'weui.js'
+import qs from 'qs'
+// import weui from 'weui.js'
 import Touchslider from 'static/js/touchslider.js'
 
 // import Vue from 'vue'

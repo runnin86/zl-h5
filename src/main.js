@@ -12,8 +12,8 @@ import * as config from './config'
 import 'normalize.css/normalize.css'
 import 'assets/iconfont/iconfont.css'
 import infiniteScroll from './directives/infinite-scroll'
-import util from './utils'
-import md5 from 'md5'
+// import util from './utils'
+// import md5 from 'md5'
 
 if ('addEventListener' in document) {
   document.addEventListener('DOMContentLoaded', function () {
@@ -36,23 +36,23 @@ axios.defaults.baseURL = config.apiUrl
 // axios请求拦截器
 axios.interceptors.request.use(function (config) {
   // Do something before request is sent
-  let uid = 0
-  if (util.getStore('user_nhh')) {
-    uid = JSON.parse(util.getStore('user_nhh')).user_id
-  }
-  let timestamp = Date.parse(new Date()) / 1000
-  let md5Str = md5(uid + '' + timestamp + 'NhH$ApI')
-  let param = {
-    // XDEBUG_SESSION_START: 17258,
-    uid: uid,
-    timestamp: timestamp,
-    sign: md5Str
-  }
-  if (!config.params) {
-    config.params = {}
-  }
-  // 组装请求默认需要携带的参数
-  Object.assign(config.params, param)
+  // let uid = 0
+  // if (util.getStore('user_nhh')) {
+  //   uid = JSON.parse(util.getStore('user_nhh')).user_id
+  // }
+  // let timestamp = Date.parse(new Date()) / 1000
+  // let md5Str = md5(uid + '' + timestamp + 'NhH$ApI')
+  // let param = {
+  //   // XDEBUG_SESSION_START: 17258,
+  //   uid: uid,
+  //   timestamp: timestamp,
+  //   sign: md5Str
+  // }
+  // if (!config.params) {
+  //   config.params = {}
+  // }
+  // // 组装请求默认需要携带的参数
+  // Object.assign(config.params, param)
   return config
 }, function (error) {
   // Do something with request error

@@ -58,7 +58,7 @@ export default {
   // name: 'app',
   mounted () {
     // 去后台获取签名等信息
-    this.$http.get('http://127.0.0.1:8090/api/v1/weChat/wxConfig')
+    this.$http.get('http://127.0.0.1:8090/api/v1/weChat/wxConfig', {
       params: {
         appid: config.appId,
         appsecret: config.appSecret,
