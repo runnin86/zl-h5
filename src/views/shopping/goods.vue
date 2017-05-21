@@ -42,51 +42,18 @@
           </span>
         </p>
         <div class="shop_price">
-          {{main.price}}
+          ￥{{main.price}}
           <span class="shop_price_span_add">
             市场价￥{{main.marketPrice}}
           </span>
           <div class="goodNum">
             <a class="add" href="javascript:void(0);" @click="numberChange('del')">-</a>
-            <input type="text" v-model="goodNumber" name="number" />
+            <input type="text" v-model="buyNum" />
             <a class="delete" href="javascript:void(0);" style="cursor:pointer" @click="numberChange('add')">+</a>
           </div>
         </div>
       </div>
     </div>
-    <!-- <div class="row" style="margin-left:0">
-      <span class="dTimer">
-          <span v-html="countDownTime"></span>
-        </span>
-    </div> -->
-    <!-- <div class="row goodsProp">
-      <div class="col-xs-12">
-        <span class="color">颜色：</span>
-        <div>
-          <a title="无色" class="redBg redBgColor">{{goodUpc.color_name}}</a>&nbsp;
-        </div>
-      </div>
-      <div class="col-xs-12">
-        <span class="color">尺寸：</span>
-        <div>
-          <a title="通用" class="redBg redBgColor">{{goodUpc.size_name}}</a>&nbsp;
-        </div>
-      </div>
-      <div class="col-xs-12">
-        <span class="color">数量：</span>
-        <div>
-          <span class="add-del">
-              <a class="add" href="javascript:void(0);" @click="numberChange('del')">-</a>
-              <input type="text" v-model="goodNumber" name="number" />
-              <a class="delete" href="javascript:void(0);" style="cursor:pointer" @click="numberChange('add')">+</a>
-          </span>
-        </div>
-        <a href="javascript:void(0);" v-bind:class="['btn store_recommend', goodData.is_in_store ? 'store_recommended redBgColor' : '']" @click="addRecomend()" v-html="commendText"></a>
-      </div>
-    </div> -->
-    <!-- <p class="detailTab redBorderColor">
-      <span class="redBgColor">商品详情</span>
-    </p> -->
   </div>
   <div class="row info_goods">
       <div class="col-xs-4" style="text-align:left">
@@ -102,7 +69,7 @@
   <div class="goodsTxt">
     <p class="redColor">#商品详情#</p>
   </div>
-  <div class="goodsBrief" v-html="goodBrief"></div>
+  <div class="goodsBrief" v-if="main" v-html="main.profile"></div>
   <span class="red-dot"></span>
   <div class="cartBottom">
     <div class="cartImg clearfix">
@@ -170,7 +137,10 @@ export default {
   data() {
     return {
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=',
-      goodNumber: '1', // 购买数量
+      main: null,
+      photo: null,
+      img_domain: 'http://img.zulibuy.com/images/',
+      buyNum: '1', // 购买数量
       goodsCount: null, // 商品总数
       cartCount: null, // 购物车总数
       goodBrief: null, // 详情
@@ -198,31 +168,23 @@ export default {
   },
   methods: {
     loadGood() {
-      this.$http.get('/goods.php', {
-        params: {
-          id: this.$route.query.gid,
-          page: this.pagenum
-        }
-      })
-      .then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
+      this.$http.post('product/productDetail', qs.stringify({
+        pid: this.$route.query.gid
+      })).then(({data: {data, code, msg}}) => {
+        if (code === 1) {
           console.log(data)
-          this.goodBrief = data.goods.goods_desc_m
-          this.cartCount = data.cart_goods_count
-          this.surplus = data.upc.number
-          this.goodsCount = data.upc.number
-          this.goodData = data
-          this.goodUpc = data.upc
+          this.main = data.main
+          this.photo = data.photo
           // 微信分享初始化->(title, desc, imgUrl, link)
           let desc = '【南华汇】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【南华汇】逛逛，你就out了！'
           this.$parent.initWechatShare(
-            data.page_title,
+            '分享标题123',
             desc,
-            data.img_domain + data.goods_img[0].goods_thumb,
+            this.img_domain + data.photo[0],
             window.location.href)
         } else {
           console.log(msg)
-          console.error('获取商品列表失败:' + msg)
+          console.error('获取商品失败:' + msg)
         }
         this.load = false
       }, (response) => {
@@ -233,14 +195,14 @@ export default {
     numberChange(opaeratType) { // 购买商品数量
       if (opaeratType === 'add') {
         if (this.surplus > 1) {
-          this.goodNumber = this.goodNumber - (-1)
+          this.buyNum = this.buyNum - (-1)
           this.surplus -= 1
         } else {
           weui.alert('库存不足，请选择其他商品')
         }
       } else {
-        if (this.goodNumber > 1) {
-          this.goodNumber -= 1
+        if (this.buyNum > 1) {
+          this.buyNum -= 1
         } else {
           weui.alert('购买最小数量为1')
         }
@@ -253,7 +215,7 @@ export default {
           'quick': 0,
           'spec': [],
           'goods_id': this.goodData.id,
-          'number': this.goodNumber,
+          'number': this.buyNum,
           'parent': 0,
           'upc_id': this.goodUpc.upc_id
         }),
