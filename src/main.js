@@ -105,7 +105,7 @@ router.beforeEach((to, from, next) => {
     store.commit('CHANGE_IS_INDEX', false)
   } else if (tLength < fLength || showIndexUrl.includes(toPath)) {
     // 显示底部菜单时要去获取购物车数量
-    store.dispatch('getCartNum')
+    store.dispatch('getCartData')
     store.commit('CHANGE_IS_INDEX', true)
   }
   // 确保要调用 next 方法，否则钩子就不会被 resolved。

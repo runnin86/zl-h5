@@ -1,19 +1,21 @@
 import axios from 'axios'
-// import {baseParam} from '../getters.js'
 
 export default {
-  getCartNum(cb) {
-    axios.get('cart/cartList').then(({data: {data, code, msg}}) => {
-      console.log(data)
+  getCartData(cb) {
+    axios.get('cart/cartList', {
+      headers: {
+        'x-token': window.localStorage.getItem('zlToken')
+      }
+    }).then(({data: {code, data, msg}}) => {
+      // console.log(data)
       if (code === 1) {
         // 获取购物车数据,回调给调用者
         cb(data)
       } else {
-        console.warn('获取购物车失败:' + msg)
+        cb(null)
       }
-    }, (response) => {
-      // error callback
-      console.error(response)
+    }).catch((e) => {
+      console.error('获取购物车失败:' + e)
     })
   }
 }
