@@ -24,7 +24,7 @@
           <div class="weui-cell__hd">
             <input type="checkbox" class="weui-check"
               v-model="isSelectAll"
-              @change="selectPro(key, 0, $event)">
+              @change="checkPro('all', $event)">
             <i class="weui-icon-checked"></i>
           </div>
           <div class="weui-cell__bd">
@@ -40,7 +40,7 @@
                   <div class="weui-cell__hd">
                     <input type="checkbox" class="weui-check"
                       :checked="Boolean(parseFloat(pro.isCheck))"
-                      @change="selectPro(pro.pid, 1, $event)">
+                      @change="checkPro(pro.pid, $event)">
                     <i class="weui-icon-checked"></i>
                   </div>
                 </label>
@@ -67,7 +67,7 @@
                   </div>
                   <div class="product-num">
                     <a @click="updateCartNum(pro, -1)" class="num-reduce"></a>
-                    <input :value="pro.num" v-on:blur='inputCartNum(pro, $event)' type="tel"
+                    <input :value="pro.num" type="tel" disabled="disabled"
                       min=1 max=9999 class="num-value" style="ime-mode:disabled;"
                       onKeyPress="if(event.keyCode < 48 || event.keyCode > 57) event.returnValue = false;"
                       onKeyUp="this.value=this.value.replace(/\D/g,'')"/>
@@ -99,7 +99,7 @@
         <label class="weui-cell">
             <div class="weui-cell__hd">
               <input type="checkbox" class="weui-check" v-model="isSelectAll"
-                @change="selectPro(null, 2, $event)">
+                @change="checkPro('all', $event)">
               <i class="weui-icon-checked"></i>
             </div>
             <div class="weui-cell__bd">
@@ -108,7 +108,7 @@
           </label>
       </div>
       <div class="checkout-info" style="text-align:center;margin-right:60px;">
-        合计：<strong class="red"> ￥{{totalMoney}}</strong>
+        合计：<strong class="red" v-show="totalMoney>0"> ￥{{totalMoney}}</strong>
       </div>
       <a class="btn btn-checkout redBgColor" @click="checkoutCart()">
         去结算({{selectCounts}})
@@ -120,7 +120,6 @@
 
 <script>
 import $ from 'zepto'
-import qs from 'qs'
 import weui from 'weui.js'
 import Indicator from '../../../src/components/indicator'
 
@@ -130,7 +129,6 @@ export default {
    */
   activated() {
     this.cartList = []
-    this.totalMoney = this.selectCounts = 0
     // 去获取购物车数据
     this.getCarts()
     // this.$store.commit('CHANGE_IS_INDEX', false)
@@ -158,6 +156,8 @@ export default {
      */
     getCarts() {
       Indicator.open('加载中')
+      // 设置总金额和总数目为0
+      this.totalMoney = this.selectCounts = 0
       this.$http.get('cart/cartList', {
         headers: {
           'x-token': window.localStorage.getItem('zlToken')
@@ -171,14 +171,20 @@ export default {
             this.showTips = true
           }
           // 计算总价和数量
+          let checkCount = 0
           for (var i = 0; i < data.length; i++) {
             if (data[i].isCheck === 1) {
+              checkCount++
               this.selectCounts += data[i].num
-              this.totalMoney += data[i].num * data[i].price
+              this.totalMoney += parseFloat(data[i].num) * parseFloat(data[i].price)
             }
           }
+          this.isSelectAll = (checkCount === data.length)
+          console.log(this.isSelectAll)
           this.$parent.cartBadgeNum = this.selectCounts
           this.cartList = data
+          // 获取购物车数量
+          this.$store.dispatch('getCartData')
         } else {
           $.toast(msg, 'forbidden')
           console.warn('获取购物车失败:' + msg)
@@ -192,93 +198,57 @@ export default {
     /*
      * 商品选择
      */
-    selectPro(id, type, e) {
-      // op->
-      // 全选/全不选：all_checkout/all_uncheckout,此时不用传第一个参数；
-      // 单选/单不选：single_checkout/single_uncheckout；
-      // 供应商选择/供应商取消选择：suppliers_checkout/suppliers_uncheckout，此时第一个参数传0
+    checkPro(id, e) {
       let c = e.target.checked
-      let op = ''
-      if (type === 0) {
-        // 供应商
-        op = (c ? 'suppliers_checkout' : 'suppliers_uncheckout')
-      } else if (type === 1) {
-        // 单个
-        op = (c ? 'single_checkout' : 'single_uncheckout')
-      } else if (type === 2) {
-        // 全部
-        op = (c ? 'all_checkout' : 'all_uncheckout')
-      }
-      // op不为空才去发送请求
-      if (op) {
-        this.$http.get('flow.php', {
-          params: {
-            step: 'select_cart_goods',
-            id: id, // 商品ID
-            op: op
-          }
-        }).then(({data: {data, errcode, msg}}) => {
-          if (errcode === 0) {
-            // console.log(data)
-            // 重新获取数据
-            this.getCarts()
-          } else {
-            console.error('商品选择失败:' + msg)
-          }
-        }, (response) => {
-          // error callback
-          console.log(response)
-        })
-      }
-    },
-    /*
-     * 商品数量输入
-     */
-    inputCartNum(p, e) {
-      let validAmount = 0
-      if (e.target.value > 0) {
-        validAmount = parseFloat(e.target.value)
-      } else if (e.target.value === '' || parseFloat(e.target.value) === 0) {
-        e.target.value = 1
-        validAmount = 1
-      }
-      this.submiUpdateCartNum(p.rec_id, validAmount)
+      this.$http.get('cart/updateCartCheck', {
+        params: {
+          pid: id,
+          check: Number(c)
+        },
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(({data: {code, data, msg}}) => {
+        if (code === 1) {
+          // 重新获取数据
+          this.getCarts()
+        } else {
+          $.toast(msg, 'forbidden')
+        }
+      }).catch((e) => {
+        console.error('商品选中状态更改失败:' + e)
+      })
     },
     /*
      * 商品数量加减
      */
     updateCartNum(p, type) {
-      let num = parseFloat(p.goods_number) + type
-      this.submiUpdateCartNum(p.rec_id, num)
-    },
-    /*
-     * 商品数量加减
-     */
-    submiUpdateCartNum(rid, num) {
-      // 发送请求
-      let postData = {
-        rec_id: rid,
-        goods_number: num
-      }
-      this.$http.post('/flow.php?step=update_cart_number', qs.stringify(postData))
-      .then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
-          // console.log(data)d
-          if (data.message !== 1) {
-            // 友情提示
-            weui.alert(data.message)
+      let num = parseFloat(p.num) + type
+      if (num > 0) {
+        // 发送请求
+        this.$http.get('cart/updateCartNum', {
+          params: {
+            pid: p.pid,
+            num: num
+          },
+          headers: {
+            'x-token': window.localStorage.getItem('zlToken')
           }
-          // 重新获取数据
-          this.getCarts()
-        } else {
-          console.error('商品数量更新失败:' + msg)
-        }
-        // 重新获取数据
-        this.getCarts()
-      }, (response) => {
-        // error callback
-        console.log(response)
-      })
+        }).then(({data: {data, code, msg}}) => {
+          if (code === 1) {
+            // 重新获取数据
+            this.getCarts()
+          } else {
+            $.toast(msg, 'forbidden')
+          }
+        }, (response) => {
+          // error callback
+          console.log(response)
+        })
+      } else {
+        // 友情提示
+        weui.alert('最少购买一个')
+      }
     },
     /*
      * 删除购物车商品
@@ -286,21 +256,20 @@ export default {
     delCartById(rid) {
       weui.confirm('您确实要把该商品移出购物车吗?', () => {
         // 确认
-        this.$http.get('flow.php', {
+        this.$http.delete('cart/delCart', {
           params: {
-            step: 'drop_goods',
-            id: rid // 商品ID
+            pid: rid
+          },
+          headers: {
+            'x-token': window.localStorage.getItem('zlToken')
           }
-        }).then(({data: {data, errcode, msg}}) => {
-          if (errcode === 0) {
-            console.log(data)
+        }).then(({data: {data, code, msg}}) => {
+          if (code === 1) {
+            // 重新获取数据
+            this.getCarts()
           } else {
-            console.error('删除商品失败:' + msg)
+            $.toast(msg, 'forbidden')
           }
-          // 重新获取数据
-          this.getCarts()
-          // 获取购物车数量
-          this.$store.dispatch('getCartData')
         }, (response) => {
           // error callback
           console.log(response)

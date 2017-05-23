@@ -84,7 +84,7 @@
     </div>
     <div class="clearfix" style=" padding-left:40%;">
       <div class="tbl-cell">
-        <a class="btn-cart redBgColor" @click="addCart()">
+        <a class="btn-cart redBgColor" @click="addCartFn(pid)">
           <span class="iconfont-yzg icon-yzg-msnui-cart"></span>加入购物车
         </a>
       </div>
@@ -184,33 +184,29 @@ export default {
         }
       }
     },
-    addCart() {
-      if (!this.$store.getters.token) {
-        $.toast('您还没有登录', 'forbidden')
-      } else {
-        let _this = this
-        let gd = {
-          goods: JSON.stringify({
-            'quick': 0,
-            'spec': [],
-            'goods_id': this.pid,
-            'number': this.buyNum,
-            'parent': 0
-          }),
-          buy_type: 0,
-          group_no: 0,
-          seller_id: this.$store.getters.sellerId
-        }
-        this.$http.post('/flow.php?step=add_to_cart', qs.stringify(gd))
-        .then(function({data: {data, code, msg}}) {
-          if (code === 1) {
-            _this.moveCart()
-          } else {
-            weui.alert(msg)
+    addCartFn(pid) {
+      let token = window.localStorage.getItem('zlToken')
+      if (token) {
+        this.$http.get('cart/addToCart', {
+          params: {
+            pid: pid
+          },
+          headers: {
+            'x-token': token
           }
-        }).catch(function(error) {
-          console.error(error)
+        }).then(({data: {code, data, msg}}) => {
+          if (code === 1) {
+            this.moveCart()
+            // 获取购物车数量
+            this.$store.dispatch('getCartData')
+          } else {
+            $.toast(msg, 'forbidden')
+          }
+        }).catch((e) => {
+          console.error('商品选中状态更改失败:' + e)
         })
+      } else {
+        $.toast('您还没有登录', 'forbidden')
       }
     },
     collect() {

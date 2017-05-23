@@ -6,18 +6,18 @@ import axios from 'axios'
 import store from './store/'
 import WeVue from './components'
 import router from './router'
-import FastClick from 'fastclick'
 import * as filters from './filters'
 import * as config from './config'
 import 'normalize.css/normalize.css'
 import 'assets/iconfont/iconfont.css'
 import infiniteScroll from './directives/infinite-scroll'
+// import FastClick from 'fastclick'
 // import util from './utils'
 // import md5 from 'md5'
 
 if ('addEventListener' in document) {
   document.addEventListener('DOMContentLoaded', function () {
-    FastClick.attach(document.body)
+    // FastClick.attach(document.body)
   }, false)
 }
 

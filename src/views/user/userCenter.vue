@@ -161,6 +161,10 @@ export default {
           this.accountInfo = data
         } else {
           $.toast(msg, 'forbidden')
+          if (msg === 'token失效') {
+            // 进入登录页面
+            this.$router.push('login')
+          }
         }
       }).catch((e) => {
         console.error('获取账户盈利失败:' + e)
