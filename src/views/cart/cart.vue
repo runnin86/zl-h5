@@ -120,6 +120,7 @@
 
 <script>
 import $ from 'zepto'
+import qs from 'qs'
 import weui from 'weui.js'
 import Indicator from '../../../src/components/indicator'
 
@@ -224,30 +225,45 @@ export default {
      */
     updateCartNum(p, type) {
       let num = parseFloat(p.num) + type
+      let pid = p.pid
       if (num > 0) {
-        // 发送请求
-        this.$http.get('cart/updateCartNum', {
-          params: {
-            pid: p.pid,
-            num: num
-          },
-          headers: {
-            'x-token': window.localStorage.getItem('zlToken')
-          }
-        }).then(({data: {data, code, msg}}) => {
+        // 增加时去判断剩余数量
+        this.$http.post('product/productDetail', qs.stringify({
+          pid: pid
+        })).then(({data: {data, code, msg}}) => {
           if (code === 1) {
-            // 重新获取数据
-            this.getCarts()
-          } else {
-            $.toast(msg, 'forbidden')
+            if (num > data.main.numbers) {
+              weui.alert('库存不足，请选择其他商品')
+            } else {
+              // 发送更新购物车数量请求
+              this.$http.get('cart/updateCartNum', {
+                params: {
+                  pid: pid,
+                  num: type
+                },
+                headers: {
+                  'x-token': window.localStorage.getItem('zlToken')
+                }
+              }).then(({data: {data, code, msg}}) => {
+                if (code === 1) {
+                  // 重新获取数据
+                  this.getCarts()
+                } else {
+                  $.toast(msg, 'forbidden')
+                }
+              }, (response) => {
+                // error callback
+                console.log(response)
+              })
+            }
           }
         }, (response) => {
           // error callback
-          console.log(response)
+          console.error(response)
         })
       } else {
         // 友情提示
-        weui.alert('最少购买一个')
+        weui.alert('购买最小数量为1')
       }
     },
     /*

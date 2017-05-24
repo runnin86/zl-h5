@@ -111,6 +111,7 @@ export default {
   beforeDestroy() {
   },
   activated() {
+    this.buyNum = 1
     this.pid = this.$route.query.gid
     this.loadGood()
     this.$store.commit('CHANGE_IS_INDEX', false)
@@ -126,9 +127,8 @@ export default {
       main: null,
       photo: null,
       img_domain: 'http://img.zulibuy.com/images/',
-      buyNum: '1', // 购买数量
+      buyNum: 1, // 购买数量
       goodsCount: null, // 商品总数
-      surplus: null, // 剩余数量
       startX: '',
       clientX: '',
       centerX: '',
@@ -170,9 +170,9 @@ export default {
     },
     numberChange(opaeratType) { // 购买商品数量
       if (opaeratType === 'add') {
-        if (this.surplus > 1) {
+        if (this.main.numbers > 1) {
           this.buyNum = this.buyNum - (-1)
-          this.surplus -= 1
+          this.main.numbers -= 1
         } else {
           weui.alert('库存不足，请选择其他商品')
         }
@@ -189,7 +189,8 @@ export default {
       if (token) {
         this.$http.get('cart/addToCart', {
           params: {
-            pid: pid
+            pid: pid,
+            num: this.buyNum
           },
           headers: {
             'x-token': token
