@@ -128,7 +128,6 @@ export default {
       photo: null,
       img_domain: 'http://img.zulibuy.com/images/',
       buyNum: 1, // 购买数量
-      goodsCount: null, // 商品总数
       startX: '',
       clientX: '',
       centerX: '',
@@ -159,7 +158,7 @@ export default {
             this.img_domain + data.photo[0],
             window.location.href)
         } else {
-          console.log(msg)
+          $.toast(msg, 'forbidden')
           console.error('获取商品失败:' + msg)
         }
         this.load = false

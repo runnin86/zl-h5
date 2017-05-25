@@ -1,6 +1,6 @@
 <template>
   <div class="ucenter ucenter_buyer" @click="clearStorage">
-    <div class="row">
+    <div class="row" v-show="userInfo" v-cloak>
       <div class="col-xs-12 ucenter-top ">
         <a @click="linkChange">
           <img class="pull-left" src="static/images/store/user_pa.jpg"/>
@@ -89,10 +89,10 @@
             <i class="iconfont-yzg icon-yzg-aaa"></i>
             <router-link to="">我的团购</router-link>
           </li> -->
-          <li>
+          <!-- <li>
             <i class="iconfont-yzg icon-yzg-shoucang1"></i>
             <router-link to="/userCenter/myCollect">我的收藏</router-link>
-          </li>
+          </li> -->
           <li @click="building()">
             <i class="iconfont-yzg icon-yzg-guanyuwomen"></i>
             <router-link to="">关于我们</router-link>

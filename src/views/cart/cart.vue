@@ -298,13 +298,17 @@ export default {
      * 结算
      */
     checkoutCart() {
-      this.$http.get('flow.php', {
-        params: {
-          step: 'checkout',
-          code: 1
+      if (this.selectCounts === 0) {
+        $.toast('没有选中商品', 'forbidden')
+        return
+      }
+      this.$http.post('order/createOrder', {}, {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
         }
-      }).then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
+      })
+      .then(({data: {data, code, msg}}) => {
+        if (code === 1) {
           // console.log(data)
           this.$router.push({
             path: 'orderfill',
@@ -313,10 +317,9 @@ export default {
             }
           })
         } else {
+          $.toast(msg, 'forbidden')
           console.error('结算商品失败:' + msg)
         }
-        // 重新获取数据
-        this.getCarts()
       }, (response) => {
         // error callback
         console.log(response)

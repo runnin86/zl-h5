@@ -9,7 +9,7 @@
       </div>
       <div class="col-xs-8 loginTitle">登录</div>
       <div class="col-xs-2 shop-bag">
-        <router-link :to="{ name: 'Index',path: '/category'}">
+        <router-link :to="{path: '/category'}">
           <span class="iconfont-yzg icon-yzg-goods"></span>
         </router-link>
       </div>
