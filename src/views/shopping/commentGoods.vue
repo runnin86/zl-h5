@@ -329,7 +329,7 @@ export default {
   beforeMount () {
     // 模板编译之前
     // 去后台获取签名等信息
-    this.$http.get('http://127.0.0.1:8090/api/v1/weChat/wxConfig')
+    this.$http.get('weChat/wxConfig')
     .then(({data: {data, code, msg}}) => {
       // 微信配置
       wx.config({

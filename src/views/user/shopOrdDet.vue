@@ -97,7 +97,7 @@ export default {
    */
   beforeMount () {
     // 获取签名等信息
-    this.$http.get('http://127.0.0.1:8090/api/v1/weChat/wxConfig')
+    this.$http.get('weChat/wxConfig')
     .then(({data: {data, code, msg}}) => {
       // 微信配置
       wx.config({

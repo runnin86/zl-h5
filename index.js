@@ -16,8 +16,8 @@ var urls = [
 ]
 
 app.get('*', function (req, res) {
-  if (req.url === '/MP_verify_pXCiYozvZK5lztM2.txt') {
-    res.sendFile('MP_verify_pXCiYozvZK5lztM2.txt', { root: path.join(__dirname, './') })
+  if (req.url === '/MP_verify_qWt5iLNibZ8E1334.txt') {
+    res.sendFile('MP_verify_qWt5iLNibZ8E1334.txt', { root: path.join(__dirname, './') })
   } else {
     res.sendFile('index.html', { root: path.join(__dirname, './dist') })
   }
