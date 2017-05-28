@@ -70,7 +70,7 @@
                     <td v-else>￥0.00</td>
                     <td v-if="uld.commission">￥{{uld.commission}}</td>
                     <td v-else>￥0.00</td>
-                    <td @click = "remark(uld.user_id, $event)">
+                    <td @click = "remark(uld.seller_id, $event)">
                       <span class="iconfont-yzg icon-yzg-beizhu"></span>
                     </td>
                   </tr>
@@ -121,7 +121,7 @@
                     <td>{{ct.order_count}}</td>
                     <td>￥{{ct.amount_count}}</td>
                     <td>￥{{ct.commission}}</td>
-                    <td @click = "remark(ct.user_id, $event)">
+                    <td @click = "remark(ct.seller_id, $event)">
                       <span class="iconfont-yzg icon-yzg-beizhu"></span>
                     </td>
                   </tr>
@@ -243,7 +243,7 @@ export default{
       let _this = this
       let $ev = judge ? $(this.user_list_distributer) : $(this.user_list_client)
       $ev.forEach(function(item, index) {
-        if ($ev[index].user_id === userId) {
+        if ($ev[index].seller_id === userId) {
           _this.indexNum = index
         }
       })
@@ -264,6 +264,7 @@ export default{
             this.user_list_distributer[this.indexNum].remark = this.uldRemark  // 备注赋值
             weui.alert('修改成功')
           } else {
+            $.toast('非法修改', 'forbidden')
             console.error('获取数据失败:' + msg)
           }
         }, (response) => {
@@ -278,6 +279,7 @@ export default{
             this.user_list_client[this.indexNum].remark = this.uldRemark  // 备注赋值
             weui.alert('修改成功')
           } else {
+            $.toast('非法修改', 'forbidden')
             console.error('获取数据失败:' + msg)
           }
         }, (response) => {

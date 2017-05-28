@@ -45,22 +45,29 @@
         <tr>
           <td>配送区域：</td>
           <td>
-            <span class="form-control districtSel" @click="showCityPicker(itemIndex)">
+            <!-- <span class="form-control districtSel" @click="showCityPicker(itemIndex)">
 							{{address.province_name}}-{{address.city_name}}-{{address.district_name}}
-						</span>
+						</span> -->
+            <wv-city-picker title="居住地址" :location="location" @get-val="addressPick"></wv-city-picker>
           </td>
         </tr>
         <tr>
           <td>详细地址：</td>
           <td>
-						<input type="text" class="form-control" placeholder="请填写详细地址" v-model="address.address"/>
+						<input type="text" class="form-control" v-model="address.address"/>
 					</td>
         </tr>
         <tr>
           <td>收 货 人：</td>
           <td>
-						<input type="text" class="form-control" placeholder="请填写收货人姓名" v-model="address.consignee"/>
+						<input type="text" class="form-control" v-model="address.consignee"/>
 					</td>
+        </tr>
+        <tr>
+          <td>身份证号：</td>
+          <td>
+            <input type="text" class="form-control" v-model="address.idcard"/>
+          </td>
         </tr>
         <tr>
           <td>电　　话：</td>
@@ -80,7 +87,6 @@
       <a href="javascript:void(0);" class="btn redBgColor" style="display:block; border-radius:0">新增收货地址</a>
     </router-link>
   </div>
-  <citys-picker :city="data" :init-value="defaultVal" @confirm="confirmCP" ref="address"></citys-picker>
   <div class="loading" v-if = "load">
     <i class="weui-loading"></i>
   </div>
@@ -91,13 +97,8 @@
 import weui from 'weui.js'
 import $ from 'zepto'
 import qs from 'qs'
-import CitysPicker from 'vue-citys-picker'
-import CityData from '../../../static/json/citydata.json'
 
 export default {
-  components: {
-    CitysPicker
-  },
   data() {
     return {
       editState: '0',
@@ -105,20 +106,11 @@ export default {
       addList: [],
       savePreAdd: [], // 保存原始地址
       editIndex: '',
-      data: CityData, // 地区选择控件
-      defaultVal: [{
-        name: '安徽省',
-        value: '340000'
-      }, {
-        name: '芜湖市',
-        value: '340200'
-      }, {
-        name: '三山区',
-        value: '340208'
-      }],
-      addressStr: null,
-      pickedId: null,
-      load: true  // 是否显示加载动画
+      load: true,  // 是否显示加载动画
+      location: {
+        id: '340000 340200 340208',
+        name: '安徽省 芜湖市 三山区'
+      }
     }
   },
   activated() {
@@ -126,19 +118,12 @@ export default {
     this.loadAddressList()
   },
   methods: {
-    confirmCP(values) { // 地址选择
-      if (this.editState !== 'addstate') { // 新加地址
-        this.$set(this.addList[this.pickedId], 'province_name', values[0].name)
-        this.$set(this.addList[this.pickedId], 'city_name', values[1].name)
-        this.$set(this.addList[this.pickedId], 'district_name', values[2].name)
-      } else { // 已存在地址改变数组内容
-        this.$set(this.$data, this.pickedId, values[0].name + '-' + values[1].name + '-' + values[2].name)
-      }
-      this.pickedId = null
-    },
-    showCityPicker(id) { // 显示地址选择器
-      this.pickedId = id
-      this.$refs['address'].open()
+    /* 地址选择控件 */
+    addressPick(name, code) {
+      name = name.split(' ')
+      this.addList[this.editIndex].province_name = name[0]
+      this.addList[this.editIndex].city_name = name[1]
+      this.addList[this.editIndex].district_name = name[2]
     },
     /*
      * 获取地址数据
@@ -174,6 +159,7 @@ export default {
       this.savePreAdd['province_name'] = this.addList[this.editIndex].province_name
       this.savePreAdd['city_name'] = this.addList[this.editIndex].city_name
       this.savePreAdd['district_name'] = this.addList[this.editIndex].district_name
+      this.location.name = this.addList[this.editIndex].province_name + ' ' + this.addList[this.editIndex].city_name + ' ' + this.addList[this.editIndex].district_name
     },
     /*
     * 取消修改
@@ -225,20 +211,23 @@ export default {
       let address = ''
       let consignee = ''
       let mobile = ''
+      let idcard = ''
       let validResult = ''
       if (indexObj !== 'add') {
         this.addressEach(indexObj)
         let nowEditAdd = this.addList[this.editIndex]
-        validResult = this.dataValid(nowEditAdd.consignee, nowEditAdd.province_name, nowEditAdd.address, nowEditAdd.mobile)
-        if (validResult) {
+        validResult = this.dataValid(nowEditAdd.consignee, nowEditAdd.province_name, nowEditAdd.address, nowEditAdd.mobile, nowEditAdd.idcard)
+        this.checkIdcard(nowEditAdd.idcard)
+        if (validResult && this.errorMsg === '1') {
           pcdAdd = nowEditAdd.province_name + '-' + nowEditAdd.city_name + '-' + nowEditAdd.district_name
           address = nowEditAdd.address
           consignee = nowEditAdd.consignee
           mobile = nowEditAdd.mobile
+          idcard = nowEditAdd.idcard
         }
       } else {
       }
-      if (validResult) {
+      if (validResult && this.errorMsg === '1') {
         let _this = this
         let saveParam = {
           pcd: pcdAdd,
@@ -247,7 +236,8 @@ export default {
           mobile: mobile,
           submit: '保存',
           act: 'act_edit_address',
-          address_id: indexObj
+          address_id: indexObj,
+          idcard: idcard
         }
         this.$http.post('user.php', qs.stringify(saveParam))
         .then(function({data: {data, errcode, msg}}) {
@@ -311,8 +301,8 @@ export default {
     /*
     * 地址填写验证
     */
-    dataValid (consignee, region, address, mobile) {
-      if (consignee === '' || region === '' || address === '' || mobile === '') {
+    dataValid (consignee, region, address, mobile, idcard) {
+      if (consignee === '' || region === '' || address === '' || mobile === '' || idcard === '') {
         weui.alert('请填写完整收货信息')
         return false
       }
@@ -321,14 +311,96 @@ export default {
         return false
       }
       return true
+    },
+    /*
+    * 身份证号码验证
+    */
+    checkIdcard(idcard) {
+      var str_l = idcard.substr(idcard.length - 1, 1)
+      var Y, JYM
+      if (str_l === 'x') {
+        idcard = idcard.replace('x', 'X')
+      }
+      var Errors = [
+        '1',
+        '身份证号码位数不对!',
+        '身份证号码出生日期超出范围或含有非法字符!',
+        '身份证号码校验错误!',
+        '身份证地区非法!'
+      ]
+      var area = {11: '北京', 12: '天津', 13: '河北', 14: '山西', 15: '内蒙古', 21: '辽宁', 22: '吉林', 23: '黑龙江', 31: '上海', 32: '江苏', 33: '浙江', 34: '安徽', 35: '福建', 36: '江西', 37: '山东', 41: '河南', 42: '湖北', 43: '湖南', 44: '广东', 45: '广西', 46: '海南', 50: '重庆', 51: '四川', 52: '贵州', 53: '云南', 54: '西藏', 61: '陕西', 62: '甘肃', 63: '青海', 64: '宁夏', 65: '新疆', 71: '台湾', 81: '香港', 82: '澳门', 91: '国外'}
+      var S, M, ereg
+      var idcard_array = []
+      idcard_array = idcard.split('')
+      // 地区检验
+      if (area[parseInt(idcard.substr(0, 2))] === null) {
+        // return Errors[4]
+        console.log(Errors[4])
+        weui.alert(Errors[4])
+      }
+      // 身份号码位数及格式检验
+      switch (idcard.length) {
+        case 15:
+          if ((parseInt(idcard.substr(6, 2)) + 1900) % 4 === 0 || ((parseInt(idcard.substr(6, 2)) + 1900) % 100 === 0 && (parseInt(idcard.substr(6, 2)) + 1900) % 4 === 0)) {
+            ereg = /^[1-9][0-9]{5}[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}$/   // 测试出生日期的合法性
+          } else {
+            ereg = /^[1-9][0-9]{5}[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|1[0-9]|2[0-8]))[0-9]{3}$/   // 测试出生日期的合法性
+          }
+          if (ereg.test(idcard)) {
+            // return Errors[0]
+            console.log(Errors[0])
+            this.errorMsg = Errors[0]
+          } else {
+            // return Errors[2]
+            console.log(Errors[2])
+            weui.alert(Errors[2])
+          }
+          break
+        case 18:
+          // 18位身份号码检测
+          // 出生日期的合法性检查
+          // 闰年月日:((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))
+          // 平年月日:((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|1[0-9]|2[0-8]))
+          if (parseInt(idcard.substr(6, 4)) % 4 === 0 || (parseInt(idcard.substr(6, 4)) % 100 === 0 && parseInt(idcard.substr(6, 4)) % 4 === 0)) {
+            ereg = /^[1-9][0-9]{5}19[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}[0-9Xx]$/  // 闰年出生日期的合法性正则表达式
+          } else {
+            ereg = /^[1-9][0-9]{5}19[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|1[0-9]|2[0-8]))[0-9]{3}[0-9Xx]$/   // 平年出生日期的合法性正则表达式
+          }
+          if (ereg.test(idcard)) {
+            // 测试出生日期的合法性
+            // 计算校验位
+            S = (parseInt(idcard_array[0]) + parseInt(idcard_array[10])) * 7 + (parseInt(idcard_array[1]) + parseInt(idcard_array[11])) * 9 + (parseInt(idcard_array[2]) + parseInt(idcard_array[12])) * 10 + (parseInt(idcard_array[3]) + parseInt(idcard_array[13])) * 5 + (parseInt(idcard_array[4]) + parseInt(idcard_array[14])) * 8 + (parseInt(idcard_array[5]) + parseInt(idcard_array[15])) * 4 + (parseInt(idcard_array[6]) + parseInt(idcard_array[16])) * 2 + parseInt(idcard_array[7]) * 1 + parseInt(idcard_array[8]) * 6 + parseInt(idcard_array[9]) * 3
+            Y = S % 11
+            M = 'F'
+            JYM = '10X98765432'
+            M = JYM.substr(Y, 1) // 判断校验位
+            if (M === idcard_array[17]) {
+              // return Errors[0] // 检测ID的校验位
+              console.log(Errors[0])
+              this.errorMsg = Errors[0]
+            } else {
+              // return Errors[3]
+              console.log(Errors[3])
+              weui.alert(Errors[3])
+            }
+          } else {
+            // return Errors[2]
+            console.log(Errors[2])
+            weui.alert(Errors[2])
+          }
+          break
+        default:
+          // return Errors[1]
+          console.log(Errors[1])
+          weui.alert(Errors[1])
+          break
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-/*@import '/static/style/weui2.css';*/
-@import '/static/style/vue-citys-picker.css';
 body {
   padding-bottom: 60px;
 }
@@ -403,4 +475,5 @@ body {
   overflow: hidden;
   line-height: 24px
 }
+
 </style>

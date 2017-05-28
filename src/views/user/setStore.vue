@@ -41,7 +41,7 @@
 
 <script>
 import qs from 'qs'
-import weui from 'weui.js'
+import $ from 'zepto'
 
 export default {
   data () {
@@ -64,9 +64,10 @@ export default {
       this.$http.post('create.php?act=step_2', qs.stringify(kd))
       .then(({data: {data, errcode, msg}}) => {
         if (errcode === 0) {
-          weui.alert('设置成功')
-          this.$router.push({path: '/userCenter'})
-          console.log(data)
+          $.toast('设置成功')
+          this.$parent.appIsShop = true
+          this.delayRun()
+          // console.log(data)
         } else {
           console.error('获取数据失败:' + msg)
         }
@@ -74,6 +75,13 @@ export default {
         // error callback
         console.error(response)
       })
+    },
+    delayRun () {
+      let _this = this
+      setTimeout(function () {
+        window.localStorage.clear()
+        _this.$router.push({path: '/userCenter'})
+      }, 1000)
     }
   }
 }

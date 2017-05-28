@@ -201,6 +201,7 @@ export default{
   },
   activated () {
     this.order_list = []
+    this.order_info_team = []
     this.pagenum = 0
     this.queryList()
   }

@@ -21,7 +21,7 @@
           infinite-scroll-disabled="busy"
           infinite-scroll-distance="30">
           <a v-for="g in goods_list" class="sub-goods_list collect_list">
-            <router-link :to="{ name: 'Goods',path: '/shopping/goods', query: { gid: g.goods_id }}">
+            <router-link :to="{ name: 'Goods',path: '/shopping/goods', query: { gid: g.upc_id }}">
               <div class="goods-img">
                 <img :src="imgBase64"
                   :style="{backgroundImage: 'url(' + (g.master_img?img_domain+g.master_img:'/static/images/no_picture.jpg') + ')'}">

@@ -12,76 +12,9 @@
 </template>
 
 <script>
-// import qs from 'qs'
-// import md5 from 'md5'
-// import $ from 'zepto'
-
 export default {
-  data() {
-    return {
-    }
-  },
-  beforeCreate() {
-    // 组件实例刚刚被创建，属性都没有
-    // console.log(this.$store.getters.userInfo)
-    // if (!this.$store.storeUser) {
-    //   // 去鉴权
-    //   this.$router.push({path: '/oauth'})
-    // }
-  },
-  created() {
-    // 组件实例创建完毕，属性已经绑定
-  },
-  beforeMount() {
-    // 模板编译之前
-  },
-  mounted() {
-    // 模板编译之后，代替了之前的ready*
-    // 跳转至列表页
-    this.$router.push({path: '/category'})
-    // let code = this.$route.query.code
-    // if (code) {
-    //   console.log('doLogin:' + '' + code)
-    //   // // let state = this.$route.query.state
-    //   // // 微信授权回调后获得code去调用登录接口
-    //   let timestamp = Date.parse(new Date()) / 1000
-    //   let md5Str = md5('0' + timestamp + 'NhH$ApI')
-    //   let loginParam = {
-    //     timestamp: timestamp,
-    //     sign: md5Str,
-    //     uid: 0,
-    //     code: code
-    //   }
-    //   let zhis = this
-    //   this.$http.post('wx_login.php', qs.stringify(loginParam))
-    //   .then(function({data: {data, errcode, msg}}) {
-    //     if (errcode === 0) {
-    //       zhis.$store.commit('SET_USER', data.user)
-    //       // 跳转至列表页
-    //       zhis.$router.push({path: '/category'})
-    //     } else {
-    //       $('.pacman').hide()
-    //       $.toast(msg, 'forbidden')
-    //       console.warn(errcode, msg, data)
-    //     }
-    //   }).catch(function(error) {
-    //     $('.pacman').hide()
-    //     $.toast('系统异常', 'forbidden')
-    //     console.error(error)
-    //   })
-    // }
-  },
-  beforeUpdate() {
-    // 组件更新之前
-  },
-  updated() {
-    // 组件更新完毕
-  },
-  beforeDestroy() {
-    // 组件销毁之前
-  },
-  destroyed() {
-    // 组件销毁后
+  activated() {
+    this.$router.replace({path: '/oauth'})
   }
 }
 </script>

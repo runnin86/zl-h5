@@ -17,8 +17,8 @@
     <div class="row">
       <div class="fund-box">
         <div class="fund-header">
-          <div class="rest_fund">剩余低佣金：￥{{offset_money}}</div>
-          <div class="used_fund">已使用低佣金：￥{{total_used_offset}}</div>
+          <div class="rest_fund">剩余抵用金：￥{{offset_money}}</div>
+          <div class="used_fund">已使用抵用金：￥{{total_used_offset}}</div>
         </div>
         <div class="fund-content">
           <table class="table">
@@ -27,13 +27,13 @@
                 <th>日期</th>
                 <th>订单号</th>
                 <th>订单金额</th>
-                <th>使用低佣金</th>
+                <th>使用抵用金</th>
               </tr>
             </thead>
             <tbody v-for="oi in orderInfo">
               <tr class="fund-title" v-if="oi.order_month">
                 <td>{{oi.order_month}}月</td>
-                <td colspan="3" class="text-right">使用低佣金：￥{{oi.used_offset}}</td>
+                <td colspan="3" class="text-right">使用抵用金：￥{{oi.used_offset}}</td>
               </tr>
               <tr v-for="or in oi" v-if="or.add_time">
                 <td>{{or.add_time}}</td>

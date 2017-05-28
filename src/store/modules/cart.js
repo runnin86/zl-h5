@@ -2,31 +2,28 @@ import api from '../api'
 
 // initial state
 const state = {
-  cartData: null,
   cartBadge: 0,
   isIndex: true
 }
 
 // getters
 const getters = {
-  cartData: state => state.cartData,
   cartBadge: state => state.cartBadge,
   isIndex: state => state.isIndex
 }
 
 // actions(异步)
 const actions = {
-  getCartData({commit}) {
-    api.getCartData(data => {
-      commit('RECEIVE_CART_INFO', {data})
+  getCartNum({commit}) {
+    api.getCartNum(data => {
+      commit('RECEIVE_CART_NUM', {data})
     })
   }
 }
 
 // mutations(同步)
 const mutations = {
-  RECEIVE_CART_INFO (state, cartData) {
-    state.cartData = cartData
+  RECEIVE_CART_NUM (state, cartData) {
     state.cartBadge = 0
     for (let i in cartData.data) {
       if (cartData.data[i].isCheck === 1) {

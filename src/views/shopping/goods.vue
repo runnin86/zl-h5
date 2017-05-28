@@ -11,8 +11,9 @@
       </a>
     </div>
     <div class="col-xs-8 shop-name">
-      <span class="double_title buyer_comment">商品详情</span>
-      <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: pid}}" class="double_title">买家评论</router-link>
+      <span>{{main.productName}}</span>
+      <!-- <span class="double_title buyer_comment">商品详情</span>
+      <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: pid}}" class="double_title">买家评论</router-link> -->
     </div>
     <div class="col-xs-2 shop-bag">
       <router-link :to="{name: 'Category',path: '/category'}">

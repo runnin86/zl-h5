@@ -3,6 +3,7 @@ import Header from './header/index.js'
 import Button from './button/index.js'
 import Group from './group/index.js'
 import Cell from './cell/index.js'
+import CityPick from './city-picker/index.js'
 // import Icon from './icon/index.js'
 import Textarea from './textarea/index.js'
 import Input from './input/index.js'
@@ -50,6 +51,7 @@ const install = function (Vue) {
   Vue.component(Button.name, Button)
   Vue.component(Group.name, Group)
   Vue.component(Cell.name, Cell)
+  Vue.component(CityPick.name, CityPick)
   // Vue.component(Icon.name, Icon)
   Vue.component(Textarea.name, Textarea)
   Vue.component(Input.name, Input)
@@ -106,6 +108,7 @@ export default {
   Button,
   Group,
   Cell,
+  CityPick,
   // Icon,
   Textarea,
   Input,

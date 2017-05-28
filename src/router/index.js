@@ -32,27 +32,22 @@ const scrollBehavior = (to, from, savedPosition) => {
 
 export default new Router({
   mode: 'history', // hash,history,abstract
-  // suppressTransitionError: true,
-  // transitionOnLoad: true,
-  hashbang: true,
-  history: true,
-  saveScrollPosition: true,
-  suppressTransitionError: true,
   transitionName: 'fade', // 页面切换动画名称
   scrollBehavior,
   routes: [
     {
       path: '/',
       component(resolve) {
-        require(['@/views/oauth'], resolve)
-      }
-    }, {
-      path: '/welcome',
-      component(resolve) {
         require(['@/views/welcome'], resolve)
       }
     }, {
+      path: '/oauth',
+      component(resolve) {
+        require(['@/views/oauth'], resolve)
+      }
+    }, {
       path: '/userCenter',
+      meta: {scrollToTop: true, title: '用户中心'},
       component(resolve) {
         require(['@/views/user/userCenter'], resolve)
       }
@@ -63,6 +58,7 @@ export default new Router({
       }
     }, {
       path: '/nhhDetail',
+      meta: {scrollToTop: true, title: '成为汇商'},
       component(resolve) {
         require(['@/views/user/nhhDetail'], resolve)
       }
@@ -177,6 +173,7 @@ export default new Router({
       }
     }, {
       path: '/cart',
+      meta: {scrollToTop: true, title: '购物车'},
       component(resolve) {
         require(['@/views/cart/cart'], resolve)
       }

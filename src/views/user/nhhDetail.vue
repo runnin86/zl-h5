@@ -15,7 +15,10 @@
       </div>
       <div id="arrow_up"></div>
       <div class="weui_btn_area" id="btn_link">
-        <a class="weui_btn weui_btn_primary" @click="pay()">开店支付</a>
+        <a style="position: fixed;bottom: 30px; right: 0;width: 130px;text-align: center;color: #ed3366; font-weight: bold; font-size: 16px;" @click="pay()">
+        <!-- <i class="iconfont-yzg icon-yzg-shangcheng"></i> -->
+          <img src="/static/images/nhh/nhh.png" style=" width: 130px; display: block; margin-bottom: 5px;"/>
+        </a>
       </div>
     </div>
   </div>
@@ -77,6 +80,8 @@ export default{
           //     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
           //   }
           // })
+        } else {
+          $.toast('没有获取到支付参数', 'forbidden')
         }
       }, (response) => {
         // error callback
