@@ -18,11 +18,11 @@
   <div class="row navbar-location" v-show="parent_cat.length>0">
     <div class="navbar-yzg-default" :style="{width: (parent_cat.length+1)*108+'px'}">
       <ul id='activeMenu' class="ul-slider">
-        <li class="slider-item" :class="cid===-1?'active':''">
-          <a @click="changeCid(-1)">全部商品</a>
+        <li class="slider-item" :class="cid===0?'active':''">
+          <a @click="changeCid(0)">全部商品</a>
         </li>
         <li v-for="cat in parent_cat" class="slider-item"
-          v-if="cat.cat_id>-1" :class="cat.cat_id===cid?'active':''">
+          v-if="cat.cat_id>0" :class="cat.cat_id===cid?'active':''">
           <a @click="changeCid(cat.cat_id)">{{cat.cat_name}}</a>
         </li>
       </ul>
@@ -85,31 +85,34 @@ export default {
     return {
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=',
       parent_cat: [{
-        cat_id: -1,
+        cat_id: 0,
         cat_name: '全部商品'
       }, {
-        cat_id: 0,
-        cat_name: '光伏发电'
-      }, {
         cat_id: 1,
-        cat_name: '汽车'
+        cat_name: '新能源系列'
       }, {
         cat_id: 2,
-        cat_name: '太阳能'
+        cat_name: '五金卫浴'
       }, {
         cat_id: 3,
-        cat_name: '居家生活'
+        cat_name: '家电系列'
       }, {
         cat_id: 4,
-        cat_name: '特色产品'
+        cat_name: '生活用品'
       }, {
         cat_id: 5,
-        cat_name: '其他'
+        cat_name: '母婴产品'
+      }, {
+        cat_id: 6,
+        cat_name: '酒水类'
+      }, {
+        cat_id: 7,
+        cat_name: '特色产品'
       }],
       goods_list: [],
       img_domain: 'http://img.zulibuy.com/images/',
       title_name: '全部商品',
-      cid: -1,
+      cid: 0,
       pagenum: 0,
       showLoading: false,
       busy: true
@@ -177,7 +180,7 @@ export default {
      */
     changeCid (cid) {
       // this.title_name = this.parent_cat[value = cid]
-      this.title_name = this.parent_cat[cid + 1].cat_name
+      this.title_name = this.parent_cat[cid].cat_name
       this.cid = cid
       this.pagenum = 0
       this.goods_list = []

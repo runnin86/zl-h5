@@ -26,7 +26,7 @@
           <div class="col-xs-4">
             <span v-if="parseFloat(accountInfo.advance) > 0">{{accountInfo.advance}}</span>
             <span v-else>0.00</span>
-            <p>预付款</p>
+            <p>保证金</p>
           </div>
         </router-link>
         <router-link to="/userCenter/sellerIncome">

@@ -28,6 +28,7 @@ export default {
         /*
          * 1.微信鉴权后获取code去登录
          */
+        this.$router.push({path: 'category'})
       } else if (window.localStorage.getItem('zlUser')) {
         /*
          * 2.已登录
