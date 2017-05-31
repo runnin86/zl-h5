@@ -10,7 +10,7 @@
         <i class="iconfont-yzg icon-yzg-back"></i>
       </a>
     </div>
-    <div class="col-xs-8 shop-name">
+    <div class="col-xs-8 shop-name" v-if="main">
       <span>{{main.productName}}</span>
       <!-- <span class="double_title buyer_comment">商品详情</span>
       <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: pid}}" class="double_title">买家评论</router-link> -->
@@ -59,7 +59,7 @@
       <img src="/static/images/qu.png">&nbsp;全球直采
     </div>
     <div class="col-xs-4" style="text-align:right;">
-      <img src="/static/images/bao.png">&nbsp;满99包邮
+      <img src="/static/images/bao.png">&nbsp;同城配送
     </div>
   </div>
   <div class="goodsTxt">
@@ -112,6 +112,7 @@ export default {
   beforeDestroy() {
   },
   activated() {
+    this.main = this.photo = null
     this.buyNum = 1
     this.pid = this.$route.query.gid
     this.loadGood()
