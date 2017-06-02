@@ -10,7 +10,7 @@
       <span>收货地址管理</span>
     </div>
     <div class="col-xs-2 shop-bag">
-      <router-link :to="{ name: 'Index',path: '/index'}">
+      <router-link :to="{ name: 'Category',path: '/category'}">
         <span class="iconfont-yzg icon-yzg-goods"></span>
       </router-link>
     </div>
@@ -22,13 +22,16 @@
 					{{address.consignee}}
 				</p>
         <p>
-					{{address.province_name}}-{{address.city_name}}-{{address.district_name}}
+					{{address.province}}-{{address.city}}-{{address.district}}
+				</p>
+        <p>
+					{{address.address}}
 				</p>
         <p>
 					{{address.mobile}}
 				</p>
         <div class="row">
-          <div class="col-xs-6" :class="defaultAddId === address.address_id ? 'setDefault redColor' : ''" @click="setDefaultAdd(address.address_id)">
+          <div class="col-xs-6" :class="1 === address.lastUse ? 'setDefault redColor' : ''" @click="setDefaultAdd(address.id)">
               <i class="iconfont-yzg icon-yzg-xuanzhong"></i> 设为默认地址
           </div>
           <div class="col-xs-6">
@@ -108,8 +111,8 @@ export default {
       editIndex: '',
       load: true,  // 是否显示加载动画
       location: {
-        id: '340000 340200 340208',
-        name: '安徽省 芜湖市 三山区'
+        id: '130000 130600 130630',
+        name: '河北省 保定市 涞源县'
       }
     }
   },
@@ -129,20 +132,20 @@ export default {
      * 获取地址数据
     */
     loadAddressList() {
-      let postData = {
-        act: 'address_list'
-      }
-      this.$http.post('user.php', qs.stringify(postData))
-      .then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
-          this.addList = data.consignee_list
-          this.addressEach('deleteNull')
-          this.addressEach('getDefault')
-          this.load = false
-        } else {
-          $.toast('获取地址失败，请刷新重试', 'forbidden')
+      this.$http.get('/user/addressList', {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
         }
+      }).then(({data: {data, code, msg}}) => {
+        // console.log(data)
+        if (code === 1) {
+          this.addList = data.addressList
+        } else {
+          $.toast(msg, 'forbidden')
+        }
+        this.load = false
       }, (response) => {
+        this.load = false
         console.log(response)
       })
     },
@@ -151,7 +154,6 @@ export default {
     */
     edit(indexObj) {
       this.editState = indexObj
-      this.addressEach(indexObj)
       // 保存原有地址 取消修改时使用
       this.savePreAdd['consignee'] = this.addList[this.editIndex].consignee
       this.savePreAdd['address'] = this.addList[this.editIndex].address
@@ -180,7 +182,6 @@ export default {
     deleteAddress(indexObj) {
       if (confirm('确定要删除当前收货地址吗')) {
         let _this = this
-        this.addressEach(indexObj)
         this.$http.get('user.php?act=drop_consignee', {
           params: {
             id: indexObj
@@ -214,7 +215,6 @@ export default {
       let idcard = ''
       let validResult = ''
       if (indexObj !== 'add') {
-        this.addressEach(indexObj)
         let nowEditAdd = this.addList[this.editIndex]
         validResult = this.dataValid(nowEditAdd.consignee, nowEditAdd.province_name, nowEditAdd.address, nowEditAdd.mobile, nowEditAdd.idcard)
         this.checkIdcard(nowEditAdd.idcard)
@@ -253,29 +253,6 @@ export default {
           console.log(error)
         })
       }
-    },
-    /*
-    * 寻找对应地址索引
-    */
-    addressEach(indexObj) {
-      let _this = this
-      this.addList.forEach(function(item, index) {
-        if (indexObj === 'getDefault') {    // 寻找默认地址id
-          if (item.last_use === '1') {
-            _this.defaultAddId = item.address_id
-            return
-          }
-        } else if (indexObj === 'deleteNull') { // 删除id为空的地址  暂时用///
-          if (item.address_id === undefined) {
-            _this.addList.splice(index, 1)
-          }
-        } else {
-          if (item.address_id === indexObj) {
-            _this.editIndex = index
-            return
-          }
-        }
-      })
     },
     /*
     * 设置默认地址
