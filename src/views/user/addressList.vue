@@ -31,7 +31,7 @@
 					{{address.mobile}}
 				</p>
         <div class="row">
-          <div class="col-xs-6" :class="1 === address.lastUse ? 'setDefault redColor' : ''" @click="setDefaultAdd(address.id)">
+          <div class="col-xs-6" :class="address.lastUse === 1 ? 'setDefault redColor' : ''" @click="setDefaultAdd(address.id)">
               <i class="iconfont-yzg icon-yzg-xuanzhong"></i> 设为默认地址
           </div>
           <div class="col-xs-6">
