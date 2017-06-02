@@ -185,7 +185,7 @@ export default {
           this.$parent.cartBadgeNum = this.selectCounts
           this.cartList = data
           // 获取购物车数量
-          this.$store.dispatch('getCartData')
+          this.$store.dispatch('getCartNum')
         } else {
           $.toast(msg, 'forbidden')
           console.warn('获取购物车失败:' + msg)

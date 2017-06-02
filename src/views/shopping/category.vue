@@ -47,7 +47,9 @@
               :style="{backgroundImage: 'url(' + (g.img?img_domain+g.img:'/static/images/no_picture.jpg') + ')'}">
           </div>
         </router-link>
-        <div class="goods-title" v-html="g.productName+'('+g.productDesc+')'"></div>
+        <div class="goods-title"
+          v-html="g.productName+(g.productDesc?'('+g.productDesc+')':'')">
+        </div>
         <div class="goods-price">
           ￥{{g.price}}
           <span class="market_price_span_add">￥{{g.marketPrice}}</span>

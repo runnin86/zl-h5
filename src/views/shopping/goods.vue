@@ -200,7 +200,7 @@ export default {
           if (code === 1) {
             this.moveCart()
             // 获取购物车数量
-            this.$store.dispatch('getCartData')
+            this.$store.dispatch('getCartNum')
           } else {
             $.toast(msg, 'forbidden')
           }
