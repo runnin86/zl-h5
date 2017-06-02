@@ -242,7 +242,6 @@ export default {
       errorMsg: '',  // 如果购物车没有商品 则显示错误信息
       newAddDetail: '',
       newAddTel: '',
-      addressErrorMsg: '',
       dataItems: [{
         consignee: '',
         region: '',
@@ -278,7 +277,9 @@ export default {
     removeSpace(str) {
       return str.replace(/(^\s*)|(\s*$)/g, '')
     },
-    // 页面加载请求接口
+    /*
+     * 查询订单信息
+     */
     loadOrder() {
       let checkParam = {
         one_step_buy: this.oneBuyType,
@@ -359,7 +360,7 @@ export default {
       let validResult = ''
       if (this.checkState === 'add') {
         validResult = this.dataValid(this.newAddName, this.newAddProvince, this.newAddDetail, this.newAddTel)
-        if (validResult && this.addressErrorMsg === '1') {
+        if (validResult) {
           var pro = this.newAddProvince.split('-')
           this.dataItems.push({
             address_id: '0',
@@ -382,7 +383,7 @@ export default {
         /*
         如果验证通过则执行地址赋值，否则。。。
         */
-        if (validResult && this.addressErrorMsg === '1') {
+        if (validResult) {
           var existPro = this.dataItems[this.checkState].region.split('-')  // 拆分地址并分别赋值省市区
           var transObj = this.dataItems[this.checkState]   // 寻找目标地址
           // transObj.country_name = existPro[0]
@@ -391,7 +392,7 @@ export default {
           transObj.district_name = this.removeSpace(existPro[3])
         }
       }
-      if (validResult && this.addressErrorMsg === '1') {
+      if (validResult) {
         let dataState = this.dataItems[this.checkState]
         let changeAdd = {
           country: 1,
