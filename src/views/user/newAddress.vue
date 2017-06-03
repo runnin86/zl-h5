@@ -60,6 +60,7 @@ import weui from 'weui.js'
 
 export default {
   activated() {
+    this.newAddName = this.newAddDetail = this.newAddTel = ''
     this.$store.commit('CHANGE_IS_INDEX', false)
   },
   data() {

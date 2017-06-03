@@ -35,7 +35,7 @@
               <i class="iconfont-yzg icon-yzg-xuanzhong"></i> 设为默认地址
           </div>
           <div class="col-xs-6">
-  					<a @click="edit(address.id)">
+  					<a @click="editAddress(address)">
   						<i class="iconfont-yzg icon-yzg-bianji"></i> 编辑&nbsp; &nbsp; &nbsp;
   					</a>
             <a @click="deleteAddress(address.id)">
@@ -71,8 +71,8 @@
         </tr>
         <tr>
           <td colspan="2" class="saveAdd">
-            <input type="button" class="form-control redAllBorCol" value="保存" @click="saveAddress(address.id)"/>
-            <input type="button" class="form-control redAllBorCol" value="取消" @click="cancelAdd(address.id)" />
+            <input type="button" class="form-control redAllBorCol" value="保存" @click="saveAddress(address)"/>
+            <input type="button" class="form-control redAllBorCol" value="取消" @click="editState = -1" />
           </td>
         </tr>
       </table>
@@ -114,10 +114,7 @@ export default {
   methods: {
     /* 地址选择控件 */
     addressPick(name, code) {
-      name = name.split(' ')
-      this.addList[this.editIndex].province_name = name[0]
-      this.addList[this.editIndex].city_name = name[1]
-      this.addList[this.editIndex].district_name = name[2]
+      this.location.name = name
     },
     /*
      * 获取地址数据
@@ -141,31 +138,11 @@ export default {
       })
     },
     /*
-    * 判断选择的是哪个地址
-    */
-    edit(indexObj) {
-      this.editState = indexObj
-      // 保存原有地址 取消修改时使用
-      this.savePreAdd['consignee'] = this.addList[this.editIndex].consignee
-      this.savePreAdd['address'] = this.addList[this.editIndex].address
-      this.savePreAdd['mobile'] = this.addList[this.editIndex].mobile
-      this.savePreAdd['province_name'] = this.addList[this.editIndex].province_name
-      this.savePreAdd['city_name'] = this.addList[this.editIndex].city_name
-      this.savePreAdd['district_name'] = this.addList[this.editIndex].district_name
-      this.location.name = this.addList[this.editIndex].province_name + ' ' + this.addList[this.editIndex].city_name + ' ' + this.addList[this.editIndex].district_name
-    },
-    /*
-    * 取消修改
-    */
-    cancelAdd(indexObj) {
-      this.editState = '-1'
-      // 地址赋值为原始保存地址 取消修改
-      this.addList[this.editIndex].consignee = this.savePreAdd['consignee']
-      this.addList[this.editIndex].address = this.savePreAdd['address']
-      this.addList[this.editIndex].mobile = this.savePreAdd['mobile']
-      this.addList[this.editIndex].province_name = this.savePreAdd['province_name']
-      this.addList[this.editIndex].city_name = this.savePreAdd['city_name']
-      this.addList[this.editIndex].district_name = this.savePreAdd['district_name']
+     *
+     */
+    editAddress(address) {
+      this.editState = address.id
+      this.location.name = address.province + ' ' + address.city + ' ' + address.district
     },
     /*
     * 删除地址
@@ -198,42 +175,24 @@ export default {
     /*
     * 地址保存
     */
-    saveAddress(indexObj) {
-      let pcdAdd = ''
-      let address = ''
-      let consignee = ''
-      let mobile = ''
-      let validResult = ''
-      if (indexObj !== 'add') {
-        let nowEditAdd = this.addList[this.editIndex]
-        validResult = this.dataValid(nowEditAdd.consignee, nowEditAdd.province_name, nowEditAdd.address, nowEditAdd.mobile)
-        if (validResult && this.errorMsg === '1') {
-          pcdAdd = nowEditAdd.province_name + '-' + nowEditAdd.city_name + '-' + nowEditAdd.district_name
-          address = nowEditAdd.address
-          consignee = nowEditAdd.consignee
-          mobile = nowEditAdd.mobile
-        }
-      } else {
-      }
-      if (validResult && this.errorMsg === '1') {
+    saveAddress(address) {
+      // 地址采用选择器的
+      address.province = this.location.name.split(' ')[0]
+      address.city = this.location.name.split(' ')[1]
+      address.district = this.location.name.split(' ')[2]
+
+      if (this.dataValid(address.consignee, address.province, address.address, address.mobile)) {
         let _this = this
-        let saveParam = {
-          pcd: pcdAdd,
-          address: address,
-          consignee: consignee,
-          mobile: mobile,
-          submit: '保存',
-          act: 'act_edit_address',
-          address_id: indexObj
-        }
-        this.$http.post('user.php', qs.stringify(saveParam))
-        .then(function({data: {data, errcode, msg}}) {
-          if (errcode === 0) {
+        this.$http.post('/user/editAddress', qs.stringify(address), {
+          headers: {
+            'x-token': window.localStorage.getItem('zlToken')
+          }
+        }).then(function({data: {data, code, msg}}) {
+          if (code === 1) {
             _this.editState = '-1'
-            weui.toast('更新地址成功', 1000)
-            // console.log(data)
+            $.toast(msg)
           } else {
-            weui.toast('更新地址失败', 1000)
+            $.toast(msg, 'forbidden')
           }
         })
         .catch(function(error) {
