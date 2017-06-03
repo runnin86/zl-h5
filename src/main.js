@@ -139,7 +139,7 @@ router.beforeEach((to, from, next) => {
 // // 注册一个全局的 after 钩子
 router.afterEach((route) => {
   // let title = route.meta.title ? route.meta.title : ''
-  setWechatTitle('')
+  setWechatTitle('足力购')
   // 更新store中的route状态
   // store.commit([ROUTE_UPDATE_ROUTE], route)
 })
