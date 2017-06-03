@@ -16,7 +16,7 @@
     </div>
   </div>
   <div class="address" style="margin-top:54px">
-    <div class="row singleAddress" v-for="(address, itemIndex) in addList">
+    <div class="row singleAddress" v-for="(address, itemIndex) in addressList">
       <div>
         <p>
 					{{address.consignee}}
@@ -95,11 +95,8 @@ import qs from 'qs'
 export default {
   data() {
     return {
-      editState: '0',
-      defaultAddId: '',
-      addList: [],
-      savePreAdd: [], // 保存原始地址
-      editIndex: '',
+      editState: 0,
+      addressList: [],
       load: true,  // 是否显示加载动画
       location: {
         id: '130000 130600 130630',
@@ -127,7 +124,7 @@ export default {
       }).then(({data: {data, code, msg}}) => {
         // console.log(data)
         if (code === 1) {
-          this.addList = data.addressList
+          this.addressList = data.addressList
         } else {
           $.toast(msg, 'forbidden')
         }
@@ -189,7 +186,7 @@ export default {
           }
         }).then(function({data: {data, code, msg}}) {
           if (code === 1) {
-            _this.editState = '-1'
+            _this.editState = -1
             $.toast(msg)
           } else {
             $.toast(msg, 'forbidden')
@@ -212,7 +209,8 @@ export default {
       .then(function({data: {data, errcode, msg}}) {
         if (errcode === 0) {
           weui.toast('默认地址已更改', 1000)
-          _this.defaultAddId = obj
+          // 重新获取数据
+          _this.loadAddressList()
         } else {
           weui.toast('默认地址更改失败', 1000)
         }
