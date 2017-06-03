@@ -16,7 +16,7 @@
     </div>
   </div>
   <div class="address" style="margin-top:54px">
-    <div class="row singleAddress" v-for="(address,itemIndex) in addList">
+    <div class="row singleAddress" v-for="(address, itemIndex) in addList">
       <div>
         <p>
 					{{address.consignee}}
@@ -35,7 +35,7 @@
               <i class="iconfont-yzg icon-yzg-xuanzhong"></i> 设为默认地址
           </div>
           <div class="col-xs-6">
-  					<a @click="edit(address.address_id)">
+  					<a @click="edit(address.id)">
   						<i class="iconfont-yzg icon-yzg-bianji"></i> 编辑&nbsp; &nbsp; &nbsp;
   					</a>
             <a @click="deleteAddress(address.id)">
@@ -44,13 +44,10 @@
           </div>
 				</div>
       </div>
-      <table v-if="editState === address.address_id">
+      <table v-if="editState === address.id">
         <tr>
           <td>配送区域：</td>
           <td>
-            <!-- <span class="form-control districtSel" @click="showCityPicker(itemIndex)">
-							{{address.province_name}}-{{address.city_name}}-{{address.district_name}}
-						</span> -->
             <wv-city-picker title="居住地址" :location="location" @get-val="addressPick"></wv-city-picker>
           </td>
         </tr>
@@ -74,14 +71,14 @@
         </tr>
         <tr>
           <td colspan="2" class="saveAdd">
-            <input type="button" class="form-control redAllBorCol" value="保存" @click="saveAddress(address.address_id)"/>
-            <input type="button" class="form-control redAllBorCol" value="取消" @click="cancelAdd(address.address_id)" />
+            <input type="button" class="form-control redAllBorCol" value="保存" @click="saveAddress(address.id)"/>
+            <input type="button" class="form-control redAllBorCol" value="取消" @click="cancelAdd(address.id)" />
           </td>
         </tr>
       </table>
     </div>
     <router-link :to="{path:'/userCenter/addressList/newAddress'}">
-      <a href="javascript:void(0);" class="btn redBgColor" style="display:block; border-radius:0">新增收货地址</a>
+      <a class="btn redBgColor" style="display:block; border-radius:0">新增收货地址</a>
     </router-link>
   </div>
   <div class="loading" v-if = "load">
