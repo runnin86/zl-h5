@@ -31,8 +31,12 @@
 					{{address.mobile}}
 				</p>
         <div class="row">
-          <div class="col-xs-6" :class="address.lastUse === 1 ? 'setDefault redColor' : ''" @click="setDefaultAdd(address.id)">
-              <i class="iconfont-yzg icon-yzg-xuanzhong"></i> 设为默认地址
+          <div class="col-xs-6" @click="setDefaultAddress(address.id)"
+            :class="address.lastUse === 1 ? 'setDefault redColor' : ''">
+              <i class="iconfont-yzg "
+                :class="address.lastUse === 1 ? 'icon-yzg-xuanzhong' : 'icon-yzg-weixuanzhong'">
+              </i>
+              设为默认地址
           </div>
           <div class="col-xs-6">
   					<a @click="editAddress(address)">
@@ -200,23 +204,26 @@ export default {
     /*
     * 设置默认地址
     */
-    setDefaultAdd(obj) {
+    setDefaultAddress(obj) {
       let _this = this
       let defAddParam = {
-        address_id: obj
+        id: obj
       }
-      this.$http.post('default_address.php', qs.stringify(defAddParam))
-      .then(function({data: {data, errcode, msg}}) {
-        if (errcode === 0) {
-          weui.toast('默认地址已更改', 1000)
+      this.$http.post('/user/defaultAddress', qs.stringify(defAddParam), {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(function({data: {data, code, msg}}) {
+        if (code === 1) {
+          $.toast(msg)
           // 重新获取数据
           _this.loadAddressList()
         } else {
-          weui.toast('默认地址更改失败', 1000)
+          $.toast(msg, 'forbidden')
         }
-      })
-      .catch(function(error) {
-        console.log(error)
+      }).catch(function(error) {
+        $.toast(error, 'forbidden')
+        console.error(error)
       })
     },
     /*
