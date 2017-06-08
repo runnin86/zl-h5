@@ -1,46 +1,47 @@
 <template>
 <div>
   <div>
-    <div class="row yzg-title" style="margin-top:-80px !important;">
+    <div class="row yzg-title" style="position:relative;width:auto;">
       <div class="col-xs-2 backBtn">
-        <a @click="$parent.gotoAddress('category')">
-          <i class="iconfont-yzg icon-yzg-back" style=""></i>
-        </a>
+        <router-link :to="{path: '/category'}">
+          <i class="iconfont-yzg icon-yzg-back"></i>
+        </router-link>
       </div>
-      <div class="col-xs-8 loginTitle">登录</div>
+      <div class="col-xs-8 shop-name">
+        <span>登录</span>
+      </div>
       <div class="col-xs-2 shop-bag">
         <router-link :to="{path: '/category'}">
-          <span class="iconfont-yzg icon-yzg-goods"></span>
+          <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
         </router-link>
       </div>
     </div>
-    <div style="margin-top:80px;">
-      <ul>
-        <li>
-          <input type="tel" v-model="userPhone"
-            class="loginInput" placeholder="手机号">
-        </li>
-        <li>
-          <input type="password" v-model="userPwd"
-            class="loginInput" placeholder="密码">
-        </li>
-        <li>
-          <button @click="loginFun()" type="submit" class="btn btn-danger loginBtn">
-						登录
-					</button>
-        </li>
-        <li class="login_bottom row" style="display: none;">
-          <span class="col-xs-8 account_add">
-						我没有账号,去
-						<a @click="state('register')">
-							注册
-						</a>
-					</span>
-          <a class="col-xs-4 pass_backadd" @click="state('passwordBack')">
-						找回密码
+
+    <div style="margin-top:30px;">
+      <div>
+        <input type="number" v-model="userPhone"
+          class="loginInput" placeholder="手机号">
+      </div>
+      <div>
+        <input type="password" v-model="userPwd"
+          class="loginInput" placeholder="密码">
+      </div>
+      <div>
+        <button @click="loginFun()" type="submit" class="btn btn-danger loginBtn">
+					登录
+				</button>
+      </div>
+      <div class="login_bottom row" style="display: none;">
+        <span class="col-xs-8 account_add">
+					我没有账号,去
+					<a @click="state('register')">
+						注册
 					</a>
-        </li>
-      </ul>
+				</span>
+        <a class="col-xs-4 pass_backadd" @click="state('passwordBack')">
+					找回密码
+				</a>
+      </div>
     </div>
   </div>
   <!-- <div class="register" v-else-if="loginState=='register'">
@@ -171,8 +172,13 @@ export default {
     },
     loginFun() {
       window.localStorage.setItem('localPhone', this.userPhone)
-      if (!this.userPhone || !this.userPwd) {
-        $.toast('请输入用户名或密码', 'forbidden')
+      if (!this.userPhone) {
+        $.toast('请输入用户名', 'forbidden')
+        return
+      }
+
+      if (!this.userPwd) {
+        $.toast('请输入密码', 'forbidden')
         return
       }
 
@@ -196,7 +202,7 @@ export default {
           $.toast(msg, 'forbidden')
         }
       }.bind(this)).catch(function(e) {
-        $.toast('服务器连接中断...', 'forbidden')
+        $.toast('连接失败...', 'forbidden')
         console.error('无法连接服务器:' + e)
       })
     }

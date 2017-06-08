@@ -9,14 +9,15 @@
     <div class="col-xs-8 shop-name">
       <span>{{title_name}}</span>
     </div>
-    <div class="col-xs-2 shop-bag">
+    <!-- <div class="col-xs-2 shop-bag">
       <router-link :to="{ name: 'Index',path: '/index'}">
         <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
       </router-link>
-    </div>
+    </div> -->
   </div>
   <div class="row navbar-location" v-show="parent_cat.length>0">
-    <div class="navbar-yzg-default" :style="{width: (parent_cat.length+1)*108+'px'}">
+    <div class="navbar-yzg-default"
+      :style="{width: (parent_cat.length+1)*108+'px', 'margin-top':'6px'}">
       <ul id='activeMenu' class="ul-slider">
         <li class="slider-item" :class="cid===0?'active':''">
           <a @click="changeCid(0)">全部商品</a>
