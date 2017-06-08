@@ -1,6 +1,6 @@
 <template>
 <div class="container container-content">
-  <div class="row yzg-title" style="position:relative;width:auto;">
+  <div class="row yzg-title" style="position:relative;width:auto;margin-bottom: 6px;">
     <div class="col-xs-2 backBtn">
       <!-- <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
@@ -17,7 +17,7 @@
   </div>
   <div class="row navbar-location" v-show="parent_cat.length>0">
     <div class="navbar-yzg-default"
-      :style="{width: (parent_cat.length+1)*108+'px', 'margin-top':'6px'}">
+      :style="{width: (parent_cat.length+1)*108+'px'}">
       <ul id='activeMenu' class="ul-slider">
         <li class="slider-item" :class="cid===0?'active':''">
           <a @click="changeCid(0)">全部商品</a>
@@ -238,7 +238,6 @@ export default {
             // $('#activeMenu').animate({scrollLeft: i * 108 * -1}, 100)
           }
         }
-        this.busy = this.showLoading = false
       }
     }
   }

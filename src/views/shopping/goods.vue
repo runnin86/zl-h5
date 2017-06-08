@@ -4,7 +4,7 @@
     <!--img src="/images/share_wx.png" class="share_wx_add"/-->
   </div>
   <!--头部标题-->
-  <div class="row yzg-title">
+  <div class="row yzg-title" style="position:relative;width:auto;">
     <div class="col-xs-2 backBtn">
       <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
@@ -17,12 +17,12 @@
     </div>
     <div class="col-xs-2 shop-bag">
       <router-link :to="{name: 'Category',path: '/category'}">
-        <span class="iconfont-yzg icon-yzg-goods"></span>
+        <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
       </router-link>
     </div>
   </div>
   <!--轮播图及内容-->
-  <div class="goodsMain">
+  <div>
     <div style="position:relative">
       <div class="detail-img">
         <wv-swipe class="demo-swipe" :height="300" :auto="4000">
