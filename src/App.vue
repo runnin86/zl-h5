@@ -221,7 +221,6 @@ export default {
   pushtop:从下至上切入
 ]*/
 @import '/static/style/transition.css';
-/*@import '/static/style/bootstrap.min.css';*/
 @import '/static/style/store.css';
 @import '/static/style/public.css';
 /*@import '/static/style/progressive.css';*/

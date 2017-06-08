@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div v-if="loginState=='login'">
+  <div>
     <div class="row yzg-title" style="margin-top:-80px !important;">
       <div class="col-xs-2 backBtn">
         <a @click="$parent.gotoAddress('category')">
@@ -14,15 +14,15 @@
         </router-link>
       </div>
     </div>
-    <div style="margin-top:80px !important;">
+    <div style="margin-top:80px;">
       <ul>
         <li>
-          <input type="number" v-model="userPhone"
-            class="form-control form-control_add" placeholder="手机号">
+          <input type="tel" v-model="userPhone"
+            class="loginInput" placeholder="手机号">
         </li>
-        <li style="position:relative">
+        <li>
           <input type="password" v-model="userPwd"
-            class="form-control form-control_add" placeholder="密码">
+            class="loginInput" placeholder="密码">
         </li>
         <li>
           <button @click="loginFun()" type="submit" class="btn btn-danger loginBtn">
@@ -206,4 +206,13 @@ export default {
 
 <style scoped>
 @import '/static/style/login.css';
+.loginInput {
+  height: 50px;
+  margin-bottom: 25px;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 </style>
