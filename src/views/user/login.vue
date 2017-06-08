@@ -20,17 +20,26 @@
     <div style="margin-top:30px;">
       <div>
         <input type="number" v-model="userPhone"
-          class="loginInput" placeholder="手机号">
+          class="loginInput" placeholder="手机号码">
       </div>
+      <a class="clear" style="margin-left: 80%;"
+        :style="{display: userPhone?'block':'none'}"
+        @click="userPhone=null"></a>
+
       <div>
         <input type="password" v-model="userPwd"
           class="loginInput" placeholder="密码">
       </div>
+      <a class="clear" style="margin-left: 80%;"
+        :style="{display: userPwd?'block':'none'}"
+        @click="userPwd=null"></a>
+
       <div>
         <button @click="loginFun()" type="submit" class="btn btn-danger loginBtn">
 					登录
 				</button>
       </div>
+
       <div class="login_bottom row" style="display: none;">
         <span class="col-xs-8 account_add">
 					我没有账号,去
@@ -151,6 +160,7 @@
 <script>
 import $ from 'zepto'
 import qs from 'qs'
+import weui from 'weui.js'
 
 export default {
   data() {
@@ -202,7 +212,7 @@ export default {
           $.toast(msg, 'forbidden')
         }
       }.bind(this)).catch(function(e) {
-        $.toast('连接失败...', 'forbidden')
+        weui.alert('无法连接到服务器...')
         console.error('无法连接服务器:' + e)
       })
     }
@@ -220,5 +230,16 @@ export default {
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.clear{
+  background:no-repeat center center url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAMAAADyHTlpAAAAflBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCtoPsAAAAKnRSTlMAAQIDBAUHCQoLDA0ODxASGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjOWCMFEAAABUklEQVR4Xo3U4W6CMBSG4a8dcyo4FUVAHCpa4bv/G1xiOJm1B9j7+0lz0rQHfibZlFeSzbnYriyGm2cPvtTmMfS+KgbVSwWatKPWIRgjOnGgy8yXXzcO5mJPPjhS9w0JUcPR2oVI88OJblFPUwH3YEyxeX/xckuFLXx5tLnY5EmPIg1M4UkDI/b8PLSXjQHEigSsDLUCkLEvhdg/aUr2lYB1DKwi2UVYkoFVJLnGhpqtAsk9SipWkaxxpWIVSQdHxSqSRMfAipyklZF7eAtOkbrFVZHquQ6lL+1zzlSxNTaKJBW7x1KTml3DulBqtouALJCqLV+e9l2kZ72njUpWjhEp9uXUi/8ND1ak2F7KocBu8HM3Igt5RPW/Vwai+/Qikubt9HqTFmNLM4HX5+C8zQxv2V2nyvwDYbMihNUceovMu4pHHmOkeFudHdmeT2lifPALZUK7MQNh4w4AAAAASUVORK5CYII=);
+  background-size: 15px 15px;
+  width:40px;
+  height:40px;
+  position: absolute;
+  margin-top: -72px;
+  /*margin: -2.76rem 0.2rem 0 86%;*/
+  /*display: none;*/
 }
 </style>

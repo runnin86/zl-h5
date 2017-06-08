@@ -238,6 +238,7 @@ export default {
             // $('#activeMenu').animate({scrollLeft: i * 108 * -1}, 100)
           }
         }
+        this.busy = this.showLoading = false
       }
     }
   }
