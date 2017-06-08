@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="row yzg-title">
+  <div class="row yzg-title" style="position:relative;width:auto;">
     <div class="col-xs-2 backBtn">
       <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
@@ -15,7 +15,8 @@
       </router-link>
     </div>
   </div>
-  <div class="address" style="margin-top:54px">
+
+  <div class="address" style="margin-top:16px">
     <div class="row singleAddress" v-for="(address, itemIndex) in addressList">
       <div>
         <p>
@@ -82,7 +83,7 @@
       </table>
     </div>
     <router-link :to="{path:'/userCenter/addressList/newAddress'}">
-      <a class="btn redBgColor" style="display:block; border-radius:0">新增收货地址</a>
+      <a class="btn redBgColor" style="display:block;">新增收货地址</a>
     </router-link>
   </div>
   <div class="loading" v-if = "load">

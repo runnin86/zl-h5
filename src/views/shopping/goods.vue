@@ -85,8 +85,10 @@
     </div>
     <div class="clearfix" style=" padding-left:40%;">
       <div class="tbl-cell">
-        <a class="btn-cart redBgColor" @click="addCartFn(pid)">
-          <span class="iconfont-yzg icon-yzg-msnui-cart"></span>加入购物车
+        <a class="btn-cart redBgColor" @click="addCartFn(pid)"
+          style="border-radius: 4px;margin-top: -1px;">
+          <span class="iconfont-yzg icon-yzg-msnui-cart"></span>
+          加入购物车
         </a>
       </div>
     </div>
@@ -212,7 +214,9 @@ export default {
       }
     },
     collect() {
-      $.toast('敬请期待')
+      weui.alert('商品收藏建设中,敬请期待....', function() {
+        this.counter = 0
+      }.bind(this))
     },
     /*
      * 加入购物车动画效果

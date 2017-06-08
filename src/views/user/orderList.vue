@@ -1,6 +1,6 @@
 <template>
 	<div>
-    <div class="row yzg-title">
+    <div class="row yzg-title" style="position:relative;width:auto;">
       <div class="col-xs-2 backBtn">
         <a @click="$parent.back()">
           <i class="iconfont-yzg icon-yzg-back"></i>
@@ -15,8 +15,9 @@
         </router-link>
       </div>
     </div>
+
 		<div class="weui_tab orderTitle row"  id="orderTab"
-		  style="height:44px;top:44px;margin-bottom:44px;z-index:0;">
+		  style="height:44px;top:4px;z-index:0;">
 				<div class="weui_navbar" style="height:44px; border-top:1px solid #ddd; background:#f4f4f4">
 						<div class="weui_navbar_item" @click="orderType('order_all')"
 						  :class="orderAct === 'order_all' ? 'tab-green' : ''">
@@ -155,7 +156,7 @@ export default {
         this.busy = this.showLoading = false
       }, (response) => {
         // error callback
-        weui.toast(response, 2000)
+        console.error(response)
       })
     }
   }

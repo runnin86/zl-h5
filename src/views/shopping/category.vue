@@ -82,36 +82,37 @@ import Touchslider from 'static/js/touchslider.js'
 //   scale: true
 // })
 let menu
+let menuList = [{
+  cat_id: 0,
+  cat_name: '全部商品'
+}, {
+  cat_id: 1,
+  cat_name: '新能源系列'
+}, {
+  cat_id: 2,
+  cat_name: '五金卫浴'
+}, {
+  cat_id: 3,
+  cat_name: '家电系列'
+}, {
+  cat_id: 4,
+  cat_name: '生活用品'
+}, {
+  cat_id: 5,
+  cat_name: '母婴产品'
+}, {
+  cat_id: 6,
+  cat_name: '酒水类'
+}, {
+  cat_id: 7,
+  cat_name: '特色产品'
+}]
 
 export default {
   data () {
     return {
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=',
-      parent_cat: [{
-        cat_id: 0,
-        cat_name: '全部商品'
-      }, {
-        cat_id: 1,
-        cat_name: '新能源系列'
-      }, {
-        cat_id: 2,
-        cat_name: '五金卫浴'
-      }, {
-        cat_id: 3,
-        cat_name: '家电系列'
-      }, {
-        cat_id: 4,
-        cat_name: '生活用品'
-      }, {
-        cat_id: 5,
-        cat_name: '母婴产品'
-      }, {
-        cat_id: 6,
-        cat_name: '酒水类'
-      }, {
-        cat_id: 7,
-        cat_name: '特色产品'
-      }],
+      parent_cat: menuList,
       goods_list: [],
       img_domain: 'http://img.zulibuy.com/images/',
       title_name: '全部商品',
@@ -164,7 +165,7 @@ export default {
       // this.cid = this.$route.params.cid
       this.changeCid(this.$route.params.cid)
     }
-    $('.container').scrollTop(this.$parent.scrollTop)
+    // $('.container').scrollTop(this.$parent.scrollTop)
     $(document).ready(function () {
       $('.navbar-yzg-default').css({'position': 'relative', 'width': 'auto'})
       $('.container').scroll(function () {
@@ -176,6 +177,7 @@ export default {
         }
       })
     })
+    this.parent_cat = menuList
   },
   methods: {
     /*

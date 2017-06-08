@@ -2,7 +2,7 @@
   <div class="ucenter ucenter_buyer" @click="clearStorage">
     <div class="row" v-show="userInfo" v-cloak>
       <div class="col-xs-12 ucenter-top ">
-        <a @click="linkChange">
+        <a @click="building()">
           <img class="pull-left" src="static/images/store/user_pa.jpg"/>
           <div class="pull-left top-title clearfix">
             <div class="title clearfix" style=" color:#fff; position:relative;">
@@ -97,9 +97,11 @@
             <i class="iconfont-yzg icon-yzg-guanyuwomen"></i>
             <router-link to="">关于我们</router-link>
           </li>
-          <li @click="building()">
+          <li>
             <i class="iconfont-yzg icon-yzg-kefu"></i>
-            <router-link to="">联系客服</router-link>
+            <a href="tel:0312-7333023">
+              联系客服
+            </a>
           </li>
         </ul>
       </div>
@@ -157,7 +159,7 @@ export default {
         }
       }).then(({data: {code, data, msg}}) => {
         if (code === 1) {
-          console.log(data)
+          // console.log(data)
           this.accountInfo = data
         } else {
           $.toast(msg, 'forbidden')
