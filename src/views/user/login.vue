@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div>
+  <div v-show="oauthCode">
     <div class="row yzg-title" style="position:relative;width:auto;">
       <div class="col-xs-2 backBtn">
         <router-link :to="{path: '/category'}">
@@ -53,107 +53,6 @@
       </div>
     </div>
   </div>
-  <!-- <div class="register" v-else-if="loginState=='register'">
-    <div class="row yzg-title">
-      <div class="col-xs-2 backBtn">
-        <a href="javascript:history.back(-1)">
-          <i class="iconfont-yzg icon-yzg-back" style=""></i>
-        </a>
-      </div>
-      <div class="col-xs-8 loginTitle">
-        注册
-      </div>
-      <div class="col-xs-2"></div>
-    </div>
-    <div>
-      <ul>
-        <li style="position:relative">
-          <input type="text" class="form-control form-control_add" placeholder="手机号" name='username' id="username" onblur="">
-        </li>
-        <li>
-          <div class="input-group form-control_add">
-            <input type="text" class="form-control form-control_add" placeholder="请输入短信验证码" name="code">
-            <span class="input-group-btn input-group-btn_add">
-              <button class="btn getCode" type="button" id="btn" value="获取短信验证码" name="getcode" onclick="">
-								获取验证码
-							</button>
-            </span>
-          </div>
-        </li>
-        <li style="position:relative">
-          <input type="text" value="15811088017" readonly="" class="form-control" style="height:50px;" placeholder="邀请者手机号,若无请留空" name="parentname" id="parentname">
-          <span class="advice_teladd" id="parentname_span">
-						*邀请者手机号
-					</span>
-        </li>
-        <li style="position:relative">
-          <input type="password" class="form-control form-control_add" placeholder="密码" name="password" onblur="">
-        </li>
-        <li style="line-height:30px;">
-          <input type="checkbox" value="1" name="agreement" checked="checked"> 我同意服务协议
-        </li>
-        <li>
-          <button type="submit" class="btn btn-danger loginBtn">
-						注册
-					</button>
-        </li>
-        <li class="login_bottom row">
-          <span class="col-xs-8 account_add">
-						我有账号,去
-						<a @click="state('login')" class="login_add">
-							登录
-						</a>
-					</span>
-          <a class="col-xs-4 pass_backadd" @click="state('passwordBack')">
-						找回密码
-					</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="passwordBack" v-else>
-    <div class="row yzg-title">
-      <div class="col-xs-2 backBtn">
-        <a href="javascript:history.back(-1)">
-          <i class="iconfont-yzg icon-yzg-back" style=""></i>
-        </a>
-      </div>
-      <div class="col-xs-8 loginTitle">密码找回</div>
-      <div class="col-xs-2">
-      </div>
-    </div>
-    <div>
-      <ul>
-        <li style="position:relative">
-          <input type="text" class="form-control form-control_add" placeholder="手机号" name='username' id="username" onblur="">
-        </li>
-        <li>
-          <div class="input-group form-control_add">
-            <input type="text" class="form-control form-control_add" placeholder="请输入短信验证码" name="code">
-            <span class="input-group-btn input-group-btn_add">
-              <button class="btn getCode" type="button" id="btn" value="获取短信验证码" name="getcode" onclick="">
-								获取验证码
-							</button>
-            </span>
-          </div>
-        </li>
-        <li>
-          <button type="submit" class="btn btn-danger loginBtn">提交</button>
-        </li>
-        <li class="login_bottom row">
-          <span class="col-xs-8 account_add">
-						我没有账号,去
-						<a @click="state('register')">
-							注册
-						</a>
-					</span>
-          <a class="col-xs-4 pass_backadd" @click="state('login')">
-						去登录
-					</a>
-        </li>
-      </ul>
-    </div>
-  </div> -->
 </div>
 </template>
 
@@ -161,6 +60,7 @@
 import $ from 'zepto'
 import qs from 'qs'
 import weui from 'weui.js'
+import * as config from './../../config'
 
 export default {
   data() {
@@ -168,13 +68,52 @@ export default {
       loginState: 'login',
       userPhone: window.localStorage.getItem('localPhone') ? window.localStorage.getItem('localPhone') : '',
       userPwd: null,
+      oauthCode: null,
       submit: false
     }
   },
   activated() {
-    this.userPwd = null
+    this.userPwd = this.oauthCode = null
     // 不显示底部的菜单栏
     this.$store.commit('CHANGE_IS_INDEX', false)
+    // 微信静默授权去获取到code提交至后台获取对应的openid
+    if (!this.$parent.is_weixn()) {
+      this.oauthCode = '123'
+    } else {
+      if (this.$route.query.code) {
+        /*
+         * 1.微信鉴权后获取code去登录
+         */
+        this.oauthCode = this.$route.query.code
+      } else if (window.localStorage.getItem('zlUser')) {
+        /*
+         * 2.已登录
+         */
+        this.$router.replace({path: '/userCenter'})
+      } else {
+        /*
+         * 3. 未登录->微信鉴权 051G0HDC1guKk00QzKDC1xlHDC1G0HDR
+         */
+        let appid = config.appId
+        let redirect_uri = encodeURIComponent(window.location.href)
+        // 应用授权作用域
+        //   1:snsapi_base(不弹出授权页面,直接跳转,只能获取用户openid)
+        //   2:snsapi_userinfo(弹出授权页面,可通过openid拿到昵称、性别、所在地。
+        //    并且,即使在未关注的情况下,只要用户授权，也能获取其信息）
+        let scopeType = 'snsapi_base'
+        // 重定向后会带上state参数
+        let innerParam = 'state'
+        // 组装鉴权URL
+        let oauthUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?' +
+        'appid=' + appid +
+        '&redirect_uri=' + redirect_uri +
+        '&response_type=code' +
+        '&scope=' + scopeType +
+        '&state=' + innerParam +
+        '#wechat_redirect'
+        window.location.href = oauthUrl
+      }
+    }
   },
   methods: {
     state(stateObj) {
@@ -195,7 +134,7 @@ export default {
       let loginParam = {
         'uphone': this.userPhone,
         'upass': this.userPwd,
-        'code': '123'
+        'code': this.oauthCode
       }
       this.$http.post('user/login', qs.stringify(loginParam))
       .then(function({data: {data, code, msg}}) {

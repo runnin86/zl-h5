@@ -37,9 +37,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component(resolve) {
-        require(['@/views/welcome'], resolve)
-      }
+      redirect: '/category'
     }, {
       path: '/oauth',
       component(resolve) {

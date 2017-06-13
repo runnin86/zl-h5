@@ -164,6 +164,7 @@ export default {
         } else {
           $.toast(msg, 'forbidden')
           if (msg === 'token失效') {
+            window.localStorage.removeItem('zlUser')
             // 进入登录页面
             this.$router.push('login')
           }

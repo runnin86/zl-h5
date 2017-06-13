@@ -116,7 +116,7 @@ export default {
     },
     jssdkConfig() {
       // 去后台获取签名等信息
-      this.$http.get('weChat/wxConfig', {
+      this.$http.get('weChat/wxJssdkConfig', {
         params: {
           appid: config.appId,
           appsecret: config.appSecret,
