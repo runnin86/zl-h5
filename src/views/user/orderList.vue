@@ -56,7 +56,7 @@
     						<img :src="img_domain + order.img">
     					</td>
     					<td class="orderCode">
-                <router-link :to="{path:'/shopOrdDet', query:{orderId: order.order_id}}">
+                <router-link :to="{path:'/shopOrdDet', query:{orderId: order.orderNo}}">
       						<p>
                     <span>订单编号：</span>{{order.orderNo}}
                   </p>
