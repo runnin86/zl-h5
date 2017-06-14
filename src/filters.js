@@ -2,6 +2,7 @@
 let format = (value) => {
   return value >= 10 ? value : '0' + value
 }
+
 /**
  * 时间格式化
  */
@@ -32,6 +33,31 @@ export let dateFilter = (time, type) => {
       break
   }
   return result
+}
+
+/**
+ * 订单状态转换
+ */
+export let orderStatusFilter = (val) => {
+  let name = ''
+  switch (val) {
+    case 0:
+      name = '待付款'
+      break
+    case 1:
+      name = '待发货'
+      break
+    case 2:
+      name = '待收货'
+      break
+    case 3:
+      name = '已完成'
+      break
+    case 4:
+      name = '已取消'
+      break
+  }
+  return name
 }
 
 /**

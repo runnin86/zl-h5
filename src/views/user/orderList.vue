@@ -10,7 +10,7 @@
         <span>购物订单列表</span>
       </div>
       <div class="col-xs-2 shop-bag">
-        <router-link :to="{ name: 'Index',path: '/index' }">
+        <router-link :to="{path: '/category'}">
           <span class="iconfont-yzg icon-yzg-goods"></span>
         </router-link>
       </div>
@@ -19,24 +19,24 @@
 		<div class="weui_tab orderTitle row"  id="orderTab"
 		  style="height:44px;top:4px;z-index:0;">
 				<div class="weui_navbar" style="height:44px; border-top:1px solid #ddd; background:#f4f4f4">
-						<div class="weui_navbar_item" @click="orderType('order_all')"
-						  :class="orderAct === 'order_all' ? 'tab-green' : ''">
+						<div class="weui_navbar_item" @click="orderType(-1)"
+						  :class="orderAct === -1 ? 'tab-green' : ''">
 								全部订单
 						</div>
-						<div class="weui_navbar_item" @click="orderType('order_unpay')"
-						  :class="orderAct === 'order_unpay' ? 'tab-green' : ''">
+						<div class="weui_navbar_item" @click="orderType(0)"
+						  :class="orderAct === 0 ? 'tab-green' : ''">
 								待付款
 						</div>
-						<div class="weui_navbar_item" @click="orderType('order_payed')"
-						  :class="orderAct === 'order_payed' ? 'tab-green' : ''">
+						<div class="weui_navbar_item" @click="orderType(1)"
+						  :class="orderAct === 1 ? 'tab-green' : ''">
 								待发货
 						</div>
-						<div class="weui_navbar_item" @click="orderType('order_done')"
-						  :class="orderAct === 'order_done' ? 'tab-green' : ''">
+						<div class="weui_navbar_item" @click="orderType(2)"
+						  :class="orderAct === 2 ? 'tab-green' : ''">
 								待收货
 						</div>
-						<div class="weui_navbar_item" @click="orderType('order_cancel')"
-						  :class="orderAct === 'order_cancel' ? 'tab-green' : ''">
+						<div class="weui_navbar_item" @click="orderType(4)"
+						  :class="orderAct === 4 ? 'tab-green' : ''">
 								已取消
 						</div>
 				</div>
@@ -49,22 +49,22 @@
     		<li v-for="order in orderList">
     			<table>
     				<tr>
-    					<td colspan="3" class="stateTitle">订单状态：{{order.order_status}}</td>
+    					<td colspan="3" class="stateTitle">订单状态：{{order.orderStatus | orderStatusFilter}}</td>
     				</tr>
     				<tr>
     					<td style="width:80px">
-    						<img :src="order.master_img">
+    						<img :src="img_domain + order.img">
     					</td>
     					<td class="orderCode">
                 <router-link :to="{path:'/shopOrdDet', query:{orderId: order.order_id}}">
       						<p>
-                    <span>订单编号：</span>{{order.order_sn}}
+                    <span>订单编号：</span>{{order.orderNo}}
                   </p>
       						<p>
-                    <span>订单金额：</span>{{order.total_fee}}
+                    <span>订单金额：</span>{{order.price}}
                   </p>
       						<p>
-                    <span>订单日期：</span>{{order.order_time}}
+                    <span>订单日期：</span>{{order.orderDate / 1000 | dateFilter(4)}}
                   </p>
                 </router-link>
     					</td>
@@ -87,15 +87,14 @@
 </template>
 
 <script>
-import weui from 'weui.js'
-import qs from 'qs'
-// import $ from 'zepto'
+import $ from 'zepto'
 
 export default {
   data () {
     return {
+      img_domain: 'http://img.zulibuy.com/images/',
       orderList: [],
-      orderAct: 'order_all',  // 购物订单类型 默认为全部订单
+      orderAct: -1,  // 购物订单类型 默认为全部订单
       pagenum: 0,
       showLoading: false,
       busy: true
@@ -132,26 +131,28 @@ export default {
         // 分页条码为负均不加载
         return
       }
-      // 请求参数列表
-      let orderParam = {
-        act: 'order_list',
-        page: this.pagenum,
-        order_action: this.orderAct
-      }
-      this.$http.post('user.php', qs.stringify(orderParam))
-      .then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
-          // this.orderList = data.orders //不能赋值
-          if (data.orders.length === 0 || data.pager.page_count < this.pagenum) {
+      this.$http.get('order/orderList', {
+        params: {
+          pageNum: this.pagenum,
+          pageSize: 10,
+          orderStatus: this.orderAct
+        },
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(({data: {code, data, msg}}) => {
+        if (code === 1) {
+          // console.log(data)
+          if (data.length === 0) {
             // 返回数据长度为0时,设置页码为-1
             this.pagenum = -1
             return
           }
-          for (let m of data.orders) {
+          for (let m of data) {
             this.orderList.push(m)
           }
         } else {
-          weui.toast(msg, 2000)
+          $.toast(msg, 'forbidden')
         }
         this.busy = this.showLoading = false
       }, (response) => {

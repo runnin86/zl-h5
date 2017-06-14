@@ -536,7 +536,7 @@ export default {
                 // zhis.$router.push({path: '/userCenter/setStore'})
                 $.toast('支付成功')
                 setTimeout(() => {
-                  zhis.$router.push({name: 'OrderList', params: {orderAct: 'order_payed'}})
+                  zhis.$router.push({name: 'OrderList', params: {orderAct: 1}})
                 }, 2000)
               } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
                 // 取消

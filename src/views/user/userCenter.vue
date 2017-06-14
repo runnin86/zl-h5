@@ -47,7 +47,7 @@
     </div>
     <div class="row ucenter_buyer">
       <div class="my-order_lists">
-        <router-link :to="{name: 'OrderList', params: {orderAct: 'order_all'}}">
+        <router-link :to="{name: 'OrderList', params: {orderAct: -1}}">
           <div class="all_list">
             <div class="my_order">
               <span>我的订单</span>
@@ -60,19 +60,19 @@
         </router-link>
         <div class="list_status">
           <ul>
-            <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 'order_unpay'}}">
+            <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 0}}">
               <i class="iconfont-yzg icon-yzg-daifukuan"></i>
               <span>待付款</span>
             </router-link>
-            <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 'order_payed'}}">
+            <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 1}}">
               <i class="iconfont-yzg icon-yzg-plane"></i>
               <span>待发货</span>
             </router-link>
-            <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 'order_done'}}">
+            <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 2}}">
               <i class="iconfont-yzg icon-yzg-icon83"></i>
               <span>待收货</span>
             </router-link>
-            <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 'order_cancel'}}">
+            <router-link tag="li" :to="{name: 'OrderList', params: {orderAct: 4}}">
               <i class="iconfont-yzg icon-yzg-tuikuan"></i>
               <span>退款/售后</span>
             </router-link>

@@ -145,6 +145,7 @@ router.afterEach((route) => {
 })
 
 // Filters
+Vue.filter('orderStatusFilter', filters.orderStatusFilter)
 Vue.filter('dateFilter', filters.dateFilter)
 Vue.filter('split', filters.splitFilter)
 Vue.filter('getArray', filters.getArray)
