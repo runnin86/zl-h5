@@ -2,27 +2,13 @@
   <div>
   <!-- 头部导航栏 -->
     <div class="row index-title">
-      <!-- <div class="col-xs-2">
-        <div class="user-img" v-if="storeinfo">
-          <img :src="imgBase64" :style="{backgroundImage: 'url(' + (storeinfo.avatar ? storeinfo.avatar : 'static/images/store/user_pa.jpg') + ')'}">
-        </div>
-      </div>
-      <div class="col-xs-8 shop-name">
-        <span v-if="storeinfo">{{store_detail.store_name}}</span>
-        <span v-else>南华汇商城</span>
-      </div>
-      <div class="col-xs-2">
-        <router-link to="/searchGoods" class="search-icon">
-          <span class="iconfont-yzg icon-yzg-sousuo-sousuo"></span>
-        </router-link>
-      </div> -->
       <div class="shop-name" v-if="storeinfo">
         <div class="user-img">
           <img :src="imgBase64" :style="{backgroundImage: 'url(' + (storeinfo.avatar ? storeinfo.avatar : 'static/images/store/user_pa.jpg') + ')'}">
         </div>
         <span class="nhh-store_name">{{store_detail.store_name}}</span>
       </div>
-      <div class="unshop-name" v-else>南华汇商城</div>
+      <div class="unshop-name" v-else>足力购商城</div>
       <div class="shop-detail clearfix" v-if="storeinfo">
         <!-- <div class="user-img">
           <img :src="imgBase64" :style="{backgroundImage: 'url(' + (storeinfo.avatar ? storeinfo.avatar : 'static/images/store/user_pa.jpg') + ')'}">
@@ -369,9 +355,9 @@ export default {
   mounted () {
     // 模板编译之后，代替了之前的ready*
     // 微信分享初始化->(title, desc, imgUrl, link)
-    let desc = '【南华汇】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【南华汇】逛逛，你就out了！'
+    let desc = '【足力购】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【足力购】逛逛，你就out了！'
     this.$parent.initWechatShare(
-      '南华汇商城首页',
+      '足力购商城首页',
       desc,
       'imgUrl',
       window.location.href)

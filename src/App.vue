@@ -202,11 +202,11 @@ export default {
         this.scrollTop = $('.container').scrollTop()
       }
       // 默认全局分享
-      let desc = '【南华汇】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【南华汇】逛逛，你就out了！'
+      let desc = '【足力购】帅哥美女们，快来足力购逛逛，捧个场吧！'
       this.initWechatShare(
-        '南华汇商城欢迎你的加入',
+        '足力购商城',
         desc,
-        'imgUrl',
+        window.location.origin + '/static/images/logo-new1.jpeg',
         window.location.href)
     }
   }

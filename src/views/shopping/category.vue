@@ -128,13 +128,6 @@ export default {
       if (this.$parent.fromPath !== '/shopping/goods' || this.goods_list.length === 0) {
         // 非详情页或数据为空要加载数据
         this.queryList()
-        // 微信分享初始化->(title, desc, imgUrl, link)
-        let desc = '【南华汇】帅哥美女们，我当老板啦！快来我的小店逛逛，捧个场吧！不知道我当老板了？再不来【南华汇】逛逛，你就out了！'
-        this.$parent.initWechatShare(
-          '分类列表页',
-          desc,
-          'imgUrl',
-          window.location.href)
       }
     })
   },

@@ -151,15 +151,15 @@ export default {
         pid: this.pid
       })).then(({data: {data, code, msg}}) => {
         if (code === 1) {
-          // console.log(data)
+          console.log(data)
           this.main = data.main
           this.photo = data.photo
           // 微信分享初始化->(title, desc, imgUrl, link)
-          let desc = '分享内容描述写在这里'
+          let desc = '【足力购】帅哥美女们，快来足力购逛逛，捧个场吧！'
           this.$parent.initWechatShare(
-            '分享标题123',
+            data.main.productName + '-足力购商城',
             desc,
-            this.img_domain + data.photo[0],
+            this.img_domain + data.photo[0].resource,
             window.location.href)
         } else {
           $.toast(msg, 'forbidden')
