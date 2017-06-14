@@ -115,18 +115,14 @@
     <div class="goodsDetail">
       <p class="title_p">商品详情</p>
       <table>
-        <tr v-for="good in goodsDetail.cart_goods_list">
+        <tr v-for="good in cartList">
           <td class="imgDetails">
-            <a href="#">
-              <img :src="goodsDetail.img_path + good.goods_thumb" />
-            </a>
+            <img :src="img_domain + good.img" />
           </td>
           <td class="subDetails">
-            <a href="">
-              <p>{{good.goods_name}}</p>
-              <p class="goodsQuantity">数量：{{good.goods_number}}</p>
-              <p class="redColor">{{good.goods_price}}</p>
-            </a>
+            <p>{{good.pName}}</p>
+            <p class="goodsQuantity">数量：{{good.num}}</p>
+            <p class="redColor">{{good.price}}</p>
           </td>
         </tr>
       </table>
@@ -138,7 +134,7 @@
       <p class="title_p">订单结算</p>
       <table>
         <tr>
-          <td>商品总价：<span>￥{{goodsDetail.your_offset_total}}</span></td>
+          <td>商品总价：<span>￥{{totalMoney}}</span></td>
         </tr>
         <tr v-if = "goodsDetail.offset > 0">
           <td>可用抵用金：<span>￥{{goodsDetail.offset}}</span></td>
@@ -146,20 +142,18 @@
         <!-- <tr v-for = "shipping in goodsDetail.total.supplier_info">
           <td>运费：￥{{shipping.shipping_fee}}</td>
         </tr> -->
-        <tr v-if = "goodsDetail.total.shipping_fee > 0">
+        <tr v-if = "goodsDetail.shipping_fee > 0">
           <td>运费：<span>￥{{goodsDetail.total.shipping_fee}}</span></td>
         </tr>
         <tr>
-          <td>应付款金额：<span>￥{{goodsDetail.order_price}}</span></td>
+          <td>应付款金额：<span>￥{{totalMoney}}</span></td>
         </tr>
         <!-- <tr>
           <td class="redColor" style="text-align:right;">满99元包邮</td>
         </tr> -->
       </table>
     </div>
-    <!-- <span class="show" @click="showCityPicker('addressStr')">show address</span> -->
-    <!-- <citys-picker :city="data" :init-value="defaultVal" @confirm="confirmCP" ref="address"></citys-picker> -->
-    <!-- <p style="text-align: center;" @click="showCityPicker('addressStr')">{{addressStr}}</p> -->
+
     <div class="placeOrder">
         <input type="button" value="提交订单" class="btn btn-danger loginBtn" @click="submitting()"/>
     </div>
@@ -222,14 +216,20 @@
 import $ from 'zepto'
 import weui from 'weui.js'
 import qs from 'qs'
+
 export default {
   activated() {
-    this.loadOrder()
+    this.cartList = []
+    this.totalMoney = 0
+    this.loadCart()
     this.$store.commit('CHANGE_IS_INDEX', false)
   },
   data() {
     return {
-      oneBuyType: this.$route.query.one_step_buy,  // 购买类型
+      cartList: [],
+      totalMoney: 0,
+      img_domain: 'http://img.zulibuy.com/images/',
+      oneBuyType: this.$route.query.step,  // 购买类型
       orderSuccess: 'fill', // 填写订单成功是否显示
       titleName: '',  // title显示标题
       checkState: '0', // 地址选择状态  按照索引显示
@@ -278,35 +278,32 @@ export default {
       return str.replace(/(^\s*)|(\s*$)/g, '')
     },
     /*
-     * 查询订单信息
+     * 查询购物车信息
      */
-    loadOrder() {
-      let checkParam = {
-        one_step_buy: this.oneBuyType,
-        buy_type: 0
-      }
-      this.$http.post('/flow.php?step=checkout', qs.stringify(checkParam))
-      .then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
-          this.goodsDetail = data
-          this.titleName = data.title_name
-          this.orderSuccess = 'fill'   // 默认显示填写订单
-          this.editState = false
-          this.dataItems = data.consignee_list
-          this.addEach('defaultAdd')  // 读取默认地址并赋值
-          this.addEach('deleteNull')  // 删除id号为空的地址 ==暂时用
-          this.addEach('saveOriginal')  // 保存初始状态地址
-          if (this.dataItems.length === 0) {  // 如果地址为空 则显示新加地址
-            this.checkState = 'add'
-            this.editState = true
-          }
-        } else {
-          this.orderSuccess = 'errormsg'
-          this.errorMsg = msg
-          this.titleName = '错误提示'
+    loadCart() {
+      // 设置总金额和总数目为0
+      this.totalMoney = this.selectCounts = 0
+      this.$http.get('cart/cartList', {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
         }
-      }, (response) => {
-        console.log(response)
+      }).then(({data: {code, data, msg}}) => {
+        // console.log(data)
+        if (code === 1) {
+          // 计算总价和数量
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].isCheck === 1) {
+              this.cartList.push(data[i])
+              this.totalMoney += parseFloat(data[i].num) * parseFloat(data[i].price)
+            }
+          }
+          console.log(this.cartList)
+        } else {
+          $.toast(msg, 'forbidden')
+          console.warn('获取购物车失败:' + msg)
+        }
+      }).catch((e) => {
+        console.error('获取购物车失败:' + e)
       })
     },
     // 查找默认地址并返回索引
@@ -402,7 +399,7 @@ export default {
           pcd: dataState.province_name + '-' + dataState.city_name + '-' + dataState.district_name,
           shipping: 4,
           is_pc: 1,
-          one_step_buy: this.oneBuyType
+          step: this.oneBuyType
         }
         this.$http.post('flow.php?step=change_address', qs.stringify(changeAdd))
         .then(function({data: {data, errcode, msg}}) {
@@ -463,43 +460,24 @@ export default {
     * 提交订单
     */
     submitting () {
-      this.addEach('requestAdd')
-      let _this = this
-      let hidAddress = this.dataItems[this.checkState]
-      let orderParam = {
-        liulanqi: 'iphone',
-        send_type: 0,
-        pcd_current_address_id: '',
-        one_step_buy: this.oneBuyType,
-        buy_type: 0,
-        consignee_hid: hidAddress.consignee,
-        address_hid: hidAddress.address,
-        mobile_hid: hidAddress.mobile,
-        // pcd: hidAddress.region,
-        pcd: hidAddress.province_name + '-' + hidAddress.city_name + '-' + hidAddress.district_name,
-        country_hid: hidAddress.country_name,
-        province_hid: hidAddress.province_name,
-        city_hid: hidAddress.city_name,
-        district_hid: hidAddress.district_name,
-        zipcode_hid: '',
-        payment: '',
-        enterprise_discount: '',
-        shipping: '4',
-        shipping_address: hidAddress.address_id,
-        offset: this.goodsDetail.offset
-      }
-      let totalParam = $.extend(orderParam, this.requestAddress, this.originalAddress)  // 合并参数列表
-      this.$http.post('flow.php?step=done', qs.stringify(totalParam))
-      .then(function({data: {data, errcode, msg}}) {
-        if (errcode === 0) {
-          _this.orderSuccess = 'submitSuc'  // 显示提交订单成功页面
-          _this.orderInfor = data    // 获取订单信息
-          _this.titleName = data.title_name  //  更改title
+      this.$http.post('order/createOrder', {}, {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(function({data: {data, code, msg}}) {
+        if (code === 1) {
+          // console.log(data)
+          this.$router.push({
+            path: 'orderfill',
+            query: {
+              step: 0
+            }
+          })
         } else {
           $.toast(msg, 'forbidden')
+          console.error('结算商品失败:' + msg)
         }
-      })
-      .catch(function(error) {
+      }).catch(function(error) {
         console.log('catch' + error)
       })
     },

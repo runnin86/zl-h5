@@ -132,7 +132,7 @@ export default {
     this.cartList = []
     // 去获取购物车数据
     this.getCarts()
-    // this.$store.commit('CHANGE_IS_INDEX', false)
+    this.$store.commit('CHANGE_IS_INDEX', true)
   },
   /*
    * 页面取消激活
@@ -302,27 +302,11 @@ export default {
         $.toast('没有选中商品', 'forbidden')
         return
       }
-      this.$http.post('order/createOrder', {}, {
-        headers: {
-          'x-token': window.localStorage.getItem('zlToken')
+      this.$router.push({
+        path: 'orderfill',
+        query: {
+          step: 'checkout'
         }
-      })
-      .then(({data: {data, code, msg}}) => {
-        if (code === 1) {
-          // console.log(data)
-          this.$router.push({
-            path: 'orderfill',
-            query: {
-              one_step_buy: 0
-            }
-          })
-        } else {
-          $.toast(msg, 'forbidden')
-          console.error('结算商品失败:' + msg)
-        }
-      }, (response) => {
-        // error callback
-        console.log(response)
       })
     }
   },
@@ -395,7 +379,7 @@ export default {
 }
 
 .cart-contain {
-  margin-top: 44px;
+  /*margin-top: 44px;*/
   background: #eee
 }
 
