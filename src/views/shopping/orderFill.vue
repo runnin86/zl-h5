@@ -6,9 +6,12 @@
 				<i class="iconfont-yzg icon-yzg-back"></i>
 			</a>
     </div>
-    <div class="col-xs-8 loginTitle">{{titleName}}</div>
+    <div class="col-xs-8 shop-name">
+      <span>{{oneBuyType==='checkout'?'填写订单':'确认订单'}}</span>
+    </div>
     <div class="col-xs-2"></div>
   </div>
+
   <div class="row mainContent" v-if="orderSuccess === 'fill'">
     <div class="receiverInfor">
       <p class="title_p">收货人信息</p>
@@ -41,7 +44,7 @@
           </td>
         </tr>
       </table>
-      <div class="addressDetails" v-if="isEditAddress">
+      <div class="addressDetails" v-if="isEditAddress||addressList.length===0">
         <h6>请选择您的收货地址</h6>
         <div v-for="(item,itemIndex) in addressList">
           <div class="radio">
@@ -83,9 +86,9 @@
             </tr>
           </table>
         </div>
-        <div class="radio" v-if="xinzeng">
+        <div class="radio" v-if="addAddress">
           <label>
-  					 <input type="radio" id="newAdd" @click="newadd">新增收货地址
+  					 <input type="radio" @click="addNewAddress">新增收货地址
   				</label>
         </div>
         <table class="addFillIn" v-if="checkState=='add'">
@@ -141,14 +144,14 @@
         <tr>
           <td>商品总价：<span>￥{{totalMoney}}</span></td>
         </tr>
-        <tr v-if = "goodsDetail.offset > 0">
-          <td>可用抵用金：<span>￥{{goodsDetail.offset}}</span></td>
+        <tr v-if = "addressList.offset > 0">
+          <td>可用抵用金：<span>￥{{addressList.offset}}</span></td>
         </tr>
-        <!-- <tr v-for = "shipping in goodsDetail.total.supplier_info">
+        <!-- <tr v-for = "shipping in supplier_info">
           <td>运费：￥{{shipping.shipping_fee}}</td>
         </tr> -->
-        <tr v-if = "goodsDetail.shipping_fee > 0">
-          <td>运费：<span>￥{{goodsDetail.total.shipping_fee}}</span></td>
+        <tr v-if = "addressList.shipping_fee > 0">
+          <td>运费：<span>￥{{addressList.shipping_fee}}</span></td>
         </tr>
         <tr>
           <td>应付款金额：<span>￥{{totalMoney}}</span></td>
@@ -175,8 +178,8 @@
                 </li>
             </ul>
         </div>
-        <div class="orderInfor">
-            <table v-for = "item in orderInfor.order_all">
+        <div class="orderInfo">
+            <table v-for = "item in orderInfo.order_all">
                 <tr>
                     <td>订单号：{{item.order.order_sn}}</td>
                 </tr>
@@ -198,21 +201,12 @@
                 </tr>
             </table>
         </div>
-        <div class="orderInfor totalMoney">
-            <p>总金额：<span>{{orderInfor.summoney}}</span></p>
+        <div class="orderInfo totalMoney">
+            <p>总金额：<span>{{orderInfo.summoney}}</span></p>
         </div>
         <div class="placeOrder">
           <a @click="payNow" class="weui-btn weui-btn_primary">微信支付</a>
         </div>
-    </div>
-    <div v-if = "orderSuccess === 'errormsg'" class="errWarning">
-      <div>
-          <i class="iconfont-yzg icon-yzg-information"></i>
-          <p>{{errorMsg}}</p>
-        <!-- <router-link :to = "{ path: 'category'}"> -->
-          <a href="/category">随便逛逛</a>
-        <!-- </router-link> -->
-      </div>
     </div>
 </div>
 </template>
@@ -236,29 +230,17 @@ export default {
       totalMoney: 0,
       addressList: [],
       img_domain: 'http://img.zulibuy.com/images/',
-      oneBuyType: this.$route.query.step,  // 购买类型
-      orderSuccess: 'fill', // 填写订单成功是否显示
-      titleName: '',  // title显示标题
-      checkState: '0', // 地址选择状态  按照索引显示
-      isEditAddress: false, // 是否编辑
-      xinzeng: true, // 是否显示新增按钮  当已经有新增时隐藏，默认只能添加一个新增地址
-      nowCheck: [], // 当前选择收货信息
-      goodsTotal: '0', // 商品总价
       newAddName: '', // 新增收货人信息
       newAddProvince: '中国-河北省-保定市-涞源县',
-      errorMsg: '',  // 如果购物车没有商品 则显示错误信息
       newAddDetail: '',
       newAddTel: '',
-      originalAddress: {}, // 保存初始地址 供提交订单时改变地址所用
-      goodsDetail: {
-        total: [{
-          amount_formated: '',
-          supplier_info: []
-        }]
-      },  // 购买商品种类列表
-      requestAddress: {}, // 提交订单请求地址参数
+      oneBuyType: this.$route.query.step,  // 购买类型
+      orderSuccess: 'fill', // 填写订单成功是否显示
+      checkState: '0', // 地址选择状态  按照索引显示
+      isEditAddress: false, // 是否编辑
+      addAddress: true, // 是否显示新增按钮  当已经有新增时隐藏，默认只能添加一个新增地址
       // 提交订单成功页面
-      orderInfor: null,
+      orderInfo: null,
       location: {
         id: '130000 130600 130630',
         name: '河北省 保定市 涞源县'
@@ -273,10 +255,6 @@ export default {
       } else {
         this.addressList[this.checkState].region = '中国' + '-' + name[0] + '-' + name[1] + '-' + name[2]
       }
-    },
-    // 去除字符串空格
-    removeSpace(str) {
-      return str.replace(/(^\s*)|(\s*$)/g, '')
     },
     /*
      * 查询购物车信息
@@ -325,38 +303,8 @@ export default {
         console.log(response)
       })
     },
-    // 查找默认地址并返回索引
-    addEach(obj) {
-      let _this = this
-      this.addressList.forEach(function(item, index) {
-        if (obj === 'defaultAdd') {  // 查找默认地址索引
-          if (item.last_use === '1') {
-            _this.checkState = index
-            return
-          }
-        } else if (obj === 'deleteNull') { // 删除id为空的地址  暂时用///
-          if (item.id === undefined) {
-            _this.addressList.splice(index, 1)
-          }
-        } else if (obj === 'saveOriginal') { // 保存初始收货地址
-          _this.originalAddress['consignee_show_' + item.id] = _this.removeSpace(item.consignee)
-          _this.originalAddress['region_show_' + item.id] = _this.removeSpace(item.region)
-          _this.originalAddress['address_show_' + item.id] = _this.removeSpace(item.address)
-          _this.originalAddress['zipcode_show_' + item.id] = ''
-          _this.originalAddress['mobile_show_' + item.id] = _this.removeSpace(item.mobile)
-        } else {  // 返回发送请求地址列表
-          console.log(_this.removeSpace(item.consignee))
-          _this.requestAddress['consignee_' + item.id] = _this.removeSpace(item.consignee)
-          console.log('dao2222')
-          _this.requestAddress['pcd_' + item.id] = _this.removeSpace(item.region)
-          _this.requestAddress['address_' + item.id] = _this.removeSpace(item.address)
-          _this.requestAddress['zipcode_' + item.id] = ''
-          _this.requestAddress['mobile_' + item.id] = _this.removeSpace(item.mobile)
-        }
-      })
-    },
     // 添加新地址状态改变
-    newadd() {
+    addNewAddress() {
       this.checkState = 'add'
       this.location = {
         id: '130000 130600 130630',
@@ -377,71 +325,34 @@ export default {
     },
     // 保存并下一步
     saveNext() {
-      let validResult = ''
-      if (this.checkState === 'add') {
-        validResult = this.dataValid(this.newAddName, this.newAddProvince, this.newAddDetail, this.newAddTel)
-        if (validResult) {
-          var pro = this.newAddProvince.split('-')
-          this.addressList.push({
-            id: '0',
-            consignee: this.newAddName,
-            region: this.newAddProvince,
-            address: this.newAddDetail,
-            mobile: this.newAddTel,
-            country: 1,
-            // country_name: pro[0],
-            province_name: pro[1],
-            city_name: pro[2],
-            district_name: pro[3]
-          })
-          this.checkState = (this.addressList.length - 1)  // 默认选择地址为最后一个
-          this.xinzeng = false   // 当存在新增地址时隐藏新增按钮 默认只能显示一个
-        }
-      } else {
-        let currentAdd = this.addressList[this.checkState]
-        validResult = this.dataValid(currentAdd.consignee, currentAdd.region, currentAdd.address, currentAdd.mobile)
-        /*
-        如果验证通过则执行地址赋值，否则。。。
-        */
-        if (validResult) {
-          var existPro = this.addressList[this.checkState].region.split('-')  // 拆分地址并分别赋值省市区
-          var transObj = this.addressList[this.checkState]   // 寻找目标地址
-          // transObj.country_name = existPro[0]
-          transObj.province_name = this.removeSpace(existPro[1])  // 省市区去除多余空格 否则会地址报错
-          transObj.city_name = this.removeSpace(existPro[2])
-          transObj.district_name = this.removeSpace(existPro[3])
-        }
-      }
+      var _this = this
+      var validResult = ''
+      validResult = this.dataValid(this.newAddName, this.newAddProvince, this.newAddDetail, this.newAddTel)
       if (validResult) {
-        let dataState = this.addressList[this.checkState]
-        let changeAdd = {
-          country: 1,
-          province: dataState.province_name,
-          city: dataState.city_name,
-          district: dataState.district_name,
-          pcd: dataState.province_name + '-' + dataState.city_name + '-' + dataState.district_name,
-          shipping: 4,
-          is_pc: 1,
-          step: this.oneBuyType
+        let saveParam = {
+          pcd: this.newAddProvince,
+          address: this.newAddDetail,
+          consignee: this.newAddName,
+          mobile: this.newAddTel
         }
-        this.$http.post('flow.php?step=change_address', qs.stringify(changeAdd))
-        .then(function({data: {data, errcode, msg}}) {
-          if (errcode === 0) {
-            this.goodsDetail.total = data.total
-            this.goodsDetail.order_price = data.order_price
-            this.isEditAddress = false
-          } else {
-            $.toast(msg, 'forbidden')
+        this.$http.post('/user/addAddress', qs.stringify(saveParam), {
+          headers: {
+            'x-token': window.localStorage.getItem('zlToken')
           }
-        }.bind(this))
+        }).then(function({data: {data, code, msg}}) {
+          if (code === 1) {
+            _this.loadAddress()
+          } else {
+            $.toast(msg, 'cancel')
+          }
+        })
         .catch(function(error) {
-          console.log('catch' + error)
+          console.log(error)
         })
       }
     },
     /*
     *地址删除操作
-    *addressEach(objId) 通过id找到对应地址索引 删除
     */
     deleteAdd(objId) {
       weui.confirm('是否确认删除当前收货地址', () => {
@@ -466,16 +377,6 @@ export default {
         })
       }, () => {
         // 取消
-      })
-    },
-    // 查找删除id所对应索引
-    addressEach (indexObj) {
-      let _this = this
-      this.addressList.forEach(function(item, index) {
-        if (item.id === indexObj) {
-          _this.delIndex = index
-          return
-        }
       })
     },
     /*
@@ -509,9 +410,9 @@ export default {
     payNow () {
       let orderList = ''
       // 遍历订单 获取所有订单号
-      for (var i in this.orderInfor.order_all) { // 不使用过滤
-        console.log(i, ':', this.orderInfor.order_all[i])
-        orderList += this.orderInfor.order_all[i].order.order_id + ','
+      for (var i in this.orderInfo.order_all) { // 不使用过滤
+        console.log(i, ':', this.orderInfo.order_all[i])
+        orderList += this.orderInfo.order_all[i].order.order_id + ','
       }
       // 去掉拼接订单字符串的最后一个逗号
       let lastIndex = orderList.lastIndexOf(',')
@@ -570,9 +471,6 @@ export default {
       }
       return true
     }
-  },
-  created() { // 创建状态初始化
-    // this.confirm(this.defaultVal)
   }
 }
 </script>
