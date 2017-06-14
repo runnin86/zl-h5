@@ -172,45 +172,53 @@ export default {
       })
     },
     numberChange(opaeratType) { // 购买商品数量
-      if (opaeratType === 'add') {
-        if (this.main.numbers > 1) {
-          this.buyNum = this.buyNum - (-1)
-          this.main.numbers -= 1
-        } else {
-          weui.alert('库存不足，请选择其他商品')
-        }
+      if (this.main.productType === '1') {
+        weui.alert('新能源系列商品,请进店咨询!')
       } else {
-        if (this.buyNum > 1) {
-          this.buyNum -= 1
+        if (opaeratType === 'add') {
+          if (this.main.numbers > 1) {
+            this.buyNum = this.buyNum - (-1)
+            this.main.numbers -= 1
+          } else {
+            weui.alert('库存不足，请选择其他商品')
+          }
         } else {
-          weui.alert('购买最小数量为1')
+          if (this.buyNum > 1) {
+            this.buyNum -= 1
+          } else {
+            weui.alert('购买最小数量为1')
+          }
         }
       }
     },
     addCartFn(pid) {
-      let token = window.localStorage.getItem('zlToken')
-      if (token) {
-        this.$http.get('cart/addToCart', {
-          params: {
-            pid: pid,
-            num: this.buyNum
-          },
-          headers: {
-            'x-token': token
-          }
-        }).then(({data: {code, data, msg}}) => {
-          if (code === 1) {
-            this.moveCart()
-            // 获取购物车数量
-            this.$store.dispatch('getCartNum')
-          } else {
-            $.toast(msg, 'forbidden')
-          }
-        }).catch((e) => {
-          console.error('商品选中状态更改失败:' + e)
-        })
+      if (this.main.productType === '1') {
+        weui.alert('新能源系列商品,请进店咨询!')
       } else {
-        $.toast('您还没有登录', 'forbidden')
+        let token = window.localStorage.getItem('zlToken')
+        if (token) {
+          this.$http.get('cart/addToCart', {
+            params: {
+              pid: pid,
+              num: this.buyNum
+            },
+            headers: {
+              'x-token': token
+            }
+          }).then(({data: {code, data, msg}}) => {
+            if (code === 1) {
+              this.moveCart()
+              // 获取购物车数量
+              this.$store.dispatch('getCartNum')
+            } else {
+              $.toast(msg, 'forbidden')
+            }
+          }).catch((e) => {
+            console.error('商品选中状态更改失败:' + e)
+          })
+        } else {
+          $.toast('您还没有登录', 'forbidden')
+        }
       }
     },
     collect() {
