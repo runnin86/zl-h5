@@ -12,10 +12,12 @@
   <div class="row mainContent" v-if="orderSuccess === 'fill'">
     <div class="receiverInfor">
       <p class="title_p">收货人信息</p>
-      <table class="inforShow" v-if="!editState" data-value="checkState">
+      <table class="inforShow" v-if="!isEditAddress&&addressList[checkState]" data-value="checkState">
         <tr>
           <td class="td">
-            <span v-if="dataItems[checkState].consignee">{{dataItems[checkState].consignee}} &nbsp;&nbsp;&nbsp;{{dataItems[checkState].mobile}}</span>
+            <span>
+              {{addressList[checkState].consignee}} &nbsp;&nbsp;{{addressList[checkState].mobile}}
+            </span>
           </td>
           <td rowspan="5" class="lastTd">
             <a @click="editInfor" style="width:auto;">
@@ -25,28 +27,33 @@
         </tr>
         <tr>
           <td class="td">
-            <span id="region_show">{{dataItems[checkState].region}}</span>
+            <span id="region_show">
+              {{addressList[checkState].country}} -
+              {{addressList[checkState].province}} -
+              {{addressList[checkState].city}} -
+              {{addressList[checkState].district}}
+            </span>
           </td>
         </tr>
         <tr>
           <td class="td">
-            <span id="address_show">{{dataItems[checkState].address}}</span>
-            <input id="address" type="hidden" v-model="dataItems[checkState].address">
+            <span id="address_show">{{addressList[checkState].address}}</span>
           </td>
         </tr>
       </table>
-      <div class="addressDetails" v-if="editState">
+      <div class="addressDetails" v-if="isEditAddress">
         <h6>请选择您的收货地址</h6>
-        <div v-for=" (item,itemIndex) in dataItems">
+        <div v-for="(item,itemIndex) in addressList">
           <div class="radio">
-            <label v-if="item.address_id === '0'">
+            <label v-if="item.id === '0'">
               <input type="radio" :value="itemIndex" v-model="checkState">新增收货地址
             </label>
             <div v-else>
               <label>
-  					    <input type="radio" :value="itemIndex" v-model="checkState" @click="switchAdd(itemIndex)">{{item.consignee}}
+  					    <input type="radio" :value="itemIndex" v-model="checkState"
+                  @click="checkAddress(itemIndex)">{{item.consignee}}
     					</label>
-              <a @click="deleteAdd(item.address_id)">[删除当前地址]</a>
+              <a @click="deleteAdd(item.id)">[删除当前地址]</a>
             </div>
           </div>
           <table class="addFillIn" v-if="checkState == itemIndex">
@@ -59,7 +66,6 @@
             <tr>
               <td>*省 &nbsp;市  区：</td>
               <td>
-                 <!-- <p class="choiceProv" @click="showCityPicker(itemIndex)">{{dataItems[itemIndex].region}}</p> -->
                  <wv-city-picker title="" :location="location" @get-val="addressPick"></wv-city-picker>
               </td>
             </tr>
@@ -92,7 +98,6 @@
           <tr>
             <td>*省  市  区：</td>
             <td>
-              <!-- <p class="choiceProv" @click="showCityPicker('newAddProvince')">{{newAddProvince}}</p> -->
               <wv-city-picker title="居住地址" :location="location" @get-val="addressPick"></wv-city-picker>
             </td>
           </tr>
@@ -222,18 +227,20 @@ export default {
     this.cartList = []
     this.totalMoney = 0
     this.loadCart()
+    this.loadAddress()
     this.$store.commit('CHANGE_IS_INDEX', false)
   },
   data() {
     return {
       cartList: [],
       totalMoney: 0,
+      addressList: [],
       img_domain: 'http://img.zulibuy.com/images/',
       oneBuyType: this.$route.query.step,  // 购买类型
       orderSuccess: 'fill', // 填写订单成功是否显示
       titleName: '',  // title显示标题
       checkState: '0', // 地址选择状态  按照索引显示
-      editState: false, // 是否编辑
+      isEditAddress: false, // 是否编辑
       xinzeng: true, // 是否显示新增按钮  当已经有新增时隐藏，默认只能添加一个新增地址
       nowCheck: [], // 当前选择收货信息
       goodsTotal: '0', // 商品总价
@@ -242,12 +249,6 @@ export default {
       errorMsg: '',  // 如果购物车没有商品 则显示错误信息
       newAddDetail: '',
       newAddTel: '',
-      dataItems: [{
-        consignee: '',
-        region: '',
-        address: '',
-        mobile: ''
-      }],  // 地址列表
       originalAddress: {}, // 保存初始地址 供提交订单时改变地址所用
       goodsDetail: {
         total: [{
@@ -270,7 +271,7 @@ export default {
       if (this.checkState === 'add') {
         this.newAddProvince = '中国' + '-' + name[0] + '-' + name[1] + '-' + name[2]
       } else {
-        this.dataItems[this.checkState].region = '中国' + '-' + name[0] + '-' + name[1] + '-' + name[2]
+        this.addressList[this.checkState].region = '中国' + '-' + name[0] + '-' + name[1] + '-' + name[2]
       }
     },
     // 去除字符串空格
@@ -297,7 +298,6 @@ export default {
               this.totalMoney += parseFloat(data[i].num) * parseFloat(data[i].price)
             }
           }
-          console.log(this.cartList)
         } else {
           $.toast(msg, 'forbidden')
           console.warn('获取购物车失败:' + msg)
@@ -306,33 +306,52 @@ export default {
         console.error('获取购物车失败:' + e)
       })
     },
+    /*
+     * 查询用户地址信息
+     */
+    loadAddress() {
+      this.$http.get('/user/addressList', {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(({data: {data, code, msg}}) => {
+        console.log(data)
+        if (code === 1) {
+          this.addressList = data.addressList
+        } else {
+          $.toast(msg, 'forbidden')
+        }
+      }, (response) => {
+        console.log(response)
+      })
+    },
     // 查找默认地址并返回索引
     addEach(obj) {
       let _this = this
-      this.dataItems.forEach(function(item, index) {
+      this.addressList.forEach(function(item, index) {
         if (obj === 'defaultAdd') {  // 查找默认地址索引
           if (item.last_use === '1') {
             _this.checkState = index
             return
           }
         } else if (obj === 'deleteNull') { // 删除id为空的地址  暂时用///
-          if (item.address_id === undefined) {
-            _this.dataItems.splice(index, 1)
+          if (item.id === undefined) {
+            _this.addressList.splice(index, 1)
           }
         } else if (obj === 'saveOriginal') { // 保存初始收货地址
-          _this.originalAddress['consignee_show_' + item.address_id] = _this.removeSpace(item.consignee)
-          _this.originalAddress['region_show_' + item.address_id] = _this.removeSpace(item.region)
-          _this.originalAddress['address_show_' + item.address_id] = _this.removeSpace(item.address)
-          _this.originalAddress['zipcode_show_' + item.address_id] = ''
-          _this.originalAddress['mobile_show_' + item.address_id] = _this.removeSpace(item.mobile)
+          _this.originalAddress['consignee_show_' + item.id] = _this.removeSpace(item.consignee)
+          _this.originalAddress['region_show_' + item.id] = _this.removeSpace(item.region)
+          _this.originalAddress['address_show_' + item.id] = _this.removeSpace(item.address)
+          _this.originalAddress['zipcode_show_' + item.id] = ''
+          _this.originalAddress['mobile_show_' + item.id] = _this.removeSpace(item.mobile)
         } else {  // 返回发送请求地址列表
           console.log(_this.removeSpace(item.consignee))
-          _this.requestAddress['consignee_' + item.address_id] = _this.removeSpace(item.consignee)
+          _this.requestAddress['consignee_' + item.id] = _this.removeSpace(item.consignee)
           console.log('dao2222')
-          _this.requestAddress['pcd_' + item.address_id] = _this.removeSpace(item.region)
-          _this.requestAddress['address_' + item.address_id] = _this.removeSpace(item.address)
-          _this.requestAddress['zipcode_' + item.address_id] = ''
-          _this.requestAddress['mobile_' + item.address_id] = _this.removeSpace(item.mobile)
+          _this.requestAddress['pcd_' + item.id] = _this.removeSpace(item.region)
+          _this.requestAddress['address_' + item.id] = _this.removeSpace(item.address)
+          _this.requestAddress['zipcode_' + item.id] = ''
+          _this.requestAddress['mobile_' + item.id] = _this.removeSpace(item.mobile)
         }
       })
     },
@@ -340,17 +359,21 @@ export default {
     newadd() {
       this.checkState = 'add'
       this.location = {
-        id: '340000 340200 340208',
-        name: '安徽省 芜湖市 三山区'
+        id: '130000 130600 130630',
+        name: '河北省 保定市 涞源县'
       }
     },
     // 判断是否为编辑状态
     editInfor() {
-      this.editState = true
-      this.location.name = this.dataItems[this.checkState].region
+      this.isEditAddress = true
+      this.location.name = this.addressList[this.checkState].province + ' ' +
+        this.addressList[this.checkState].city + ' ' +
+        this.addressList[this.checkState].district
     },
-    switchAdd(indexObj) {
-      this.location.name = this.dataItems[indexObj].region
+    checkAddress(i) {
+      this.location.name = this.addressList[i].province + ' ' +
+        this.addressList[i].city + ' ' +
+        this.addressList[i].district
     },
     // 保存并下一步
     saveNext() {
@@ -359,8 +382,8 @@ export default {
         validResult = this.dataValid(this.newAddName, this.newAddProvince, this.newAddDetail, this.newAddTel)
         if (validResult) {
           var pro = this.newAddProvince.split('-')
-          this.dataItems.push({
-            address_id: '0',
+          this.addressList.push({
+            id: '0',
             consignee: this.newAddName,
             region: this.newAddProvince,
             address: this.newAddDetail,
@@ -371,18 +394,18 @@ export default {
             city_name: pro[2],
             district_name: pro[3]
           })
-          this.checkState = (this.dataItems.length - 1)  // 默认选择地址为最后一个
+          this.checkState = (this.addressList.length - 1)  // 默认选择地址为最后一个
           this.xinzeng = false   // 当存在新增地址时隐藏新增按钮 默认只能显示一个
         }
       } else {
-        let currentAdd = this.dataItems[this.checkState]
+        let currentAdd = this.addressList[this.checkState]
         validResult = this.dataValid(currentAdd.consignee, currentAdd.region, currentAdd.address, currentAdd.mobile)
         /*
         如果验证通过则执行地址赋值，否则。。。
         */
         if (validResult) {
-          var existPro = this.dataItems[this.checkState].region.split('-')  // 拆分地址并分别赋值省市区
-          var transObj = this.dataItems[this.checkState]   // 寻找目标地址
+          var existPro = this.addressList[this.checkState].region.split('-')  // 拆分地址并分别赋值省市区
+          var transObj = this.addressList[this.checkState]   // 寻找目标地址
           // transObj.country_name = existPro[0]
           transObj.province_name = this.removeSpace(existPro[1])  // 省市区去除多余空格 否则会地址报错
           transObj.city_name = this.removeSpace(existPro[2])
@@ -390,7 +413,7 @@ export default {
         }
       }
       if (validResult) {
-        let dataState = this.dataItems[this.checkState]
+        let dataState = this.addressList[this.checkState]
         let changeAdd = {
           country: 1,
           province: dataState.province_name,
@@ -406,7 +429,7 @@ export default {
           if (errcode === 0) {
             this.goodsDetail.total = data.total
             this.goodsDetail.order_price = data.order_price
-            this.editState = false
+            this.isEditAddress = false
           } else {
             $.toast(msg, 'forbidden')
           }
@@ -418,39 +441,38 @@ export default {
     },
     /*
     *地址删除操作
-    *addressEach(objId) 通过address_id找到对应地址索引 删除
+    *addressEach(objId) 通过id找到对应地址索引 删除
     */
     deleteAdd(objId) {
-      if (confirm('是否确认删除当前收货地址')) {
-        let _this = this
-        this.addressEach(objId)
-        // let delAdd = Object.assign(this.$parent.getBasicParam(), {
-        //   address_id: objId
-        // })
-        this.$http.get('/flow.php?step=del_address', {
+      weui.confirm('是否确认删除当前收货地址', () => {
+        // 确认
+        this.$http.delete('/user/delAddress', {
           params: {
-            address_id: objId
+            aid: objId
+          },
+          headers: {
+            'x-token': window.localStorage.getItem('zlToken')
           }
-        })
-        .then(function({data: {data, errcode, msg}}) {
-          if (errcode === 0) {
-            _this.dataItems.splice(_this.delIndex, 1)
-            weui.toast('删除成功', 2000)
+        }).then(({data: {data, code, msg}}) => {
+          if (code === 1) {
+            // 重新获取数据
+            this.loadAddress()
           } else {
-            weui.toast(errcode + msg)
+            $.toast(msg, 'forbidden')
           }
+        }).catch(function(error) {
+          $.toast(error, 'forbidden')
+          console.error('catch' + error)
         })
-        .catch(function(error) {
-          console.log('catch' + error)
-        })
-      }
-      console.log('删除之后' + this.dataItems)
+      }, () => {
+        // 取消
+      })
     },
     // 查找删除id所对应索引
     addressEach (indexObj) {
       let _this = this
-      this.dataItems.forEach(function(item, index) {
-        if (item.address_id === indexObj) {
+      this.addressList.forEach(function(item, index) {
+        if (item.id === indexObj) {
           _this.delIndex = index
           return
         }
