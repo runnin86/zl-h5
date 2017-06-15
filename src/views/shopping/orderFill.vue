@@ -15,11 +15,11 @@
   <div class="row mainContent" v-if="oneBuyType === 'checkout'">
     <div class="receiverInfor">
       <p class="title_p">收货人信息</p>
-      <table class="inforShow" v-if="!isEditAddress&&addressList[checkState]" data-value="checkState">
+      <table class="inforShow" v-if="!isEditAddress&&addressList[choiceIndex]">
         <tr>
           <td class="td">
             <span>
-              {{addressList[checkState].consignee}} &nbsp;&nbsp;{{addressList[checkState].mobile}}
+              {{addressList[choiceIndex].consignee}} &nbsp;&nbsp;{{addressList[choiceIndex].mobile}}
             </span>
           </td>
           <td rowspan="5" class="lastTd">
@@ -31,16 +31,16 @@
         <tr>
           <td class="td">
             <span id="region_show">
-              {{addressList[checkState].country}} -
-              {{addressList[checkState].province}} -
-              {{addressList[checkState].city}} -
-              {{addressList[checkState].district}}
+              {{addressList[choiceIndex].country}} -
+              {{addressList[choiceIndex].province}} -
+              {{addressList[choiceIndex].city}} -
+              {{addressList[choiceIndex].district}}
             </span>
           </td>
         </tr>
         <tr>
           <td class="td">
-            <span id="address_show">{{addressList[checkState].address}}</span>
+            <span id="address_show">{{addressList[choiceIndex].address}}</span>
           </td>
         </tr>
       </table>
@@ -50,13 +50,13 @@
           <div class="radio">
             <div>
               <label>
-  					    <input type="radio" :value="itemIndex" v-model="checkState"
+  					    <input type="radio" :value="itemIndex" v-model="choiceIndex"
                   @click="checkAddress(itemIndex)">{{item.consignee}}
     					</label>
               <a @click="deleteAdd(item.id)">[删除地址]</a>
             </div>
           </div>
-          <table class="addFillIn" v-if="checkState === itemIndex">
+          <table class="addFillIn" v-if="choiceIndex === itemIndex">
             <tr>
               <td>收 &nbsp;货 人：</td>
               <td>
@@ -89,7 +89,7 @@
   					 <input type="radio" @click="addNewAddress">新增收货地址
   				</label>
         </div>
-        <table class="addFillIn" v-if="checkState=='add'">
+        <table class="addFillIn" v-if="choiceIndex=='add'">
           <tr>
             <td>*收 &nbsp;货 人：</td>
             <td>
@@ -134,9 +134,19 @@
         </tr>
       </table>
     </div>
+
     <!-- <div class="fillNotice">
       <p>注：跨境商品无法使用发票</p>
     </div> -->
+
+    <div class="weui-cells">
+      <div class="weui-cell">
+        <div class="weui-cell__bd">
+          <input class="weui-input" type="text" v-model="remarks" placeholder="选填: 给卖家留言"/>
+        </div>
+      </div>
+    </div>
+
     <div class="orderAccount">
       <p class="title_p">订单结算</p>
       <table>
@@ -237,9 +247,10 @@ export default {
       newAddDetail: '',
       newAddTel: '',
       oneBuyType: this.$route.query.step, // 购买类型
-      checkState: 0, // 地址选择状态  按照索引显示
+      choiceIndex: 0, // 地址选择状态  按照索引显示
       isEditAddress: false, // 是否编辑
       addAddress: true, // 是否显示新增按钮  当已经有新增时隐藏，默认只能添加一个新增地址
+      remarks: '',
       // 提交订单成功页面
       orderInfo: null,
       location: {
@@ -293,7 +304,9 @@ export default {
         console.log(data)
         if (code === 1) {
           this.addressList = data.addressList
-          this.baiduMapFuc(data.addressList[0].city + data.addressList[0].district)
+          if (data.addressList.length > 0) {
+            this.baiduMapFuc(data.addressList[0].city + data.addressList[0].district)
+          }
         } else {
           $.toast(msg, 'forbidden')
         }
@@ -303,7 +316,7 @@ export default {
     },
     // 添加新地址状态改变
     addNewAddress() {
-      this.checkState = 'add'
+      this.choiceIndex = 'add'
       this.location = {
         id: '130000 130600 130630',
         name: '河北省 保定市 涞源县'
@@ -312,9 +325,9 @@ export default {
     // 判断是否为编辑状态
     editInfor() {
       this.isEditAddress = true
-      this.location.name = this.addressList[this.checkState].province + ' ' +
-        this.addressList[this.checkState].city + ' ' +
-        this.addressList[this.checkState].district
+      this.location.name = this.addressList[this.choiceIndex].province + ' ' +
+        this.addressList[this.choiceIndex].city + ' ' +
+        this.addressList[this.choiceIndex].district
     },
     checkAddress(i) {
       this.location.name = this.addressList[i].province + ' ' +
@@ -341,6 +354,8 @@ export default {
           }
         }).then(function({data: {data, code, msg}}) {
           if (code === 1) {
+            _this.isEditAddress = false
+            _this.choiceIndex = 0
             _this.loadAddress()
           } else {
             $.toast(msg, 'cancel')
@@ -382,26 +397,31 @@ export default {
      * 提交订单
      */
     submitting() {
-      this.$http.post('order/createOrder', {}, {
-        headers: {
-          'x-token': window.localStorage.getItem('zlToken')
-        }
-      }).then(function({data: {data, code, msg}}) {
-        if (code === 1) {
-          // console.log(data)
-          this.$router.push({
-            path: 'orderfill',
-            query: {
-              step: 'submit'
-            }
-          })
-        } else {
-          $.toast(msg, 'forbidden')
-          console.error('结算商品失败:' + msg)
-        }
-      }).catch(function(error) {
-        console.log('catch' + error)
-      })
+      if (this.addressList[this.choiceIndex]) {
+        console.log(this.addressList[this.choiceIndex])
+        // this.$http.post('order/createOrder', {}, {
+        //   headers: {
+        //     'x-token': window.localStorage.getItem('zlToken')
+        //   }
+        // }).then(function({data: {data, code, msg}}) {
+        //   if (code === 1) {
+        //     // console.log(data)
+        //     this.$router.push({
+        //       path: 'orderfill',
+        //       query: {
+        //         step: 'submit'
+        //       }
+        //     })
+        //   } else {
+        //     $.toast(msg, 'forbidden')
+        //     console.error('结算商品失败:' + msg)
+        //   }
+        // }).catch(function(error) {
+        //   console.log('catch' + error)
+        // })
+      } else {
+        weui.alert('请填写收货人信息')
+      }
     },
     /*
      ** 立即支付
@@ -468,7 +488,7 @@ export default {
      */
     dataValid(consignee, region, address, mobile) {
       if (consignee === '' || region === '' || address === '' || mobile === '') {
-        weui.alert('请填写完整收货信息')
+        weui.alert('请填写收货人信息')
         return false
       }
       if (!(/^1(3|4|5|7|8)\d{9}$/.test(mobile))) {
