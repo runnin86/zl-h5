@@ -12,7 +12,7 @@
     <div class="col-xs-2"></div>
   </div>
 
-  <div class="row mainContent" v-if="orderSuccess === 'fill'">
+  <div class="row mainContent" v-if="oneBuyType === 'checkout'">
     <div class="receiverInfor">
       <p class="title_p">收货人信息</p>
       <table class="inforShow" v-if="!isEditAddress&&addressList[checkState]" data-value="checkState">
@@ -46,42 +46,40 @@
       </table>
       <div class="addressDetails" v-if="isEditAddress||addressList.length===0">
         <h6>请选择您的收货地址</h6>
-        <div v-for="(item,itemIndex) in addressList">
+        <div v-for="(item, itemIndex) in addressList">
           <div class="radio">
-            <label v-if="item.id === '0'">
-              <input type="radio" :value="itemIndex" v-model="checkState">新增收货地址
-            </label>
-            <div v-else>
+            <div>
               <label>
   					    <input type="radio" :value="itemIndex" v-model="checkState"
                   @click="checkAddress(itemIndex)">{{item.consignee}}
     					</label>
-              <a @click="deleteAdd(item.id)">[删除当前地址]</a>
+              <a @click="deleteAdd(item.id)">[删除地址]</a>
             </div>
           </div>
-          <table class="addFillIn" v-if="checkState == itemIndex">
+          <table class="addFillIn" v-if="checkState === itemIndex">
             <tr>
-              <td>*收 &nbsp;货 人：</td>
+              <td>收 &nbsp;货 人：</td>
               <td>
-                <input type="text" v-model="item.consignee" placeholder="请填写收货人姓名" class="form-control" />
+                <input type="text" v-model="item.consignee" disabled="disabled" class="form-control" />
               </td>
             </tr>
             <tr>
-              <td>*省 &nbsp;市 区：</td>
+              <td>省 &nbsp;市 区：</td>
               <td>
-                <wv-city-picker title="" :location="location" @get-val="addressPick"></wv-city-picker>
+                <input type="text" disabled="disabled" class="form-control"
+                  :value="item.province + ' ' + item.city + ' ' + item.district"/>
               </td>
             </tr>
             <tr>
-              <td>*详细地址：</td>
+              <td>详细地址：</td>
               <td>
-                <input type="text" v-model="item.address" placeholder="请填写详细地址" class="form-control" />
+                <input type="text" v-model="item.address" disabled="disabled" class="form-control" />
               </td>
             </tr>
             <tr>
-              <td>*手机号码：</td>
+              <td>手机号码：</td>
               <td>
-                <input type="text" v-model="item.mobile" placeholder="请填写手机号码" class="form-control" />
+                <input type="text" v-model="item.mobile" disabled="disabled" class="form-control" />
               </td>
             </tr>
           </table>
@@ -167,20 +165,20 @@
       <input type="button" value="提交订单" class="btn btn-danger loginBtn" @click="submitting()" />
     </div>
   </div>
-  <div class="row mainContent" v-if="orderSuccess === 'submitSuc'">
+  <div class="row mainContent" v-if="oneBuyType === 'submit'">
     <!--提交订单成功-->
     <div class="receiverInfor payment">
       <p class="title_p">支持以下支付平台付款</p>
       <ul>
         <li style="position: relative">
           <label>
-                        <input type="radio" name="paymentSel" value="alipay" checked="true" style="opacity:0"/>微信支付
-                    </label>
+            <input type="radio" name="paymentSel" value="alipay" checked="true" style="opacity:0"/>微信支付
+          </label>
           <i class="iconfont-yzg icon-yzg-zhifufangshi-weixinzhifu selectSign"></i>
         </li>
       </ul>
     </div>
-    <div class="orderInfo">
+    <div class="orderInfo" v-if="orderInfo">
       <table v-for="item in orderInfo.order_all">
         <tr>
           <td>订单号：{{item.order.order_sn}}</td>
@@ -203,7 +201,7 @@
         </tr>
       </table>
     </div>
-    <div class="orderInfo totalMoney">
+    <div class="orderInfo totalMoney" v-if="orderInfo">
       <p>总金额：<span>{{orderInfo.summoney}}</span></p>
     </div>
     <div class="placeOrder">
@@ -239,8 +237,7 @@ export default {
       newAddDetail: '',
       newAddTel: '',
       oneBuyType: this.$route.query.step, // 购买类型
-      orderSuccess: 'fill', // 填写订单成功是否显示
-      checkState: '0', // 地址选择状态  按照索引显示
+      checkState: 0, // 地址选择状态  按照索引显示
       isEditAddress: false, // 是否编辑
       addAddress: true, // 是否显示新增按钮  当已经有新增时隐藏，默认只能添加一个新增地址
       // 提交订单成功页面
@@ -254,11 +251,7 @@ export default {
   methods: {
     addressPick(name, code) {
       name = name.split(' ')
-      if (this.checkState === 'add') {
-        this.newAddProvince = name[0] + '-' + name[1] + '-' + name[2]
-      } else {
-        this.addressList[this.checkState].region = name[0] + '-' + name[1] + '-' + name[2]
-      }
+      this.newAddProvince = name[0] + '-' + name[1] + '-' + name[2]
     },
     /*
      * 查询购物车信息
@@ -491,16 +484,16 @@ export default {
       if (toAddress.indexOf('市辖区') === 0) {
         toAddress = toAddress.split('市辖区')[1]
       }
-      // 获取坐标
-      let myGeo = new BMap.Geocoder()
-      // 将地址解析结果显示在地图上,并调整地图视野
-      myGeo.getPoint('河北省保定市涞源县广泉大街西神山村村委会', function(point) {
-        if (point) {
-          console.log(point)
-        } else {
-          console.error('您选择地址没有解析到结果!')
-        }
-      }, '保定市')
+      // // 获取坐标
+      // let myGeo = new BMap.Geocoder()
+      // // 将地址解析结果显示在地图上,并调整地图视野
+      // myGeo.getPoint('河北省保定市涞源县广泉大街西神山村村委会', function(point) {
+      //   if (point) {
+      //     console.log(point)
+      //   } else {
+      //     console.error('您选择地址没有解析到结果!')
+      //   }
+      // }, '保定市')
       // 计算两地驾车时间和距离
       let map = new BMap.Map('allmap')
       map.centerAndZoom(new BMap.Point(116.404, 39.915), 12)
