@@ -235,7 +235,7 @@ export default {
       addressList: [],
       img_domain: 'http://img.zulibuy.com/images/',
       newAddName: '', // 新增收货人信息
-      newAddProvince: '中国-河北省-保定市-涞源县',
+      newAddProvince: '河北省-保定市-涞源县',
       newAddDetail: '',
       newAddTel: '',
       oneBuyType: this.$route.query.step, // 购买类型
@@ -255,9 +255,9 @@ export default {
     addressPick(name, code) {
       name = name.split(' ')
       if (this.checkState === 'add') {
-        this.newAddProvince = '中国' + '-' + name[0] + '-' + name[1] + '-' + name[2]
+        this.newAddProvince = name[0] + '-' + name[1] + '-' + name[2]
       } else {
-        this.addressList[this.checkState].region = '中国' + '-' + name[0] + '-' + name[1] + '-' + name[2]
+        this.addressList[this.checkState].region = name[0] + '-' + name[1] + '-' + name[2]
       }
     },
     /*
@@ -300,6 +300,7 @@ export default {
         console.log(data)
         if (code === 1) {
           this.addressList = data.addressList
+          this.baiduMapFuc(data.addressList[0].city + data.addressList[0].district)
         } else {
           $.toast(msg, 'forbidden')
         }
@@ -326,11 +327,8 @@ export default {
       this.location.name = this.addressList[i].province + ' ' +
         this.addressList[i].city + ' ' +
         this.addressList[i].district
-      if (this.addressList[i].city === '市辖区' || this.addressList[i].city === '县') {
-        this.baiduMapFuc(this.addressList[i].district)
-      } else {
-        this.baiduMapFuc(this.addressList[i].city)
-      }
+      // 去匹配距离
+      this.baiduMapFuc(this.addressList[i].city + this.addressList[i].district)
     },
     // 保存并下一步
     saveNext() {
@@ -490,6 +488,9 @@ export default {
      * 百度地图方法
      */
     baiduMapFuc(toAddress) {
+      if (toAddress.indexOf('市辖区') === 0) {
+        toAddress = toAddress.split('市辖区')[1]
+      }
       // 获取坐标
       let myGeo = new BMap.Geocoder()
       // 将地址解析结果显示在地图上,并调整地图视野
@@ -503,7 +504,7 @@ export default {
       // 计算两地驾车时间和距离
       let map = new BMap.Map('allmap')
       map.centerAndZoom(new BMap.Point(116.404, 39.915), 12)
-      let output = '从上地到西单驾车需要'
+      let output = '到' + toAddress + '驾车需要'
       var searchComplete = function(results) {
         if (transit.getStatus() !== 0) {
           return
