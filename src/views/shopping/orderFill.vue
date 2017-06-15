@@ -3,8 +3,8 @@
   <div class="row nav-center">
     <div class="col-xs-2 backBtn">
       <a href="javascript:history.back(-1)">
-				<i class="iconfont-yzg icon-yzg-back"></i>
-			</a>
+        <i class="iconfont-yzg icon-yzg-back"></i>
+      </a>
     </div>
     <div class="col-xs-8 shop-name">
       <span>{{oneBuyType==='checkout'?'填写订单':'确认订单'}}</span>
@@ -24,8 +24,8 @@
           </td>
           <td rowspan="5" class="lastTd">
             <a @click="editInfor" style="width:auto;">
-							<i class="iconfont-yzg icon-yzg-chevron"></i>
-						</a>
+              <i class="iconfont-yzg icon-yzg-chevron"></i>
+            </a>
           </td>
         </tr>
         <tr>
@@ -63,19 +63,19 @@
             <tr>
               <td>*收 &nbsp;货 人：</td>
               <td>
-                <input type="text" v-model="item.consignee" placeholder="请填写收货人姓名" class="form-control"/>
+                <input type="text" v-model="item.consignee" placeholder="请填写收货人姓名" class="form-control" />
               </td>
             </tr>
             <tr>
-              <td>*省 &nbsp;市  区：</td>
+              <td>*省 &nbsp;市 区：</td>
               <td>
-                 <wv-city-picker title="" :location="location" @get-val="addressPick"></wv-city-picker>
+                <wv-city-picker title="" :location="location" @get-val="addressPick"></wv-city-picker>
               </td>
             </tr>
             <tr>
               <td>*详细地址：</td>
               <td>
-                <input type="text" v-model="item.address" placeholder="请填写详细地址" class="form-control"/>
+                <input type="text" v-model="item.address" placeholder="请填写详细地址" class="form-control" />
               </td>
             </tr>
             <tr>
@@ -99,7 +99,7 @@
             </td>
           </tr>
           <tr>
-            <td>*省  市  区：</td>
+            <td>*省 市 区：</td>
             <td>
               <wv-city-picker title="居住地址" :location="location" @get-val="addressPick"></wv-city-picker>
             </td>
@@ -120,6 +120,7 @@
         <a @click="saveNext()" class="btn btn-danger">保存并下一步</a>
       </div>
     </div>
+
     <div class="goodsDetail">
       <p class="title_p">商品详情</p>
       <table>
@@ -144,13 +145,13 @@
         <tr>
           <td>商品总价：<span>￥{{totalMoney}}</span></td>
         </tr>
-        <tr v-if = "addressList.offset > 0">
+        <tr v-if="addressList.offset > 0">
           <td>可用抵用金：<span>￥{{addressList.offset}}</span></td>
         </tr>
         <!-- <tr v-for = "shipping in supplier_info">
           <td>运费：￥{{shipping.shipping_fee}}</td>
         </tr> -->
-        <tr v-if = "addressList.shipping_fee > 0">
+        <tr v-if="addressList.shipping_fee > 0">
           <td>运费：<span>￥{{addressList.shipping_fee}}</span></td>
         </tr>
         <tr>
@@ -163,63 +164,67 @@
     </div>
 
     <div class="placeOrder">
-        <input type="button" value="提交订单" class="btn btn-danger loginBtn" @click="submitting()"/>
+      <input type="button" value="提交订单" class="btn btn-danger loginBtn" @click="submitting()" />
     </div>
   </div>
-  <div class="row mainContent" v-if="orderSuccess === 'submitSuc'">   <!--提交订单成功-->
-        <div class="receiverInfor payment">
-            <p class="title_p">支持以下支付平台付款</p>
-            <ul>
-                <li style="position: relative">
-                    <label>
+  <div class="row mainContent" v-if="orderSuccess === 'submitSuc'">
+    <!--提交订单成功-->
+    <div class="receiverInfor payment">
+      <p class="title_p">支持以下支付平台付款</p>
+      <ul>
+        <li style="position: relative">
+          <label>
                         <input type="radio" name="paymentSel" value="alipay" checked="true" style="opacity:0"/>微信支付
                     </label>
-                    <i class="iconfont-yzg icon-yzg-zhifufangshi-weixinzhifu selectSign"></i>
-                </li>
-            </ul>
-        </div>
-        <div class="orderInfo">
-            <table v-for = "item in orderInfo.order_all">
-                <tr>
-                    <td>订单号：{{item.order.order_sn}}</td>
-                </tr>
-                <tr>
-                    <td>订单总额：{{item.total_fee}}</td>
-                </tr>
-                <tr>
-                    <td>已优惠：￥{{item.order.offset}}</td>
-                </tr>
-                <tr>
-                    <td>还需支付：{{item.total.amount_formated}}</td>
-                </tr>
-                <tr>
-                    <td>
-                    <router-link :to="{ name: 'ShopOrdDet',path: '/shopOrdDet', query: { orderId: item.order.order_id}}">
-                      <span class="redColor">查看详细信息</span>
-                    </router-link>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="orderInfo totalMoney">
-            <p>总金额：<span>{{orderInfo.summoney}}</span></p>
-        </div>
-        <div class="placeOrder">
-          <a @click="payNow" class="weui-btn weui-btn_primary">微信支付</a>
-        </div>
+          <i class="iconfont-yzg icon-yzg-zhifufangshi-weixinzhifu selectSign"></i>
+        </li>
+      </ul>
     </div>
+    <div class="orderInfo">
+      <table v-for="item in orderInfo.order_all">
+        <tr>
+          <td>订单号：{{item.order.order_sn}}</td>
+        </tr>
+        <tr>
+          <td>订单总额：{{item.total_fee}}</td>
+        </tr>
+        <tr>
+          <td>已优惠：￥{{item.order.offset}}</td>
+        </tr>
+        <tr>
+          <td>还需支付：{{item.total.amount_formated}}</td>
+        </tr>
+        <tr>
+          <td>
+            <router-link :to="{ name: 'ShopOrdDet',path: '/shopOrdDet', query: { orderId: item.order.order_id}}">
+              <span class="redColor">查看详细信息</span>
+            </router-link>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="orderInfo totalMoney">
+      <p>总金额：<span>{{orderInfo.summoney}}</span></p>
+    </div>
+    <div class="placeOrder">
+      <a @click="payNow" class="weui-btn weui-btn_primary">微信支付</a>
+    </div>
+  </div>
+  <div id="allmap"></div>
 </div>
 </template>
 
 <script>
 import $ from 'zepto'
 import weui from 'weui.js'
+import BMap from 'BMap'
 import qs from 'qs'
 
 export default {
   activated() {
     this.cartList = []
     this.totalMoney = 0
+    this.baiduMapFuc()
     this.loadCart()
     this.loadAddress()
     this.$store.commit('CHANGE_IS_INDEX', false)
@@ -234,7 +239,7 @@ export default {
       newAddProvince: '中国-河北省-保定市-涞源县',
       newAddDetail: '',
       newAddTel: '',
-      oneBuyType: this.$route.query.step,  // 购买类型
+      oneBuyType: this.$route.query.step, // 购买类型
       orderSuccess: 'fill', // 填写订单成功是否显示
       checkState: '0', // 地址选择状态  按照索引显示
       isEditAddress: false, // 是否编辑
@@ -345,15 +350,14 @@ export default {
           } else {
             $.toast(msg, 'cancel')
           }
-        })
-        .catch(function(error) {
+        }).catch(function(error) {
           console.log(error)
         })
       }
     },
     /*
-    *地址删除操作
-    */
+     *地址删除操作
+     */
     deleteAdd(objId) {
       weui.confirm('是否确认删除当前收货地址', () => {
         // 确认
@@ -380,9 +384,9 @@ export default {
       })
     },
     /*
-    * 提交订单
-    */
-    submitting () {
+     * 提交订单
+     */
+    submitting() {
       this.$http.post('order/createOrder', {}, {
         headers: {
           'x-token': window.localStorage.getItem('zlToken')
@@ -393,7 +397,7 @@ export default {
           this.$router.push({
             path: 'orderfill',
             query: {
-              step: 0
+              step: 'submit'
             }
           })
         } else {
@@ -405,9 +409,9 @@ export default {
       })
     },
     /*
-    ** 立即支付
-    */
-    payNow () {
+     ** 立即支付
+     */
+    payNow() {
       let orderList = ''
       // 遍历订单 获取所有订单号
       for (var i in this.orderInfo.order_all) { // 不使用过滤
@@ -424,43 +428,50 @@ export default {
         pay_id: '3'
       }
       let zhis = this
-      this.$http.post('flow.php?step=make_big', qs.stringify(payParams))
-      .then(function({data: {data, errcode, msg}}) {
+      this.$http.post('flow.php?step=make_big', qs.stringify(payParams), {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(function({data: {data, errcode, msg}}) {
         console.log(data)
         if (errcode === 0) {
           if (data.jsApiParameters) {
             window.WeixinJSBridge.invoke('getBrandWCPayRequest', JSON.parse(data.jsApiParameters),
-            function(res) {
-              // err_code,err_desc,err_msg
-              if (res.err_msg === 'get_brand_wcpay_request:ok') {
-                // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
-                // zhis.$router.push({path: '/userCenter/setStore'})
-                $.toast('支付成功')
-                setTimeout(() => {
-                  zhis.$router.push({name: 'OrderList', params: {orderAct: 1}})
-                }, 2000)
-              } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
-                // 取消
-                $.toast('用户取消支付', 'cancel')
-              } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
-                // 支付失败
-                $.toast(res.err_desc, 'forbidden')
-              }
-            })
+              function(res) {
+                // err_code,err_desc,err_msg
+                if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                  // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+                  // zhis.$router.push({path: '/userCenter/setStore'})
+                  $.toast('支付成功')
+                  setTimeout(() => {
+                    zhis.$router.push({
+                      name: 'OrderList',
+                      params: {
+                        orderAct: 1
+                      }
+                    })
+                  }, 2000)
+                } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+                  // 取消
+                  $.toast('用户取消支付', 'cancel')
+                } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+                  // 支付失败
+                  $.toast(res.err_desc, 'forbidden')
+                }
+              })
           }
         } else {
           $.toast(msg, 'forbidden')
           console.error(msg)
         }
-      })
-      .catch(function(error) {
+      }).catch(function(error) {
         console.log('error' + error)
       })
     },
     /*
-    * 地址填写验证
-    */
-    dataValid (consignee, region, address, mobile) {
+     * 地址填写验证
+     */
+    dataValid(consignee, region, address, mobile) {
       if (consignee === '' || region === '' || address === '' || mobile === '') {
         weui.alert('请填写完整收货信息')
         return false
@@ -470,6 +481,46 @@ export default {
         return false
       }
       return true
+    },
+    /*
+     * 百度地图方法
+     */
+    baiduMapFuc() {
+      // 获取坐标
+      let myGeo = new BMap.Geocoder()
+      // 将地址解析结果显示在地图上,并调整地图视野
+      myGeo.getPoint('河北省保定市涞源县广泉大街西神山村村委会', function(point) {
+        if (point) {
+          console.log(point)
+        } else {
+          console.error('您选择地址没有解析到结果!')
+        }
+      }, '保定市')
+      // 计算两地驾车时间和距离
+      let map = new BMap.Map('allmap')
+      map.centerAndZoom(new BMap.Point(116.404, 39.915), 12)
+      let output = '从上地到西单驾车需要'
+      var searchComplete = function(results) {
+        if (transit.getStatus() !== 0) {
+          return
+        }
+        let plan = results.getPlan(0)
+        output += plan.getDuration(true) + '\n' // 获取时间
+        output += '总路程为：'
+        output += plan.getDistance(true) + '\n' // 获取距离
+      }
+      let transit = new BMap.DrivingRoute(map, {
+        renderOptions: {
+          map: map
+        },
+        onSearchComplete: searchComplete,
+        onPolylinesSet: function() {
+          setTimeout(function() {
+            alert(output)
+          }, 1000)
+        }
+      })
+      transit.search('河北省保定市涞源县广泉大街西神山村村委会', '安徽省芜湖市三山区创业大街')
     }
   }
 }
@@ -483,5 +534,19 @@ body {
   color: #3a3a3a;
   font-size: 14px
 }
-.addFillIn .cell_box{ width:80%; }
+
+body,
+html,
+#allmap {
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  font-family: "微软雅黑";
+}
+
+.addFillIn .cell_box {
+  width: 80%;
+}
 </style>

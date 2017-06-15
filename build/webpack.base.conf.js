@@ -19,7 +19,8 @@ module.exports = {
       : config.dev.assetsPublicPath
   },
   externals: {
-    'zepto': 'Zepto'
+    'zepto': 'Zepto',
+    'BMap': 'BMap'
     // 'wx': 'jWeixin'
   },
   resolve: {
