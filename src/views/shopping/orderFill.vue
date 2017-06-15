@@ -156,9 +156,9 @@
         <tr v-if="addressList.offset > 0">
           <td>可用抵用金：<span>￥{{addressList.offset}}</span></td>
         </tr>
-        <!-- <tr v-for = "shipping in supplier_info">
-          <td>运费：￥{{shipping.shipping_fee}}</td>
-        </tr> -->
+        <tr v-if="shippingMoney>0">
+          <td>运费：￥{{shippingMoney}}</td>
+        </tr>
         <tr v-if="addressList.shipping_fee > 0">
           <td>运费：<span>￥{{addressList.shipping_fee}}</span></td>
         </tr>
@@ -228,6 +228,11 @@ import weui from 'weui.js'
 import BMap from 'BMap'
 import qs from 'qs'
 
+// 配送范围(公里)
+let distributionScope = 50
+// 默认运费(元)
+let shippingExpenses = 10
+
 export default {
   activated() {
     this.cartList = []
@@ -240,6 +245,7 @@ export default {
     return {
       cartList: [],
       totalMoney: 0,
+      shippingMoney: 0,
       addressList: [],
       img_domain: 'http://img.zulibuy.com/images/',
       newAddName: '', // 新增收货人信息
@@ -501,8 +507,12 @@ export default {
      * 百度地图方法
      */
     baiduMapFuc(toAddress) {
+      let zhis = this
       if (toAddress.indexOf('市辖区') === 0) {
         toAddress = toAddress.split('市辖区')[1]
+      }
+      if (toAddress.indexOf('县') === 0) {
+        toAddress = toAddress.substring(1, toAddress.length)
       }
       // // 获取坐标
       // let myGeo = new BMap.Geocoder()
@@ -526,6 +536,13 @@ export default {
         output += plan.getDuration(true) + '\n' // 获取时间
         output += '总路程为：'
         output += plan.getDistance(true) + '\n' // 获取距离
+        // 超过配送范围要支付运费
+        if ((plan.getDistance(false) / 1000) > distributionScope) {
+          weui.topTips('收货地址超出配送范围,默认收取' + shippingExpenses + '元快递费!')
+          zhis.shippingMoney = shippingExpenses
+        } else {
+          zhis.shippingMoney = 0
+        }
       }
       let transit = new BMap.DrivingRoute(map, {
         renderOptions: {
@@ -534,7 +551,7 @@ export default {
         onSearchComplete: searchComplete,
         onPolylinesSet: function() {
           setTimeout(function() {
-            alert(output)
+            console.log(output)
           }, 1000)
         }
       })
