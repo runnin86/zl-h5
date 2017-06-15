@@ -224,7 +224,6 @@ export default {
   activated() {
     this.cartList = []
     this.totalMoney = 0
-    this.baiduMapFuc()
     this.loadCart()
     this.loadAddress()
     this.$store.commit('CHANGE_IS_INDEX', false)
@@ -327,6 +326,11 @@ export default {
       this.location.name = this.addressList[i].province + ' ' +
         this.addressList[i].city + ' ' +
         this.addressList[i].district
+      if (this.addressList[i].city === '市辖区' || this.addressList[i].city === '县') {
+        this.baiduMapFuc(this.addressList[i].district)
+      } else {
+        this.baiduMapFuc(this.addressList[i].city)
+      }
     },
     // 保存并下一步
     saveNext() {
@@ -485,7 +489,7 @@ export default {
     /*
      * 百度地图方法
      */
-    baiduMapFuc() {
+    baiduMapFuc(toAddress) {
       // 获取坐标
       let myGeo = new BMap.Geocoder()
       // 将地址解析结果显示在地图上,并调整地图视野
@@ -520,7 +524,7 @@ export default {
           }, 1000)
         }
       })
-      transit.search('河北省保定市涞源县广泉大街西神山村村委会', '安徽省芜湖市三山区创业大街')
+      transit.search('河北省保定市涞源县广泉大街西神山村村委会', toAddress)
     }
   }
 }
