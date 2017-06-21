@@ -163,14 +163,8 @@
         <tr>
           <td>商品总价：<span>￥{{totalMoney}}</span></td>
         </tr>
-        <tr v-if="addressList.offset > 0">
-          <td>可用抵用金：<span>￥{{addressList.offset}}</span></td>
-        </tr>
         <tr v-if="shippingMoney>0">
           <td>运费：￥{{shippingMoney}}</td>
-        </tr>
-        <tr v-if="addressList.shipping_fee > 0">
-          <td>运费：<span>￥{{addressList.shipping_fee}}</span></td>
         </tr>
         <tr>
           <td>应付款金额：<span>￥{{totalMoney + shippingMoney}}</span></td>
@@ -185,7 +179,8 @@
       <input type="button" value="提交订单" class="btn btn-danger loginBtn" @click="submitting()" />
     </div>
   </div>
-  <div class="row mainContent" v-if="oneBuyType === 'submit'">
+
+  <div class="row mainContent" v-if="oneBuyType==='submit'&&orderInfo">
     <!--提交订单成功-->
     <div class="receiverInfor payment">
       <p class="title_p">支持以下支付平台付款</p>
@@ -198,7 +193,7 @@
         </li>
       </ul>
     </div>
-    <div class="orderClass" v-if="orderInfo">
+    <div class="orderClass">
       <table>
         <tr>
           <td>订单号：{{orderInfo.orderNo}}</td>
@@ -214,7 +209,7 @@
         </tr>
         <tr>
           <td>
-            <router-link :to="{ name: 'ShopOrdDet',path: '/shopOrdDet', query: { orderId: orderInfo.orderId}}">
+            <router-link :to="{ name: 'ShopOrdDet',path: '/shopOrdDet', query: { orderNo: orderInfo.orderNo}}">
               <span class="redColor">查看详细信息</span>
             </router-link>
           </td>
@@ -257,6 +252,7 @@ export default {
   activated() {
     this.cartList = []
     this.totalMoney = 0
+    this.orderInfo = null
     this.loadCart()
     this.$store.commit('CHANGE_IS_INDEX', false)
   },
@@ -445,7 +441,7 @@ export default {
           if (code === 1) {
             console.log(data)
             zhis.oneBuyType = 'submit'
-            zhis.orderInfo = data
+            zhis.orderInfo = data.info
           } else {
             weui.alert(msg)
             console.error('结算商品失败:' + msg)
@@ -461,60 +457,48 @@ export default {
      ** 立即支付
      */
     payNow() {
-      let orderList = ''
-      // 遍历订单 获取所有订单号
-      for (var i in this.orderInfo.order_all) { // 不使用过滤
-        console.log(i, ':', this.orderInfo.order_all[i])
-        orderList += this.orderInfo.order_all[i].order.order_id + ','
-      }
-      // 去掉拼接订单字符串的最后一个逗号
-      let lastIndex = orderList.lastIndexOf(',')
-      if (lastIndex > -1) {
-        orderList = orderList.substring(0, lastIndex)
-      }
-      let payParams = {
-        str: orderList,
-        pay_id: '3'
+      // 发送请求
+      let loading = weui.loading('loading')
+      let postData = {
+        sn: this.orderNo, // 订单order_id：多个订单之间用','隔开
+        totalAmount: this.orderInfo.totalPrice + this.orderInfo.shipmentMoney // 金额
       }
       let zhis = this
-      this.$http.post('flow.php?step=make_big', qs.stringify(payParams), {
-        headers: {
-          'x-token': window.localStorage.getItem('zlToken')
-        }
-      }).then(function({data: {data, errcode, msg}}) {
-        console.log(data)
-        if (errcode === 0) {
-          if (data.jsApiParameters) {
-            window.WeixinJSBridge.invoke('getBrandWCPayRequest', JSON.parse(data.jsApiParameters),
-              function(res) {
-                // err_code,err_desc,err_msg
-                if (res.err_msg === 'get_brand_wcpay_request:ok') {
-                  // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
-                  // zhis.$router.push({path: '/userCenter/setStore'})
-                  $.toast('支付成功')
-                  setTimeout(() => {
-                    zhis.$router.push({
-                      name: 'OrderList',
-                      params: {
-                        orderAct: 1
-                      }
-                    })
-                  }, 2000)
-                } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
-                  // 取消
-                  $.toast('用户取消支付', 'cancel')
-                } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
-                  // 支付失败
-                  $.toast(res.err_desc, 'forbidden')
-                }
-              })
+      this.$http.post('weChat/weChartPay', qs.stringify(postData))
+      .then(({data: {data, code, msg}}) => {
+        if (code === 1) {
+          if (data) {
+            window.WeixinJSBridge.invoke('getBrandWCPayRequest', data,
+            function(res) {
+              if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+                $.toast('支付成功')
+                setTimeout(() => {
+                  zhis.$router.push({name: 'OrderList', params: {orderAct: 1}})
+                }, 2000)
+              } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+                // 取消
+                $.toast('用户取消支付', 'cancel')
+              } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+                // 支付失败
+                $.toast(res.err_desc, 'forbidden')
+              } else {
+                weui.alert(!res.err_msg ? '支付回调错误,请刷新重试!' : res.err_msg)
+              }
+            })
+          } else {
+            weui.alert('没有获取到支付参数')
           }
         } else {
-          $.toast(msg, 'forbidden')
+          weui.alert(!msg ? '支付请求异常,请刷新重试!' : msg)
           console.error(msg)
         }
-      }).catch(function(error) {
-        console.log('error' + error)
+        loading.hide()
+      }, (response) => {
+        loading.hide()
+        $.toast('服务器异常', 'forbidden')
+        // error callback
+        console.log(response)
       })
     },
     /*

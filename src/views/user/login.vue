@@ -145,7 +145,7 @@ export default {
             $.toast('登录成功')
             window.localStorage.setItem('zlUser', JSON.stringify(data.user))
             window.localStorage.setItem('zlToken', data.token)
-            this.$router.replace({path: '/userCenter'})
+            this.$router.replace({path: '/category'})
           }
         } else {
           $.toast(msg, 'forbidden')

@@ -57,7 +57,7 @@
         <ul>
           <li>支付方式：{{orderInfo.moneySource ? orderInfo.moneySource: '微信支付'}}</li>
           <li v-if="orderInfo.shippingNo">配送单号：{{orderInfo.shippingNo}}</li>
-          <li>配送费用：{{orderInfo.shipmentMoney}}</li>
+          <li v-if="orderInfo.shipmentMoney>0">配送费用：{{orderInfo.shipmentMoney}}</li>
           <li>商品总价：{{orderInfo.totalPrice}}</li>
           <!-- <li>已用优惠：￥{{orderInfo.offset}}</li> -->
           <li>应付金额：{{orderInfo.totalPrice+orderInfo.shipmentMoney}}</li>
@@ -132,27 +132,15 @@ export default {
     doWechatPay() {
       // 发送请求
       let loading = weui.loading('loading')
-      let description = ''
-      for (let i in this.orderDetail) {
-        description += this.orderDetail[i].product_name + 'x' + this.orderDetail[i].nums
-        if (i < this.orderDetail.length - 1) {
-          description += ','
-        }
-      }
-      let user = JSON.parse(window.localStorage.getItem('zlUser'))
       let postData = {
         sn: this.orderNo, // 订单order_id：多个订单之间用','隔开
-        totalAmount: this.orderInfo.totalPrice + this.orderInfo.shipmentMoney, // 金额
-        description: description, // 描述
-        openId: user.openId ? user.openId : 'oU_tvxAwZV-9NBTqlhXJ3DUkDeTU' // 用户标识openId
+        totalAmount: this.orderInfo.totalPrice + this.orderInfo.shipmentMoney // 金额
       }
-      console.log(user)
       let zhis = this
       this.$http.post('weChat/weChartPay', qs.stringify(postData))
       .then(({data: {data, code, msg}}) => {
         if (code === 1) {
           if (data) {
-            console.log(data)
             window.WeixinJSBridge.invoke('getBrandWCPayRequest', data,
             function(res) {
               // err_code,err_desc,err_msg
@@ -167,9 +155,9 @@ export default {
                 $.toast('用户取消支付', 'cancel')
               } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
                 // 支付失败
-                $.toast(res.err_desc, 'forbidden')
+                $.toast(res.err_msg, 'forbidden')
               } else {
-                weui.alert(!res.errMsg ? '支付回调错误,请刷新重试!' : res.errMsg)
+                weui.alert(!res.err_msg ? '支付回调错误,请刷新重试!' : res.err_msg)
               }
             })
           } else {
