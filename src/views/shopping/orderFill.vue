@@ -7,12 +7,18 @@
       </a>
     </div>
     <div class="col-xs-8 shop-name">
-      <span>{{oneBuyType==='checkout'?'填写订单':'确认订单'}}</span>
+      <span>
+        {{
+          oneBuyType==='checkout'
+          ?
+          '填写订单':
+          (oneBuyType==='submit' ? '提交订单成功' : '')}}
+      </span>
     </div>
     <div class="col-xs-2"></div>
   </div>
 
-  <div class="row mainContent" v-if="oneBuyType === 'checkout'">
+  <div class="row mainContent" v-if="oneBuyType==='checkout'&&cartList.length>0">
     <div class="receiverInfor">
       <p class="title_p">收货人信息</p>
       <table class="inforShow" v-if="!isEditAddress&&addressList[choiceIndex]">
@@ -142,7 +148,11 @@
     <div class="weui-cells">
       <div class="weui-cell">
         <div class="weui-cell__bd">
-          <input class="weui-input" type="text" v-model="remarks" placeholder="选填: 给卖家留言"/>
+          <input class="weui-input" type="text"
+            v-model="remarks" placeholder="选填: 给卖家留言(45字以内)"/>
+          <a class="clear" style="margin-left: 83%;"
+            :style="{display: remarks?'block':'none'}"
+            @click="remarks=null"></a>
         </div>
       </div>
     </div>
@@ -163,7 +173,7 @@
           <td>运费：<span>￥{{addressList.shipping_fee}}</span></td>
         </tr>
         <tr>
-          <td>应付款金额：<span>￥{{totalMoney}}</span></td>
+          <td>应付款金额：<span>￥{{totalMoney + shippingMoney}}</span></td>
         </tr>
         <!-- <tr>
           <td class="redColor" style="text-align:right;">满99元包邮</td>
@@ -188,34 +198,44 @@
         </li>
       </ul>
     </div>
-    <div class="orderInfo" v-if="orderInfo">
-      <table v-for="item in orderInfo.order_all">
+    <div class="orderClass" v-if="orderInfo">
+      <table>
         <tr>
-          <td>订单号：{{item.order.order_sn}}</td>
+          <td>订单号：{{orderInfo.orderNo}}</td>
         </tr>
         <tr>
-          <td>订单总额：{{item.total_fee}}</td>
+          <td>订单总额：{{orderInfo.totalPrice + orderInfo.shipmentMoney}}</td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td>已优惠：￥{{item.order.offset}}</td>
-        </tr>
+        </tr> -->
         <tr>
-          <td>还需支付：{{item.total.amount_formated}}</td>
+          <td>待支付：{{orderInfo.totalPrice + orderInfo.shipmentMoney}}</td>
         </tr>
         <tr>
           <td>
-            <router-link :to="{ name: 'ShopOrdDet',path: '/shopOrdDet', query: { orderId: item.order.order_id}}">
+            <router-link :to="{ name: 'ShopOrdDet',path: '/shopOrdDet', query: { orderId: orderInfo.orderId}}">
               <span class="redColor">查看详细信息</span>
             </router-link>
           </td>
         </tr>
       </table>
     </div>
-    <div class="orderInfo totalMoney" v-if="orderInfo">
-      <p>总金额：<span>{{orderInfo.summoney}}</span></p>
+    <div class="orderClass totalMoney" v-if="orderInfo">
+      <p>总金额：<span>{{orderInfo.totalPrice + orderInfo.shipmentMoney}}</span></p>
     </div>
     <div class="placeOrder">
       <a @click="payNow" class="weui-btn weui-btn_primary">微信支付</a>
+    </div>
+  </div>
+
+  <div v-if="cartList.length===0" class="errWarning">
+    <div>
+        <i class="iconfont-yzg icon-yzg-information"></i>
+        <p>您的购物车中没有商品</p>
+      <router-link :to = "{ path: 'category'}">
+        随便逛逛
+      </router-link>
     </div>
   </div>
   <div id="allmap"></div>
@@ -238,7 +258,6 @@ export default {
     this.cartList = []
     this.totalMoney = 0
     this.loadCart()
-    this.loadAddress()
     this.$store.commit('CHANGE_IS_INDEX', false)
   },
   data() {
@@ -252,7 +271,7 @@ export default {
       newAddProvince: '河北省-保定市-涞源县',
       newAddDetail: '',
       newAddTel: '',
-      oneBuyType: this.$route.query.step, // 购买类型
+      oneBuyType: 'checkout', // 购买类型
       choiceIndex: 0, // 地址选择状态  按照索引显示
       isEditAddress: false, // 是否编辑
       addAddress: true, // 是否显示新增按钮  当已经有新增时隐藏，默认只能添加一个新增地址
@@ -276,13 +295,17 @@ export default {
     loadCart() {
       // 设置总金额和总数目为0
       this.totalMoney = this.selectCounts = 0
-      this.$http.get('cart/cartList', {
+      this.$http.get('/cart/cartList', {
         headers: {
           'x-token': window.localStorage.getItem('zlToken')
         }
       }).then(({data: {code, data, msg}}) => {
         // console.log(data)
         if (code === 1) {
+          if (data.length > 0) {
+            // 购物车有数据时去获取地址信息
+            this.loadAddress()
+          }
           // 计算总价和数量
           for (var i = 0; i < data.length; i++) {
             if (data[i].isCheck === 1) {
@@ -403,28 +426,33 @@ export default {
      * 提交订单
      */
     submitting() {
+      if (this.remarks.length > 45) {
+        weui.alert('给卖家留言字数过长')
+        return
+      }
       if (this.addressList[this.choiceIndex]) {
-        console.log(this.addressList[this.choiceIndex])
-        // this.$http.post('order/createOrder', {}, {
-        //   headers: {
-        //     'x-token': window.localStorage.getItem('zlToken')
-        //   }
-        // }).then(function({data: {data, code, msg}}) {
-        //   if (code === 1) {
-        //     // console.log(data)
-        //     this.$router.push({
-        //       path: 'orderfill',
-        //       query: {
-        //         step: 'submit'
-        //       }
-        //     })
-        //   } else {
-        //     $.toast(msg, 'forbidden')
-        //     console.error('结算商品失败:' + msg)
-        //   }
-        // }).catch(function(error) {
-        //   console.log('catch' + error)
-        // })
+        let orderParams = {
+          aid: this.addressList[this.choiceIndex].id,
+          shippingMoney: this.shippingMoney,
+          remark: this.remarks
+        }
+        let zhis = this
+        this.$http.post('/order/createOrder', qs.stringify(orderParams), {
+          headers: {
+            'x-token': window.localStorage.getItem('zlToken')
+          }
+        }).then(function({data: {data, code, msg}}) {
+          if (code === 1) {
+            console.log(data)
+            zhis.oneBuyType = 'submit'
+            zhis.orderInfo = data
+          } else {
+            weui.alert(msg)
+            console.error('结算商品失败:' + msg)
+          }
+        }).catch(function(error) {
+          console.log('catch' + error)
+        })
       } else {
         weui.alert('请填写收货人信息')
       }
@@ -561,7 +589,6 @@ export default {
 }
 </script>
 
-
 <style scoped>
 @import '/static/style/orderfill.css';
 body {
@@ -583,5 +610,14 @@ html,
 
 .addFillIn .cell_box {
   width: 80%;
+}
+
+.clear{
+  background:no-repeat center center url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAMAAADyHTlpAAAAflBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCtoPsAAAAKnRSTlMAAQIDBAUHCQoLDA0ODxASGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjOWCMFEAAABUklEQVR4Xo3U4W6CMBSG4a8dcyo4FUVAHCpa4bv/G1xiOJm1B9j7+0lz0rQHfibZlFeSzbnYriyGm2cPvtTmMfS+KgbVSwWatKPWIRgjOnGgy8yXXzcO5mJPPjhS9w0JUcPR2oVI88OJblFPUwH3YEyxeX/xckuFLXx5tLnY5EmPIg1M4UkDI/b8PLSXjQHEigSsDLUCkLEvhdg/aUr2lYB1DKwi2UVYkoFVJLnGhpqtAsk9SipWkaxxpWIVSQdHxSqSRMfAipyklZF7eAtOkbrFVZHquQ6lL+1zzlSxNTaKJBW7x1KTml3DulBqtouALJCqLV+e9l2kZ72njUpWjhEp9uXUi/8ND1ak2F7KocBu8HM3Igt5RPW/Vwai+/Qikubt9HqTFmNLM4HX5+C8zQxv2V2nyvwDYbMihNUceovMu4pHHmOkeFudHdmeT2lifPALZUK7MQNh4w4AAAAASUVORK5CYII=);
+  background-size: 15px 15px;
+  width:40px;
+  height:40px;
+  position: absolute;
+  margin: -30px 0 0 -20px;
 }
 </style>

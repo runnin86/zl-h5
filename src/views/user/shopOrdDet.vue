@@ -16,35 +16,34 @@
     </div>
   </div>
 
-  <div class="mainDet row">
+  <div class="mainDet row" v-if="orderInfo">
     <p class="title_p">订单信息</p>
     <div class="shopDet">
       <ul>
-        <li>订单编号：{{orderDet}}</li>
-        <li v-if="this.$route.query.orderId">下单时间：{{orderDet.order}}</li>
-        <li v-else>下单时间：{{orderDet.order}}</li>
-        <li>付款时间：{{orderDet.pay_time===0 ? '未付款' : orderDet.pay_time}}</li>
-        <li>发货时间：{{orderDet.shipping_time===0 ? '未发货' : orderDet.shipping_time}}</li>
-        <li>订单状态：{{orderDet.order_status}}</li>
+        <li>订单编号：{{orderInfo.orderNo}}</li>
+        <li>下单时间：{{orderInfo.orderDate/1000 | dateFilter(4)}}</li>
+        <li>付款时间：{{orderInfo.payStatus===0 ? '未付款' : (orderInfo.payTime/1000 | dateFilter(4))}}</li>
+        <li>发货时间：{{!orderInfo.shippingTime ? '未发货' : (orderInfo.shippingTime/1000 | dateFilter(4))}}</li>
+        <li>订单状态：{{orderInfo.orderStatus | orderStatusFilter}}</li>
       </ul>
     </div>
     <p class="title_p">收货人信息</p>
     <div class="shopDet">
       <ul>
-        <li>收货人姓名：{{orderDet.consignee}}</li>
-        <li>详细地址：{{orderDet.address}}</li>
-        <li>联系电话：{{orderDet.mobile}}</li>
+        <li>收货人姓名：{{orderInfo.consignee}}</li>
+        <li>联系电话：{{orderInfo.consigneePhone}}</li>
+        <li>详细地址：{{orderInfo.shipmentAddress}}</li>
       </ul>
     </div>
     <p class="title_p">商品详情</p>
     <div class="shopDet" style="padding:0">
       <table>
-        <tr v-for="g in orderDet.goods_list">
-          <td><img :src="g.master_img" /></td>
+        <tr v-for="g in orderDetail">
+          <td><img :src="img_domain+g.img" /></td>
           <td>
-            <p class="g_name">{{g.goods_name}}</p>
-            <span class="g_number">数量:{{g.goods_number}}</span>
-            <span class="g_price">{{g.goods_price}}</span>
+            <p class="g_name">{{g.product_name}}</p>
+            <span class="g_number">数量: {{g.nums}}</span>
+            <span class="g_price"> ¥ {{g.price}}</span>
           </td>
           <td class="eval" v-if="1===2" @click="com_def">
             <a href="javascript:void(0)">评价</a>
@@ -52,18 +51,19 @@
         </tr>
       </table>
     </div>
-    <div v-if="this.$route.query.orderId">
+    <div v-if="this.$route.query.orderNo">
       <p class="title_p">其他信息</p>
       <div class="shopDet">
         <ul>
-          <li>支付方式：{{orderDet.pay_name}}</li>
-          <li>配送方式：{{orderDet.shipping_name}}</li>
-          <li>商品总价：{{orderDet.formated_goods_amount}}</li>
-          <li>已用优惠：￥{{orderDet.offset}}</li>
-          <li>应付金额：{{orderDet.formated_order_amount}}</li>
+          <li>支付方式：{{orderInfo.moneySource ? orderInfo.moneySource: '微信支付'}}</li>
+          <li v-if="orderInfo.shippingNo">配送单号：{{orderInfo.shippingNo}}</li>
+          <li>配送费用：{{orderInfo.shipmentMoney}}</li>
+          <li>商品总价：{{orderInfo.totalPrice}}</li>
+          <!-- <li>已用优惠：￥{{orderInfo.offset}}</li> -->
+          <li>应付金额：{{orderInfo.totalPrice+orderInfo.shipmentMoney}}</li>
         </ul>
       </div>
-      <div class="button-sp-area" v-if="orderDet.pay_status === '未付款'">
+      <div class="button-sp-area" v-if="orderInfo.payStatus === 0">
         <a @click="doWechatPay" class="weui-btn weui-btn_primary">微信支付</a>
       </div>
     </div>
@@ -74,30 +74,33 @@
 <script>
 import $ from 'zepto'
 import qs from 'qs'
+import weui from 'weui.js'
 
 export default {
   data() {
     return {
-      orderDet: [],
-      orderId: this.$route.query.orderId
+      orderNo: this.$route.query.orderNo,
+      orderInfo: null,
+      orderDetail: null,
+      img_domain: 'http://img.zulibuy.com/images/'
     }
   },
   /*
    * 激活
    */
   activated() {
+    this.orderNo = this.$route.query.orderNo
     // 获取数据
-    this.loadDet()
-    this.orderId = this.$route.query.orderId
+    this.loadOrderInfo()
   },
   methods: {
     /*
      * 获取数据
      */
-    loadDet() {
-      this.$http.get('order/orderDetail', {
+    loadOrderInfo() {
+      this.$http.get('order/orderInfo', {
         params: {
-          orderNo: this.$route.query.orderId
+          orderNo: this.$route.query.orderNo
         },
         headers: {
           'x-token': window.localStorage.getItem('zlToken')
@@ -105,7 +108,8 @@ export default {
       }).then(({data: {data, code, msg}}) => {
         if (code === 1) {
           console.log(data)
-          // this.orderDet = data
+          this.orderInfo = data.info
+          this.orderDetail = data.detail
         } else {
           $.toast(msg, 'forbidden')
         }
@@ -115,45 +119,70 @@ export default {
     },
     // 评价判断
     com_def () {
-      if (this.orderDet.order.pay_status === '已完成') {
-        this.$route.path({name: 'CommentGoods', path: '/commentGoods', query: {order_id: this.orderDet.order.order_id, goods_id: this.orderDet.goods_list.goods_id}})
-      } else {
-        $.toast('确认收货后才能评论', 'forbidden')
-      }
+      weui.alert('建设中,敬请期待....')
+      // if (this.orderDet.order.pay_status === '已完成') {
+      //   this.$route.path({name: 'CommentGoods', path: '/commentGoods', query: {order_id: this.orderDet.order.order_id, goods_id: this.orderDet.goods_list.goods_id}})
+      // } else {
+      //   $.toast('确认收货后才能评论', 'forbidden')
+      // }
     },
     /*
      * 发起微信支付
      */
     doWechatPay() {
       // 发送请求
-      let postData = {
-        str: this.orderId, // 订单order_id：多个订单之间用','隔开
-        pay_id: '3' // 支付方式
-      }
-      let zhis = this
-      this.$http.post('flow.php?step=make_big', qs.stringify(postData))
-      .then(({data: {data, errcode, msg}}) => {
-        // console.log(JSON.parse(data.jsApiParameters).package)
-        if (data.jsApiParameters) {
-          window.WeixinJSBridge.invoke('getBrandWCPayRequest', JSON.parse(data.jsApiParameters),
-          function(res) {
-            // err_code,err_desc,err_msg
-            if (res.err_msg === 'get_brand_wcpay_request:ok') {
-              // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
-              $.toast('支付成功')
-              setTimeout(() => {
-                zhis.$router.push({name: 'OrderList', params: {orderAct: 1}})
-              }, 2000)
-            } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
-              // 取消
-              $.toast('用户取消支付', 'cancel')
-            } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
-              // 支付失败
-              $.toast(res.err_desc, 'forbidden')
-            }
-          })
+      let loading = weui.loading('loading')
+      let description = ''
+      for (let i in this.orderDetail) {
+        description += this.orderDetail[i].product_name + 'x' + this.orderDetail[i].nums
+        if (i < this.orderDetail.length - 1) {
+          description += ','
         }
+      }
+      let user = JSON.parse(window.localStorage.getItem('zlUser'))
+      let postData = {
+        sn: this.orderNo, // 订单order_id：多个订单之间用','隔开
+        totalAmount: this.orderInfo.totalPrice + this.orderInfo.shipmentMoney, // 金额
+        description: description, // 描述
+        openId: user.openId ? user.openId : 'oU_tvxAwZV-9NBTqlhXJ3DUkDeTU' // 用户标识openId
+      }
+      console.log(user)
+      let zhis = this
+      this.$http.post('weChat/weChartPay', qs.stringify(postData))
+      .then(({data: {data, code, msg}}) => {
+        if (code === 1) {
+          if (data) {
+            console.log(data)
+            window.WeixinJSBridge.invoke('getBrandWCPayRequest', data,
+            function(res) {
+              // err_code,err_desc,err_msg
+              if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+                $.toast('支付成功')
+                setTimeout(() => {
+                  zhis.$router.push({name: 'OrderList', params: {orderAct: 1}})
+                }, 2000)
+              } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+                // 取消
+                $.toast('用户取消支付', 'cancel')
+              } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+                // 支付失败
+                $.toast(res.err_desc, 'forbidden')
+              } else {
+                weui.alert(!res.errMsg ? '支付回调错误,请刷新重试!' : res.errMsg)
+              }
+            })
+          } else {
+            weui.alert('没有获取到支付参数')
+          }
+        } else {
+          weui.alert(!msg ? '支付请求异常,请刷新重试!' : msg)
+          console.error(msg)
+        }
+        loading.hide()
       }, (response) => {
+        loading.hide()
+        $.toast('服务器异常', 'forbidden')
         // error callback
         console.log(response)
       })
@@ -217,6 +246,7 @@ export default {
 .shopDet table tr td .g_name {
   height: 18px;
   overflow: hidden;
+  margin-bottom: 4px
 }
 
 /*.shopDet table tr td .gd_name {
@@ -231,7 +261,7 @@ export default {
 
 .shopDet table tr td .g_price {
   display: block;
-  margin-top: 12px
+  margin-top: 4px
 }
 
 .shopDet table tr .eval {
