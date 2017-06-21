@@ -460,7 +460,7 @@ export default {
       // 发送请求
       let loading = weui.loading('loading')
       let postData = {
-        sn: this.orderNo, // 订单order_id：多个订单之间用','隔开
+        sn: this.orderInfo.orderNo, // 订单order_id：多个订单之间用','隔开
         totalAmount: this.orderInfo.totalPrice + this.orderInfo.shipmentMoney // 金额
       }
       let zhis = this
@@ -471,7 +471,7 @@ export default {
       }).then(({data: {data, code, msg}}) => {
         if (code === 1) {
           if (data) {
-            window.WeixinJSBridge.invoke('getBrandWCPayRequest', data,
+            window.WeixinJSBridge.invoke('getBrandWCPayRequest', data.jsApiParameters,
             function(res) {
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。

@@ -164,7 +164,7 @@ export default {
       }).then(({data: {data, code, msg}}) => {
         if (code === 1) {
           if (data) {
-            window.WeixinJSBridge.invoke('getBrandWCPayRequest', data,
+            window.WeixinJSBridge.invoke('getBrandWCPayRequest', data.jsApiParameters,
             function(res) {
               // err_code,err_desc,err_msg
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
