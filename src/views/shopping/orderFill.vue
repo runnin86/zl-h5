@@ -464,8 +464,11 @@ export default {
         totalAmount: this.orderInfo.totalPrice + this.orderInfo.shipmentMoney // 金额
       }
       let zhis = this
-      this.$http.post('weChat/weChartPay', qs.stringify(postData))
-      .then(({data: {data, code, msg}}) => {
+      this.$http.post('weChat/weChartPay', qs.stringify(postData), {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(({data: {data, code, msg}}) => {
         if (code === 1) {
           if (data) {
             window.WeixinJSBridge.invoke('getBrandWCPayRequest', data,

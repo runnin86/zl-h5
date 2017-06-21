@@ -86,9 +86,6 @@
       <a class="btn redBgColor" style="display:block;">新增收货地址</a>
     </router-link>
   </div>
-  <div class="loading" v-if = "load">
-    <i class="weui-loading"></i>
-  </div>
 </div>
 </template>
 
@@ -96,13 +93,13 @@
 import weui from 'weui.js'
 import $ from 'zepto'
 import qs from 'qs'
+let loading
 
 export default {
   data() {
     return {
       editState: 0,
       addressList: [],
-      load: true,  // 是否显示加载动画
       location: {
         id: '130000 130600 130630',
         name: '河北省 保定市 涞源县'
@@ -110,6 +107,7 @@ export default {
     }
   },
   activated() {
+    loading = weui.loading('加载中')
     // 页面激活去获取地址数据
     this.loadAddressList()
   },
@@ -133,9 +131,9 @@ export default {
         } else {
           $.toast(msg, 'forbidden')
         }
-        this.load = false
+        loading.hide()
       }, (response) => {
-        this.load = false
+        loading.hide()
         console.log(response)
       })
     },

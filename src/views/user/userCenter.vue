@@ -22,27 +22,27 @@
     </div>
     <div class="ucenter_seller" v-if="accountInfo">
       <div class="row month-order">
-        <router-link to="/userCenter/sellerIncome">
+        <!-- <router-link to="/userCenter/sellerIncome"> -->
           <div class="col-xs-4">
             <span v-if="parseFloat(accountInfo.advance) > 0">{{accountInfo.advance}}</span>
             <span v-else>0.00</span>
             <p>保证金</p>
           </div>
-        </router-link>
-        <router-link to="/userCenter/sellerIncome">
+        <!-- </router-link> -->
+        <!-- <router-link to="/userCenter/sellerIncome"> -->
           <div class="col-xs-4">
             <span v-if="parseFloat(accountInfo.brokerage) > 0">{{accountInfo.brokerage}}</span>
             <span v-else>0.00</span>
             <p>佣金</p>
           </div>
-        </router-link>
-        <router-link to="/userCenter/sellerIncome">
+        <!-- </router-link>
+        <router-link to="/userCenter/sellerIncome"> -->
           <div class="col-xs-4">
             <span v-if="parseFloat(accountInfo.point) > 0">{{accountInfo.point}}</span>
             <span v-else>0.00</span>
             <p>积分</p>
           </div>
-        </router-link>
+        <!-- </router-link> -->
       </div>
     </div>
     <div class="row ucenter_buyer">
@@ -214,7 +214,7 @@ export default {
     },
     clearStorage () {
       this.counter += 1
-      if (this.counter === 5) {
+      if (this.counter === 20) {
         let zhis = this
         weui.dialog({
           title: '当前用户缓存',

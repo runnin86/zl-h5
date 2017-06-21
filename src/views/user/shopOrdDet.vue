@@ -20,11 +20,27 @@
     <p class="title_p">订单信息</p>
     <div class="shopDet">
       <ul>
-        <li>订单编号：{{orderInfo.orderNo}}</li>
-        <li>下单时间：{{orderInfo.orderDate/1000 | dateFilter(4)}}</li>
-        <li>付款时间：{{orderInfo.payStatus===0 ? '未付款' : (orderInfo.payTime/1000 | dateFilter(4))}}</li>
-        <li>发货时间：{{!orderInfo.shippingTime ? '未发货' : (orderInfo.shippingTime/1000 | dateFilter(4))}}</li>
-        <li>订单状态：{{orderInfo.orderStatus | orderStatusFilter}}</li>
+        <li>
+          订单编号：{{orderInfo.orderNo}}
+        </li>
+        <li>
+          下单时间：{{orderInfo.orderDate/1000 | dateFilter(4)}}
+        </li>
+        <li v-if="orderInfo.payStatus===0">
+          付款时间：未付款
+        </li>
+        <li v-else>
+          付款时间：{{orderInfo.payTime/1000 | dateFilter(4)}}
+        </li>
+        <li v-if="!orderInfo.shipmentTime">
+          发货时间：未发货
+        </li>
+        <li v-else>
+          发货时间：{{orderInfo.shipmentTime/1000 | dateFilter(4)}}
+        </li>
+        <li>
+          订单状态：{{orderInfo.orderStatus | orderStatusFilter}}
+        </li>
       </ul>
     </div>
     <p class="title_p">收货人信息</p>
@@ -75,6 +91,7 @@
 import $ from 'zepto'
 import qs from 'qs'
 import weui from 'weui.js'
+let loading
 
 export default {
   data() {
@@ -89,7 +106,9 @@ export default {
    * 激活
    */
   activated() {
+    loading = weui.loading('加载中')
     this.orderNo = this.$route.query.orderNo
+    this.orderInfo = this.orderDetail = null
     // 获取数据
     this.loadOrderInfo()
   },
@@ -113,6 +132,7 @@ export default {
         } else {
           $.toast(msg, 'forbidden')
         }
+        loading.hide()
       }, (response) => {
         console.log(response)
       })
@@ -131,14 +151,17 @@ export default {
      */
     doWechatPay() {
       // 发送请求
-      let loading = weui.loading('loading')
+      loading = weui.loading('加载中')
       let postData = {
         sn: this.orderNo, // 订单order_id：多个订单之间用','隔开
         totalAmount: this.orderInfo.totalPrice + this.orderInfo.shipmentMoney // 金额
       }
       let zhis = this
-      this.$http.post('weChat/weChartPay', qs.stringify(postData))
-      .then(({data: {data, code, msg}}) => {
+      this.$http.post('weChat/weChartPay', qs.stringify(postData), {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(({data: {data, code, msg}}) => {
         if (code === 1) {
           if (data) {
             window.WeixinJSBridge.invoke('getBrandWCPayRequest', data,

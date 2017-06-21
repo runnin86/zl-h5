@@ -93,10 +93,6 @@
       </div>
     </div>
   </div>
-  <!--底部导航结束-->
-  <div class="loading" v-if="load">
-    <i class="weui-loading"></i>
-  </div>
 </div>
 </template>
 
@@ -104,6 +100,7 @@
 import qs from 'qs'
 import $ from 'zepto'
 import weui from 'weui.js'
+let loading
 
 export default {
   init() {
@@ -114,6 +111,7 @@ export default {
   beforeDestroy() {
   },
   activated() {
+    loading = weui.loading('加载中')
     this.main = this.photo = null
     this.buyNum = 1
     this.pid = this.$route.query.gid
@@ -141,8 +139,7 @@ export default {
       vy: 4,
       timer: 20,
       delTimer: null,
-      addTimer: null,
-      load: true // 是否显示加载动画
+      addTimer: null
     }
   },
   methods: {
@@ -165,8 +162,9 @@ export default {
           $.toast(msg, 'forbidden')
           console.error('获取商品失败:' + msg)
         }
-        this.load = false
+        loading.hide()
       }, (response) => {
+        loading.hide()
         // error callback
         console.error(response)
       })
