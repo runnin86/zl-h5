@@ -326,11 +326,11 @@ export default {
           'x-token': window.localStorage.getItem('zlToken')
         }
       }).then(({data: {data, code, msg}}) => {
-        console.log(data)
+        // console.log(data)
         if (code === 1) {
           this.addressList = data.addressList
           if (data.addressList.length > 0) {
-            this.baiduMapFuc(data.addressList[0].city + data.addressList[0].district)
+            this.baiduMapFuc(data.addressList[0])
           }
         } else {
           $.toast(msg, 'forbidden')
@@ -359,7 +359,7 @@ export default {
         this.addressList[i].city + ' ' +
         this.addressList[i].district
       // 去匹配距离
-      this.baiduMapFuc(this.addressList[i].city + this.addressList[i].district)
+      this.baiduMapFuc(this.addressList[i])
     },
     // 保存并下一步
     saveNext() {
@@ -521,56 +521,38 @@ export default {
     /*
      * 百度地图方法
      */
-    baiduMapFuc(toAddress) {
+    baiduMapFuc(to) {
       let zhis = this
-      if (toAddress.indexOf('市辖区') === 0) {
-        toAddress = toAddress.split('市辖区')[1]
+      let toAddress = to.province
+      if (to.city.indexOf('市辖区') === -1 && to.city.indexOf('县') === -1) {
+        // 去除地址中的市辖区和县字段
+        toAddress += to.city
       }
-      if (toAddress.indexOf('县') === 0) {
-        toAddress = toAddress.substring(1, toAddress.length)
-      }
-      // // 获取坐标
-      // let myGeo = new BMap.Geocoder()
-      // // 将地址解析结果显示在地图上,并调整地图视野
-      // myGeo.getPoint('河北省保定市涞源县广泉大街西神山村村委会', function(point) {
-      //   if (point) {
-      //     console.log(point)
-      //   } else {
-      //     console.error('您选择地址没有解析到结果!')
-      //   }
-      // }, '保定市')
-      // 计算两地驾车时间和距离
+      toAddress += to.district
+      // 计算两地的距离
       let map = new BMap.Map('allmap')
-      map.centerAndZoom(new BMap.Point(116.404, 39.915), 12)
-      let output = '到' + toAddress + '驾车需要'
-      var searchComplete = function(results) {
-        if (transit.getStatus() !== 0) {
-          return
-        }
-        let plan = results.getPlan(0)
-        output += plan.getDuration(true) + '\n' // 获取时间
-        output += '总路程为：'
-        output += plan.getDistance(true) + '\n' // 获取距离
-        // 超过配送范围要支付运费
-        if ((plan.getDistance(false) / 1000) > distributionScope) {
-          weui.topTips('收货地址超出配送范围,默认收取' + shippingExpenses + '元快递费!')
-          zhis.shippingMoney = shippingExpenses
+      map.centerAndZoom(new BMap.Point(114.720492, 39.341475), 12)
+      // 河北省保定市涞源县广泉大街西神山村村委会
+      let centerPoint = new BMap.Point(114.720492, 39.341475)
+      // 获取目的地坐标
+      let myGeo = new BMap.Geocoder()
+      // 将地址解析结果显示在地图上,并调整地图视野
+      myGeo.getPoint(toAddress, function(toPoint) {
+        if (toPoint) {
+          // 距离向上取整(四舍五入)distributionScope
+          let distance = Math.ceil(map.getDistance(toPoint, centerPoint) / 1000)
+          console.log(distance)
+          if (distance > distributionScope) {
+            weui.topTips('收货地址超出配送范围,默认收取' + shippingExpenses + '元快递费!')
+            zhis.shippingMoney = shippingExpenses
+          } else {
+            zhis.shippingMoney = 0
+          }
         } else {
-          zhis.shippingMoney = 0
+          weui.alert('收货地址没有解析到结果<br/>默认收取' + shippingExpenses + '元快递费')
+          zhis.shippingMoney = shippingExpenses
         }
-      }
-      let transit = new BMap.DrivingRoute(map, {
-        renderOptions: {
-          map: map
-        },
-        onSearchComplete: searchComplete,
-        onPolylinesSet: function() {
-          setTimeout(function() {
-            console.log(output)
-          }, 1000)
-        }
-      })
-      transit.search('河北省保定市涞源县广泉大街西神山村村委会', toAddress)
+      }, '保定市')
     }
   }
 }

@@ -104,11 +104,9 @@ export default {
     // this.queryList()
   },
   activated() {
-    if (this.$route.params.orderAct) {
-      this.orderAct = this.$route.params.orderAct
-      this.orderList = []
-      this.pagenum = 0
-    }
+    this.orderAct = this.$route.params.orderAct
+    this.orderList = []
+    this.pagenum = 0
     if (this.$parent.fromPath !== '/shopOrdDet' || this.orderList.length === 0) {
       this.queryList()
     }
