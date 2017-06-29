@@ -54,7 +54,7 @@
       </a>
     </div>
   </div>
-  <div style="padding-bottom: 50px;">
+  <div style="padding-bottom: 2px;">
     <div class="weui-loadmore" v-if="showLoading&&pagenum>-1">
       <i class="weui-loading"></i>
       <span class="weui-loadmore__tips">正在加载</span>
@@ -216,9 +216,9 @@ export default {
         // 滑动菜单
         for (let i in this.sortMenu) {
           if (this.sortMenu[i].id === this.cid) {
-            console.log(i * 108 * -1)
-            // $('#activeMenu').css('left', (i * 108 * -1) + 'px')
-            // $('#activeMenu').animate({scrollLeft: i * 108 * -1}, 100)
+            console.log(i)
+            // $('.cell').css('right', (i * 95) + 'px')
+            // $('.cell').animate({'right': i * 95}, 1000)
           }
         }
       }

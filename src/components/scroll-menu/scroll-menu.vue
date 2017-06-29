@@ -15,7 +15,7 @@
     <div v-show="subitemsExpanded" class="pull-down">
       <ul class="pull-down-sort">
         <li class="" v-for="pulldow in sortName">
-          <a @click="$parent.$emit(fnName, pulldow.id)">{{pulldow.name}}</a>
+          <a @click="$parent.$emit(fnName, pulldow.id),subitemsExpanded=false">{{pulldow.name}}</a>
         </li>
       </ul>
     </div>
