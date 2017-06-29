@@ -42,6 +42,8 @@ import MediaBox from './media-box/index.js'
 import Preview from './preview/index.js'
 import Footer from './footer/index.js'
 import CountDown from './countdown/index.js'
+import Qrcode from './qrcode/index.js'
+import ScrollMenu from './scroll-menu/index.js'
 // import '../src/assets/font/iconfont.css'
 
 const install = function (Vue) {
@@ -86,6 +88,8 @@ const install = function (Vue) {
   Vue.component(Preview.name, Preview)
   Vue.component(Footer.name, Footer)
   Vue.component(CountDown.name, CountDown)
+  Vue.component(Qrcode.name, Qrcode)
+  Vue.component(ScrollMenu.name, ScrollMenu)
   // Vue.use(Lazyload, {
   //   loading: require('../../static/img/loading-spin.svg'),
   //   try: 3
@@ -146,5 +150,7 @@ export default {
   MediaBox,
   Preview,
   Footer,
-  CountDown
+  CountDown,
+  Qrcode,
+  ScrollMenu
 }

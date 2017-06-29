@@ -90,10 +90,10 @@
 .navbar-location{
   position: relative;
   z-index: 10;
-  top:0;
+  top: 0;
   max-width: 640px;
-  min-width:320px;
-  overflow: hidden;
+  min-width: 320px;
+  /*overflow: hidden;*/
 }
 .navbar-yzg-default .active a {
   color: #353a40;

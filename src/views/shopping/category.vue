@@ -15,20 +15,16 @@
       </router-link>
     </div> -->
   </div>
-  <div class="row navbar-location" v-show="parent_cat.length>0">
-    <div class="navbar-yzg-default"
-      :style="{width: (parent_cat.length+1)*108+'px'}">
-      <ul id='activeMenu' class="ul-slider">
-        <li class="slider-item" :class="cid===0?'active':''">
-          <a @click="changeCid(0)">全部商品</a>
-        </li>
-        <li v-for="cat in parent_cat" class="slider-item"
-          v-if="cat.cat_id>0" :class="cat.cat_id===cid?'active':''">
-          <a @click="changeCid(cat.cat_id)">{{cat.cat_name}}</a>
-        </li>
-      </ul>
+
+  <!-- 滑动菜单 -->
+  <div class="row navbar-location" v-show="sortMenu.length>0">
+    <div class="navbar-yzg-default">
+      <wv-scroll-menu :sortMenu="sortMenu" :sortName="sortName"
+        :fnName="'changeCid'" :activeId="cid">
+      </wv-scroll-menu>
     </div>
   </div>
+
   <div class="row recommend-goods">
     <div class="goods-lists clearfix"
       v-infinite-scroll="queryList"
@@ -72,7 +68,6 @@
 import $ from 'zepto'
 import qs from 'qs'
 // import weui from 'weui.js'
-import Touchslider from 'static/js/touchslider.js'
 
 // import Vue from 'vue'
 // import progressive from './../../directives/progressive-image'
@@ -81,45 +76,45 @@ import Touchslider from 'static/js/touchslider.js'
 //   removePreview: true,
 //   scale: true
 // })
-let menu
 let menuList = [{
-  cat_id: 0,
-  cat_name: '全部商品'
+  id: 0,
+  name: '全部商品'
 }, {
-  cat_id: 1,
-  cat_name: '新能源系列'
+  id: 1,
+  name: '新能源系列'
 }, {
-  cat_id: 2,
-  cat_name: '五金卫浴'
+  id: 2,
+  name: '五金卫浴'
 }, {
-  cat_id: 3,
-  cat_name: '家电系列'
+  id: 3,
+  name: '家电系列'
 }, {
-  cat_id: 4,
-  cat_name: '生活用品'
+  id: 4,
+  name: '生活用品'
 }, {
-  cat_id: 5,
-  cat_name: '母婴产品'
+  id: 5,
+  name: '母婴产品'
 }, {
-  cat_id: 6,
-  cat_name: '酒水类'
+  id: 6,
+  name: '酒水类'
 }, {
-  cat_id: 7,
-  cat_name: '特色产品'
+  id: 7,
+  name: '特色产品'
 }]
 
 export default {
   data () {
     return {
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=',
-      parent_cat: menuList,
       goods_list: [],
       img_domain: 'http://img.zulibuy.com/images/',
       title_name: '全部商品',
       cid: 0,
       pagenum: 0,
       showLoading: false,
-      busy: true
+      busy: true,
+      sortMenu: menuList,
+      sortName: menuList
     }
   },
   mounted () {
@@ -132,21 +127,6 @@ export default {
     })
   },
   updated () {
-    menu = new Touchslider('activeMenu', {
-      // duration: 800, // 页面过渡时间
-      // interval: 3000, // 幻灯播放时间间隔
-      direction: 0, // 页面切换方向，0横向，1纵向
-      autoplay: false, // 是否自动播放幻灯
-      align: 'left', // 对齐方式，left(top) center(middle) right(bottom
-      mousewheel: false, // 是否启用鼠标滚轮切换
-      mouse: true, // 是否启用鼠标拖拽
-      fullsize: false // 是否全屏幻灯（false为自由尺寸幻灯）
-    })
-    menu.end = function() {
-    }
-    // menu.on('dragEnd', function() {
-    //   console.log($('#activeMenu').css('left'))
-    // })
   },
   /*
    * 激活
@@ -170,15 +150,18 @@ export default {
         }
       })
     })
-    this.parent_cat = menuList
+    // 获取滑动菜单组件的事件通信
+    this.$on('changeCid', function (id) {
+      this.changeCid(id)
+    })
   },
   methods: {
     /*
      * 分类点击
      */
     changeCid (cid) {
-      // this.title_name = this.parent_cat[value = cid]
-      this.title_name = this.parent_cat[cid].cat_name
+      // this.title_name = this.sortMenu[value = cid]
+      this.title_name = this.sortMenu[cid].name
       this.cid = cid
       this.pagenum = 0
       this.goods_list = []
@@ -226,8 +209,8 @@ export default {
         })
       } finally {
         // 滑动菜单
-        for (let i in this.parent_cat) {
-          if (this.parent_cat[i].cat_id === this.cid) {
+        for (let i in this.sortMenu) {
+          if (this.sortMenu[i].id === this.cid) {
             console.log(i * 108 * -1)
             // $('#activeMenu').css('left', (i * 108 * -1) + 'px')
             // $('#activeMenu').animate({scrollLeft: i * 108 * -1}, 100)
