@@ -48,10 +48,9 @@
 
 <script>
 import $ from 'zepto'
-import wx from 'weixin-js-sdk'
+import util from './utils'
 import {mapGetters} from 'vuex'
 import thumbSmall from 'static/weui/images/icon_tabbar.png'
-import * as config from './config'
 
 export default {
   // name: 'app',
@@ -59,7 +58,7 @@ export default {
     let ignoreUrl = ['/', '/oauth']
     if (!ignoreUrl.includes(window.location.pathname) && this.is_weixn()) {
       // 非忽略的url要进行jssdk初始化
-      this.jssdkConfig()
+      util.wxConfig()
     }
   },
   computed: {
@@ -113,83 +112,6 @@ export default {
         pwd += $chars.charAt(Math.floor(Math.random() * maxPos))
       }
       return pwd
-    },
-    jssdkConfig() {
-      // 去后台获取签名等信息
-      this.$http.get('weChat/wxJssdkConfig', {
-        params: {
-          appid: config.appId,
-          appsecret: config.appSecret,
-          reqUrl: location.href.split('#')[0]
-        }
-      }).then(({data: {data, code, msg}}) => {
-        if (code === 1) {
-          // 微信jssdk配置
-          wx.config({
-            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出
-            appId: data.appId, // 必填，公众号的唯一标识
-            timestamp: data.timestamp, // 必填，生成签名的时间戳
-            nonceStr: data.nonceStr, // 必填，生成签名的随机串
-            signature: data.signature, // 必填，签名，见附录1
-            jsApiList: [ // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
-              'onMenuShareTimeline',
-              'onMenuShareAppMessage',
-              'onMenuShareQQ',
-              'onMenuShareWeibo',
-              'onMenuShareQZone',
-              'chooseImage',
-              'uploadImage',
-              'startRecord',
-              'stopRecord',
-              'onVoiceRecordEnd',
-              'uploadVoice'
-            ]
-          })
-        }
-      }, (response) => {
-        // error callback
-        console.error(response)
-      })
-    },
-    initWechatShare(title, desc, imgUrl, link) {
-      wx.ready(function() {
-        // 获取“分享到朋友圈”按钮点击状态及自定义分享内容接口
-        wx.onMenuShareTimeline({
-          title: title,
-          link: link,
-          imgUrl: imgUrl,
-          trigger: function (res) {
-            // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
-          },
-          success: function (res) {
-            // console.log('分享完成')
-          },
-          cancel: function (res) {
-            // console.log('取消分享')
-          },
-          fail: function (res) {
-            // console.log(JSON.stringify(res))
-          }
-        })
-        // 获取“分享给朋友”按钮点击状态及自定义分享内容接口
-        wx.onMenuShareAppMessage({
-          title: title, // 分享标题
-          desc: desc, // 分享描述
-          link: link, // 分享链接
-          imgUrl: imgUrl, // 分享图标
-          type: '', // 分享类型,music、video或link，不填默认为link
-          dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-          success: function () {
-            // 用户确认分享后执行的回调函数
-          },
-          cancel: function () {
-            // 用户取消分享后执行的回调函数
-          }
-        })
-        wx.error(function (res) {
-          // console.log(res.errMsg)
-        })
-      })
     }
   },
   // dynamically set transition based on route change
@@ -202,12 +124,18 @@ export default {
         this.scrollTop = $('.container').scrollTop()
       }
       // 默认全局分享
-      let desc = '【足力购】帅哥美女们，快来足力购逛逛，捧个场吧！'
-      this.initWechatShare(
-        '足力购商城',
-        desc,
-        window.location.origin + '/static/images/logo-new1.jpeg',
-        window.location.href)
+      let ignoreUrl = ['/', '/oauth', '/favicon.ico']
+      if (!ignoreUrl.includes(window.location.pathname)) {
+        // 默认全局分享
+        let desc = '【足力购】帅哥美女们，快来足力购逛逛，捧个场吧！'
+        let link = window.location.origin + '/category'
+        this.initWechatShare(
+          '足力购商城欢迎您',
+          desc,
+          window.location.origin + '/static/images/logo-new1.jpeg',
+          link
+        )
+      }
     }
   }
 }

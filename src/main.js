@@ -14,17 +14,35 @@ import 'normalize.css/normalize.css'
 import 'assets/iconfont/iconfont.css'
 import infiniteScroll from './directives/infinite-scroll'
 import setWechatTitle from './utils/setWechatTitle.js'
+import util from './utils'
 
 if ('addEventListener' in document) {
   document.addEventListener('DOMContentLoaded', function () {
     FastClick.attach(document.body)
+    util.wxConfig()
   }, false)
 }
 
 Vue.config.debug = true
 Vue.config.productionTip = false
-Vue.prototype.$http = axios
+
 Vue.use(WeVue)
+Vue.prototype.$http = axios
+Vue.prototype.initWechatShare = (title, desc, imgUrl, link) => {
+  if (navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Adr') > -1) {
+    // TODO: Android手机需要重新配置jssdk
+    util.wxConfig()
+  }
+  util.wxReady({
+    title, desc, imgUrl, link
+  }, (res) => {
+    console.log('分享完成')
+  }, (res) => {
+    console.log('取消分享')
+  }, (res) => {
+    console.error(JSON.stringify(res))
+  })
+}
 
 Vue.directive('infiniteScroll', infiniteScroll)
 

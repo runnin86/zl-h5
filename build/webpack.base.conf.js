@@ -20,8 +20,8 @@ module.exports = {
   },
   externals: {
     'zepto': 'Zepto',
-    'BMap': 'BMap'
-    // 'wx': 'jWeixin'
+    'BMap': 'BMap',
+    'wx': 'jWeixin'
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],

@@ -80,7 +80,7 @@
 import qs from 'qs'
 import $ from 'zepto'
 import weui from 'weui.js'
-import wx from 'weixin-js-sdk'
+import wx from 'wx'
 import * as config from './../../config'
 
 export default {
