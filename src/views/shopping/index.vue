@@ -321,7 +321,6 @@
 
 <script type="text/babel">
 import $ from 'zepto'
-import touchslider from 'static/js/touchslider.js'
 
 export default {
   data () {
@@ -364,16 +363,6 @@ export default {
   },
   updated () {
     // 组件更新完毕
-    touchslider('activeMenu', {
-      // duration: 800, // 页面过渡时间
-      // interval: 3000, // 幻灯播放时间间隔
-      direction: 0, // 页面切换方向，0横向，1纵向
-      autoplay: false, // 是否自动播放幻灯
-      align: 'left', // 对齐方式，left(top) center(middle) right(bottom
-      mousewheel: false, // 是否启用鼠标滚轮切换
-      mouse: true, // 是否启用鼠标拖拽
-      fullsize: false // 是否全屏幻灯（false为自由尺寸幻灯）
-    })
   },
   activated () {
     this.loadData()

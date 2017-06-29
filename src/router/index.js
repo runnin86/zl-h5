@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Demo from '@/views/demo/demo'
-import Test from '@/views/demo/test'
 
 Vue.use(Router)
 
@@ -224,9 +223,6 @@ export default new Router({
     }, {
       path: '/demo',
       component: Demo
-    }, {
-      path: '/test',
-      component: Test
     }, {
       path: '*',
       component(resolve) {
