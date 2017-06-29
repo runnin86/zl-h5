@@ -54,12 +54,14 @@
       </a>
     </div>
   </div>
-  <div class="weui-loadmore" v-if="showLoading&&pagenum>-1">
-    <i class="weui-loading"></i>
-    <span class="weui-loadmore__tips">正在加载</span>
-  </div>
-  <div class="weui-loadmore weui-loadmore_line" v-if="pagenum===-1">
-    <span class="weui-loadmore__tips">暂无商品</span>
+  <div style="padding-bottom: 50px;">
+    <div class="weui-loadmore" v-if="showLoading&&pagenum>-1">
+      <i class="weui-loading"></i>
+      <span class="weui-loadmore__tips">正在加载</span>
+    </div>
+    <div class="weui-loadmore weui-loadmore_line" v-if="pagenum===-1">
+      <span class="weui-loadmore__tips">没有更多啦</span>
+    </div>
   </div>
 </div>
 </template>

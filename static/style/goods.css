@@ -55,6 +55,7 @@
 .goodsBrief {
   width: 100%;
   word-break: break-all;
+  padding-bottom: 50px;
 }
 
 .goodsBrief img {

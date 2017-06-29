@@ -10,8 +10,8 @@
         <i class="iconfont-yzg icon-yzg-back"></i>
       </a>
     </div>
-    <div class="col-xs-8 shop-name" v-if="main">
-      <span>{{main.productName}}</span>
+    <div class="col-xs-8 shop-name">
+      <span v-if="main">{{main.productName}}</span>
       <!-- <span class="double_title buyer_comment">商品详情</span>
       <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: pid}}" class="double_title">买家评论</router-link> -->
     </div>
@@ -21,75 +21,77 @@
       </router-link>
     </div>
   </div>
-  <!--轮播图及内容-->
-  <div>
-    <div style="position:relative">
-      <div class="detail-img">
-        <wv-swipe class="demo-swipe" :height="300" :auto="4000">
-          <wv-swipe-item class="demo-swipe-item" v-for="img in photo" :key="img.id">
-            <img :src="imgBase64" :style="{backgroundImage: 'url(' + img_domain + img.resource + ')'}">
-          </wv-swipe-item>
-        </wv-swipe>
+  <div v-show="main">
+    <!--轮播图及内容-->
+    <div>
+      <div style="position:relative">
+        <div class="detail-img">
+          <wv-swipe class="demo-swipe" :height="300" :auto="4000">
+            <wv-swipe-item class="demo-swipe-item" v-for="img in photo" :key="img.id">
+              <img :src="imgBase64" :style="{backgroundImage: 'url(' + img_domain + img.resource + ')'}">
+            </wv-swipe-item>
+          </wv-swipe>
+        </div>
       </div>
-    </div>
-    <div class="row" style="margin:0px; margin-top:10px">
-      <div class="col-xs-12 goodsTitle" v-if="main">
-        <p>
-          {{main.productName}}
-        </p>
-        <div class="shop_price">
-          ￥{{main.price}}
-          <span class="shop_price_span_add">
-            市场价￥{{main.marketPrice}}
-          </span>
-          <div class="goodNum">
-            <a class="add" @click="numberChange('del')">-</a>
-            <input type="text" v-model="buyNum" />
-            <a class="delete" style="cursor:pointer" @click="numberChange('add')">+</a>
+      <div class="row" style="margin:0px; margin-top:10px">
+        <div class="col-xs-12 goodsTitle" v-if="main">
+          <p>
+            {{main.productName}}
+          </p>
+          <div class="shop_price">
+            ￥{{main.price}}
+            <span class="shop_price_span_add">
+              市场价￥{{main.marketPrice}}
+            </span>
+            <div class="goodNum">
+              <a class="add" @click="numberChange('del')">-</a>
+              <input type="text" v-model="buyNum" />
+              <a class="delete" style="cursor:pointer" @click="numberChange('add')">+</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row info_goods">
-    <div class="col-xs-4" style="text-align:left">
-      <img src="/static/images/zheng.png">&nbsp;正品保证
+    <div class="row info_goods">
+      <div class="col-xs-4" style="text-align:left">
+        <img src="/static/images/zheng.png">&nbsp;正品保证
+      </div>
+      <div class="col-xs-4" style="text-align:center;">
+        <img src="/static/images/qu.png">&nbsp;全球直采
+      </div>
+      <div class="col-xs-4" style="text-align:right;">
+        <img src="/static/images/bao.png">&nbsp;同城配送
+      </div>
     </div>
-    <div class="col-xs-4" style="text-align:center;">
-      <img src="/static/images/qu.png">&nbsp;全球直采
+    <div class="goodsTxt">
+      <p class="redColor">#商品详情#</p>
     </div>
-    <div class="col-xs-4" style="text-align:right;">
-      <img src="/static/images/bao.png">&nbsp;同城配送
-    </div>
-  </div>
-  <div class="goodsTxt">
-    <p class="redColor">#商品详情#</p>
-  </div>
-  <div class="goodsBrief" v-if="main" v-html="main.profile"></div>
-  <span class="red-dot"></span>
-  <div class="cartBottom">
-    <div class="cartImg clearfix">
-      <!-- 购物车图标 -->
-      <router-link :to="'/cart'">
-        <a class="cart_png addCartPng">
-          <span class="iconfont-yzg icon-yzg-msnui-cart"></span>
-          <span class="quantity redBgColor" v-show="$store.getters.cartBadge>0">
-            {{$store.getters.cartBadge}}
-          </span>
+    <div class="goodsBrief" v-if="main" v-html="main.profile"></div>
+    <span class="red-dot"></span>
+    <div class="cartBottom">
+      <div class="cartImg clearfix">
+        <!-- 购物车图标 -->
+        <router-link :to="'/cart'">
+          <a class="cart_png addCartPng">
+            <span class="iconfont-yzg icon-yzg-msnui-cart"></span>
+            <span class="quantity redBgColor" v-show="$store.getters.cartBadge>0">
+              {{$store.getters.cartBadge}}
+            </span>
+          </a>
+        </router-link>
+        <!-- 收藏图标 -->
+        <a @click="collect(pid)" class="cart_png">
+          <span v-if="main" :class="['iconfont-yzg', main.isSale === '上架' ? 'icon-yzg-shoucang' : 'icon-yzg-shouc_no']"></span>
         </a>
-      </router-link>
-      <!-- 收藏图标 -->
-      <a @click="collect(pid)" class="cart_png">
-        <span v-if="main" :class="['iconfont-yzg', main.isSale === '上架' ? 'icon-yzg-shoucang' : 'icon-yzg-shouc_no']"></span>
-      </a>
-    </div>
-    <div class="clearfix" style=" padding-left:40%;">
-      <div class="tbl-cell">
-        <a class="btn-cart redBgColor" @click="addCartFn(pid)"
-          style="border-radius: 4px;margin-top: -1px;">
-          <span class="iconfont-yzg icon-yzg-msnui-cart"></span>
-          加入购物车
-        </a>
+      </div>
+      <div class="clearfix" style=" padding-left:40%;">
+        <div class="tbl-cell">
+          <a class="btn-cart redBgColor" @click="addCartFn(pid)"
+            style="border-radius: 4px;margin-top: -1px;">
+            <span class="iconfont-yzg icon-yzg-msnui-cart"></span>
+            加入购物车
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -153,7 +155,7 @@ export default {
           this.photo = data.photo
           // 微信分享初始化->(title, desc, imgUrl, link)
           let desc = '【足力购】帅哥美女们，快来足力购逛逛，捧个场吧！'
-          this.$parent.initWechatShare(
+          this.initWechatShare(
             data.main.productName + '-足力购商城',
             desc,
             this.img_domain + data.photo[0].resource,
