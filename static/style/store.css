@@ -1,36 +1,56 @@
 
-.user-img a img{
+.user-img img{
   border-radius:50%;
   border: 1px solid #eee;
+/*  width:100%;*/
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  width: 62px;
+  background-color: #fff;
 }
 /*s首页头部样式*/
 .index-title{
-  /*height:auto;
-  line-height: inherit;
-  background: #d6244f;
-  color: #fff;
-  font-size: 18px;
-  position: fixed;
-  width: 100%;
-  max-width: 640px;
-  min-width: 320px;
-  z-index: 100;*/
-  background: #f8f8f8;
-  font-size: 18px;
+  background: url(/static/images/index_bg.jpg) no-repeat center top;
+  background-size: 100%;
   position: relative;
+  color: #fff;
+}
+.index-title .unshop-name{
+  height: 44px;
+  line-height: 44px;
+  padding-top:0;
+  text-align: center;
+  overflow: hidden;
 }
 .index-title .shop-name{
-  height: 44px;
   text-align: center;
-  line-height: 44px;
-  font-weight: bold;
-  border-bottom: 1px solid #eee;
-  font-size: 15px;
+  overflow: hidden;
+  color: #fff;
+  padding: 15px 0 7px;
+  position: relative;
+  height: 84px;
+}
+.index-title .shop-name .contact_img{
+  position: absolute;
+  left:14px;
+  top:12px;
+}
+.shop-name .contact_img .shoper_contact {
+  font-size: 11px;
+  border-radius: 10px;
+  background: #fff;
+  color: #ef0021;
+  padding: 0px 4px;
+  display: inline-block;
+  float: left;
+  margin-top: 7px;
+  margin-left: 7px;
 }
 .index-title .shop-detail{
-  padding: 10px 15px;
-  background: #f6f6f6;
-  border-bottom: 1px solid #eee;
+  color: #fff;
+  text-align: center
 }
 .index-title .shop-detail .user-img{
   float:left;
@@ -46,20 +66,28 @@
   border: 1px solid #ddd;
 }
 .index-title .shop-detail .shop-info{
-  padding-left:50px;
+  /*padding-left:50px;*/
   position: relative;
+  padding-bottom: 20px;
 }
-.index-title .shop-detail .shop-info .search-icon{
+.index-title .search-icon{
   position: absolute;
-  right:0;
-  bottom:0;
+  right:18px;
+  top: 16px;
   color:#777;
+}
+.index-title .search-icon .search_css{
+  color: #fff;
+  font-size: 18px;
 }
 .index-title .shop-detail .shop-info .info{
   font-size: 12px;
   display: block;
   height: 18px;
   overflow: hidden;
+  padding: 0 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 /*导航条样式*/
 .navbar-yzg-default{
@@ -204,6 +232,7 @@
 .goods-lists .goods-price{
     font-size: 14px;
     padding: 5px 8px;
+    color: #ef0021;
 }
 .goods-lists .goods-price .goods-price_origin{
 	color: #999;
@@ -239,7 +268,7 @@
 }
 /*特卖，限时抢购样式*/
 .hot-sale_box{
-  padding-top:10px;
+  /*padding-top:10px;*/
 }
 .hot-sale_box .hot-sale_goods{
   background: #fff;

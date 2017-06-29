@@ -19,8 +19,8 @@
   <!-- 滑动菜单 -->
   <div class="row navbar-location" v-show="sortMenu.length>0">
     <div class="navbar-yzg-default">
-      <wv-scroll-menu :sortMenu="sortMenu" :sortName="sortName"
-        :fnName="'changeCid'" :activeId="cid">
+      <wv-scroll-menu ref="menuComp" :sortMenu="sortMenu" :sortName="sortName"
+        :isSortName="true" :fnName="'changeCid'" :activeId="cid">
       </wv-scroll-menu>
     </div>
   </div>
@@ -138,15 +138,18 @@ export default {
       // this.cid = this.$route.params.cid
       this.changeCid(this.$route.params.cid)
     }
-    // $('.container').scrollTop(this.$parent.scrollTop)
+    $(window).scrollTop(this.$parent.scrollTop)
+    let _this = this
     $(document).ready(function () {
-      $('.navbar-yzg-default').css({'position': 'relative', 'width': 'auto'})
-      $('.container').scroll(function () {
-        let scrollT = $('.container').scrollTop()
+      $('.navbar-location').css({'position': 'relative', 'width': 'auto'})
+      $(window).scroll(function () {
+        // 滑动菜单不展开
+        _this.$refs.menuComp.subitemsExpanded = false
+        let scrollT = $(window).scrollTop()
         if (scrollT < 44) {
-          $('.navbar-yzg-default').css({'position': 'relative', 'width': 'auto'})
+          $('.navbar-location').css({'position': 'relative', 'width': 'auto'})
         } else {
-          $('.navbar-yzg-default').css({'position': 'fixed', 'width': '100%', 'top': '0'})
+          $('.navbar-location').css({'position': 'fixed', 'width': '100%', 'top': '0'})
         }
       })
     })

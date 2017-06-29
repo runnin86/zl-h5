@@ -1,14 +1,14 @@
 <template>
-  <div class="page__bd" style="height: 100%;overflow:hidden;">
+  <div class="page__bd">
     <transition :name="$router.options.transitionName" mode="out-in">
       <keep-alive>
-        <router-view class="container container-content tab-panel viewScroll"></router-view>
+        <router-view class="container container-content viewStyle"></router-view>
       </keep-alive>
     </transition>
 
-    <wv-tabbar v-if="showIndex" style="position: fixed;table-layout: fixed;border-top: 1px solid #ddd;">
+    <wv-tabbar v-if="showIndex" style="position: fixed;table-layout: fixed;">
       <wv-tabbar-item to="/category" :is-on="$route.path==='/category'">
-        <span slot="icon" style="display: inline-block; position: relative; height:34px">
+        <span slot="icon" style="display: inline-block; position: relative; height:34px; padding-top:5px">
           <!-- <img class="weui-tabbar__icon" src="static/weui/images/icon_nav_search_bar.png" slot="icon"> -->
           <i class="iconfont-yzg icon-yzg-goods" style="font-size:26px"></i>
         </span>
@@ -16,7 +16,7 @@
       </wv-tabbar-item>
 
       <wv-tabbar-item to="/cart" :is-on="$route.path==='/cart'">
-        <span slot="icon" style="display: inline-block; position: relative; height:34px">
+        <span slot="icon" style="display: inline-block; position: relative; height:34px; padding-top:5px">
           <!-- <img class="weui-tabbar__icon" :src="thumbSmall" slot="icon"> -->
           <i class="iconfont-yzg icon-yzg-msnui-cart" style="font-size:26px"></i>
           <wv-badge v-show="cartBadgeNum"
@@ -34,7 +34,7 @@
       </wv-tabbar-item> -->
 
       <wv-tabbar-item to="/userCenter" :is-on="$route.path==='/userCenter'">
-        <span slot="icon" style="display: inline-block; position: relative; height:34px">
+        <span slot="icon" style="display: inline-block; position: relative; height:34px; padding-top:5px">
           <!-- <img class="weui-tabbar__icon" :src="thumbSmall" slot="icon"> -->
           <i class="iconfont-yzg icon-yzg-wode" style="font-size:26px"></i>
           <wv-badge is-dot style="position: absolute;top: 0;right: -6px;">8</wv-badge>
@@ -157,6 +157,10 @@ export default {
   display: none;
 }
 
+[v-cloak] {
+  display: none;
+}
+
 .tab-panel {
   box-sizing: border-box;
   height: 100%;
@@ -168,6 +172,13 @@ export default {
 .viewScroll {
   position: absolute;
   overflow: auto;
+}
+.loading {
+  margin-left:-20px;
+}
+.loading .weui-loading {
+  width: 40px;
+  height: 40px;
 }
 
 html,
@@ -212,6 +223,8 @@ img {
   left:0;
   margin:auto;
 }
+
+.viewStyle{ box-sizing:border-box; padding-bottom:50px;}
 
 .weui-badge_dot {
   padding: .4em;
