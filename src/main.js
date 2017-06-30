@@ -19,7 +19,7 @@ import util from './utils'
 if ('addEventListener' in document) {
   document.addEventListener('DOMContentLoaded', function () {
     FastClick.attach(document.body)
-    util.wxConfig()
+    window.localStorage.setItem('landing_page', window.location.href)
   }, false)
 }
 
@@ -29,11 +29,7 @@ Vue.config.productionTip = false
 Vue.use(WeVue)
 Vue.prototype.$http = axios
 Vue.prototype.initWechatShare = (title, desc, imgUrl, link) => {
-  if (navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Adr') > -1) {
-    // TODO: Android手机需要重新配置jssdk
-    util.wxConfig()
-  }
-  util.wxReady({
+  util.wxShareReady({
     title, desc, imgUrl, link
   }, (res) => {
     console.log('分享完成')
