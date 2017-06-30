@@ -121,6 +121,7 @@ export default {
   },
   mounted () {
     // 模板编译之后，代替了之前的ready*
+    window.localStorage.setItem('landing_page', window.location.href)
     this.$nextTick(function() {
       if (this.$parent.fromPath !== '/shopping/goods' || this.goods_list.length === 0) {
         // 非详情页或数据为空要加载数据
