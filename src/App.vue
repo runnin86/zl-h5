@@ -48,18 +48,12 @@
 
 <script>
 import $ from 'zepto'
-import util from './utils'
 import {mapGetters} from 'vuex'
 import thumbSmall from 'static/weui/images/icon_tabbar.png'
 
 export default {
   // name: 'app',
   mounted () {
-    let ignoreUrl = ['/', '/oauth']
-    if (!ignoreUrl.includes(window.location.pathname) && this.is_weixn()) {
-      // 非忽略的url要进行jssdk初始化
-      util.wxConfig()
-    }
   },
   computed: {
     ...mapGetters({
@@ -124,7 +118,7 @@ export default {
         this.scrollTop = $('.container').scrollTop()
       }
       // 默认全局分享
-      let ignoreUrl = ['/', '/oauth', '/favicon.ico']
+      let ignoreUrl = ['/favicon.ico']
       if (!ignoreUrl.includes(window.location.pathname)) {
         // 默认全局分享
         let desc = '【足力购】帅哥美女们，快来足力购逛逛，捧个场吧！'

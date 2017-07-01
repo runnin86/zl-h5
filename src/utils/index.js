@@ -41,13 +41,8 @@ export default {
     let isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) // ios终端
     // 默认使用
     let url = location.href.split('#')[0]
-    if (isiOS) {
-      // ios使用landing page
-      url = window.localStorage.getItem('landing_page').split('#')[0]
-    }
-    console.log(url)
     // console.log(title, desc, imgUrl, link)
-    console.log('android->' + isAndroid, 'ios->' + isiOS)
+    // console.log('android->' + isAndroid, 'ios->' + isiOS)
     // 去后台获取签名等信息
     axios.get('weChat/wxJssdkConfig', {
       params: {
@@ -74,7 +69,19 @@ export default {
             'chooseImage',
             'uploadImage',
             'chooseWXPay'
-          ]
+          ],
+          success: function (res) {
+						console.log("检测通过：", JSON.stringify(res))
+					},
+					fail: function (res) {
+						console.log("检测失败：", JSON.stringify(res))
+					},
+					complete: function (res) {
+						console.log("检测结束：", res)
+					},
+					error: function (e) {
+						console.error("检查错误:", e)
+					}
         })
         // 微信jssdk初始化
         wx.ready(function() {

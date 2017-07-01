@@ -19,7 +19,6 @@ import util from './utils'
 if ('addEventListener' in document) {
   document.addEventListener('DOMContentLoaded', function () {
     FastClick.attach(document.body)
-    window.localStorage.setItem('landing_page', window.location.href)
   }, false)
 }
 
@@ -133,21 +132,18 @@ router.beforeEach((to, from, next) => {
     store.dispatch('getCartNum')
     store.commit('CHANGE_IS_INDEX', true)
   }
-  // 设置卖家ID
-  // if (to.query.seller_id) {
-  //   let u = JSON.parse(window.localStorage.getItem('zlUser'))
-  //   if (u !== null) {
-  //     if (u.is_shop === '0' && !util.getStore('seller_id_nhh')) {
-  //       // 未开店的记录第一次获得的卖家ID
-  //       util.setStore('seller_id_nhh', to.query.seller_id)
-  //     } else if (u.is_shop === '1' && util.getStore('seller_id_nhh') !== to.query.seller_id) {
-  //       // 已开店且存储的卖家ID和链接的卖家ID不一致时,记录链接的卖家ID
-  //       util.setStore('seller_id_nhh', to.query.seller_id)
-  //     }
-  //   }
-  // }
-  // 确保要调用 next 方法，否则钩子就不会被 resolved。
-  next()
+  // 登录校验
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (window.localStorage.getItem('zlUser') === null) {
+      // 需要登录
+      Object.assign(to.query, {toPath: to.path})
+      next({path: '/login', query: to.query})
+    } else {
+      next()
+    }
+  } else {
+    next() // 确保一定要调用 next()
+  }
 })
 
 // // 注册一个全局的 after 钩子

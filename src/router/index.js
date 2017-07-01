@@ -44,12 +44,13 @@ export default new Router({
       }
     }, {
       path: '/userCenter',
-      meta: {scrollToTop: true, title: '用户中心'},
+      meta: {scrollToTop: true, title: '用户中心', requiresAuth: true},
       component(resolve) {
         require(['@/views/user/userCenter'], resolve)
       }
     }, {
       path: '/userCenter/addressList',
+      meta: {requiresAuth: true},
       component(resolve) {
         require(['@/views/user/addressList'], resolve)
       }
@@ -61,6 +62,7 @@ export default new Router({
       }
     }, {
       path: '/userCenter/addressList/newAddress',
+      meta: {requiresAuth: true},
       component(resolve) {
         require(['@/views/user/newAddress'], resolve)
       }
@@ -72,6 +74,7 @@ export default new Router({
     }, {
       name: 'OrderList',
       path: '/userCenter/orderList',
+      meta: {requiresAuth: true},
       component(resolve) {
         require(['@/views/user/orderList'], resolve)
       }
@@ -102,6 +105,7 @@ export default new Router({
       }
     }, {
       path: '/userCenter/accountManage',
+      meta: {requiresAuth: true},
       component(resolve) {
         require(['@/views/user/accountManage'], resolve)
       }
@@ -170,7 +174,7 @@ export default new Router({
       }
     }, {
       path: '/cart',
-      meta: {scrollToTop: true, title: '购物车'},
+      meta: {scrollToTop: true, title: '购物车', requiresAuth: true},
       component(resolve) {
         require(['@/views/cart/cart'], resolve)
       }
@@ -181,6 +185,7 @@ export default new Router({
       }
     }, {
       path: '/orderfill',
+      meta: {requiresAuth: true},
       component(resolve) {
         require(['@/views/shopping/orderFill'], resolve)
       }
@@ -197,6 +202,7 @@ export default new Router({
       }
     }, {
       path: '/withdraw',
+      meta: {requiresAuth: true},
       component(resolve) {
         require(['@/views/commission/withdraw'], resolve)
       }
