@@ -1,6 +1,6 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import $ from 'zepto'
+// import $ from 'zepto'
 import App from './App'
 import Vue from 'vue'
 import axios from 'axios'
@@ -78,7 +78,7 @@ axios.interceptors.response.use(function (response) {
   // console.log('response:' + response.config.url, '状态:' + response.status + '->' + response.statusText)
   return response
 }, function (error) {
-  $.toast('网络错误', 'forbidden')
+  // $.toast('网络错误', 'forbidden')
   // Do something with response error
   return Promise.reject(error)
 })

@@ -29,14 +29,14 @@
             <p>保证金</p>
           </div>
         <!-- </router-link> -->
-        <!-- <router-link to="/userCenter/sellerIncome"> -->
+        <router-link to="/userCenter/sellerIncome">
           <div class="col-xs-4">
             <span v-if="parseFloat(accountInfo.brokerage) > 0">{{accountInfo.brokerage}}</span>
             <span v-else>0.00</span>
             <p>佣金</p>
           </div>
-        <!-- </router-link>
-        <router-link to="/userCenter/sellerIncome"> -->
+        </router-link>
+        <!-- <router-link to="/userCenter/sellerIncome"> -->
           <div class="col-xs-4">
             <span v-if="parseFloat(accountInfo.point) > 0">{{accountInfo.point}}</span>
             <span v-else>0.00</span>
@@ -199,8 +199,7 @@ export default {
         headers: {
           'x-token': token
         }
-      })
-      .then(({data: {data, code, msg}}) => {
+      }).then(({data: {data, code, msg}}) => {
         console.log(code, data, msg)
         if (code === 1) {
           window.localStorage.removeItem('zlUser')

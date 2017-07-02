@@ -244,7 +244,7 @@ import BMap from 'BMap'
 import qs from 'qs'
 
 // 配送范围(公里)
-let distributionScope = 50
+let distributionScope = 10
 // 默认运费(元)
 let shippingExpenses = 10
 
