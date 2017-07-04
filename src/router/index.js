@@ -61,6 +61,12 @@ export default new Router({
         require(['@/views/user/nhhDetail'], resolve)
       }
     }, {
+      path: '/userCenter/changePwd',
+      meta: {requiresAuth: true},
+      component(resolve) {
+        require(['@/views/user/changePwd'], resolve)
+      }
+    }, {
       path: '/userCenter/addressList/newAddress',
       meta: {requiresAuth: true},
       component(resolve) {

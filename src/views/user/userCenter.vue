@@ -93,6 +93,10 @@
             <i class="iconfont-yzg icon-yzg-shoucang1"></i>
             <router-link to="/userCenter/myCollect">我的收藏</router-link>
           </li> -->
+          <li>
+            <i class="iconfont-yzg icon-yzg-shoucang1"></i>
+            <router-link to="/userCenter/changePwd">修改密码</router-link>
+          </li>
           <li @click="building()">
             <i class="iconfont-yzg icon-yzg-guanyuwomen"></i>
             <router-link to="">关于我们</router-link>
@@ -106,7 +110,7 @@
         </ul>
       </div>
     </div>
-    <div class="row quit" style="margin-top:15px;">
+    <div class="row quit" style="margin-top:4px;">
       <div class="col-xs-12">
         <a @click="logout()" class="btn">退出当前账号</a>
       </div>

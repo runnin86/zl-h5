@@ -68,8 +68,7 @@ export default {
       loginState: 'login',
       userPhone: window.localStorage.getItem('localPhone') ? window.localStorage.getItem('localPhone') : '',
       userPwd: null,
-      oauthCode: null,
-      submit: false
+      oauthCode: null
     }
   },
   activated() {
