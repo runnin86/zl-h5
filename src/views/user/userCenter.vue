@@ -94,7 +94,7 @@
             <router-link to="/userCenter/myCollect">我的收藏</router-link>
           </li> -->
           <li>
-            <i class="iconfont-yzg icon-yzg-shoucang1"></i>
+            <i class="iconfont-yzg icon-yzg-shezhi"></i>
             <router-link to="/userCenter/changePwd">修改密码</router-link>
           </li>
           <li @click="building()">
