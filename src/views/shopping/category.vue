@@ -94,6 +94,9 @@ let menuList = [{
   id: 4,
   name: '生活用品'
 }, {
+  id: 8,
+  name: '零食食品'
+}, {
   id: 5,
   name: '母婴产品'
 }, {
