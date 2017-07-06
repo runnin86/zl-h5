@@ -115,11 +115,11 @@ export default {
       }, {
         label: '积 分',
         value: '积分支付',
-        disabled: false
+        disabled: true
       }, {
         label: '佣 金',
         value: '佣金支付',
-        disabled: false
+        disabled: true
       }]
     }
   },
