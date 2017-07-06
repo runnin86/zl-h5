@@ -193,7 +193,7 @@
         </li>
       </ul>
     </div>
-    <div class="orderClass">
+    <div class="orderClass" v-if="orderInfo">
       <table>
         <tr>
           <td>订单号：{{orderInfo.orderNo}}</td>
@@ -477,7 +477,7 @@ export default {
                 // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
                 $.toast('支付成功')
                 setTimeout(() => {
-                  zhis.$router.push({name: 'OrderList', params: {orderAct: 1}})
+                  zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
                 }, 2000)
               } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
                 // 取消

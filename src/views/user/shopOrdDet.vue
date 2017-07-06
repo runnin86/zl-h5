@@ -71,16 +71,19 @@
       <p class="title_p">其他信息</p>
       <div class="shopDet">
         <ul>
-          <li>支付方式：{{orderInfo.moneySource ? orderInfo.moneySource: '微信支付'}}</li>
           <li v-if="orderInfo.shippingNo">配送单号：{{orderInfo.shippingNo}}</li>
-          <li v-if="orderInfo.shipmentMoney>0">配送费用：{{orderInfo.shipmentMoney}}</li>
-          <li>商品总价：{{orderInfo.totalPrice}}</li>
+          <li v-if="orderInfo.shipmentMoney>0">配送费用：¥ {{orderInfo.shipmentMoney}}</li>
+          <li>商品总价：¥ {{orderInfo.totalPrice}}</li>
           <!-- <li>已用优惠：￥{{orderInfo.offset}}</li> -->
-          <li>应付金额：{{orderInfo.totalPrice+orderInfo.shipmentMoney}}</li>
+          <li>{{payTips}}：¥ {{totalPay}}</li>
         </ul>
       </div>
+      <div>
+        <wv-radio title="选择支付方式" :fnName="'radioPay'"
+          v-model="payType" :options="payOptions"></wv-radio>
+      </div>
       <div class="button-sp-area" v-if="orderInfo.payStatus === 0">
-        <a @click="doWechatPay" class="weui-btn weui-btn_primary">微信支付</a>
+        <a @click="doWechatPay" class="weui-btn weui-btn_primary">{{payType}}</a>
       </div>
     </div>
   </div>
@@ -96,10 +99,28 @@ let loading
 export default {
   data() {
     return {
+      img_domain: 'http://img.zulibuy.com/images/',
       orderNo: this.$route.query.orderNo,
       orderInfo: null,
       orderDetail: null,
-      img_domain: 'http://img.zulibuy.com/images/'
+      totalPay: 0,
+      brokerage: 0,
+      point: 0,
+      wechatMoney: 0,
+      payTips: '应付金额',
+      payType: '微信支付',
+      payOptions: [{
+        label: '微 信',
+        value: '微信支付'
+      }, {
+        label: '积 分',
+        value: '积分支付',
+        disabled: false
+      }, {
+        label: '佣 金',
+        value: '佣金支付',
+        disabled: false
+      }]
     }
   },
   /*
@@ -108,11 +129,39 @@ export default {
   activated() {
     loading = weui.loading('加载中')
     this.orderNo = this.$route.query.orderNo
+    this.totalPay = this.brokerage = this.point = this.wechatMoney = 0
     this.orderInfo = this.orderDetail = null
+    this.payTips = '应付金额'
+    this.payType = '微信支付'
+    // 获取组件的事件通信
+    this.$on('radioPay', function (v) {
+      this.radioPay(v)
+    })
     // 获取数据
     this.loadOrderInfo()
+    // 获取账户
+    this.getUseAccount()
   },
   methods: {
+    /*
+     * 获取用户账户
+     */
+    getUseAccount (token) {
+      this.$http.get('user/account', {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(({data: {code, data, msg}}) => {
+        if (code === 1) {
+          this.point = data.point
+          this.brokerage = data.brokerage
+          this.payOptions[1].label += '(' + data.point + ')'
+          this.payOptions[2].label += '(' + data.brokerage + ')'
+        }
+      }).catch((e) => {
+        console.error('获取账户失败:' + e)
+      })
+    },
     /*
      * 获取数据
      */
@@ -129,6 +178,7 @@ export default {
           console.log(data)
           this.orderInfo = data.info
           this.orderDetail = data.detail
+          this.totalPay = data.info.totalPrice + data.info.shipmentMoney
         } else {
           $.toast(msg, 'forbidden')
         }
@@ -145,6 +195,35 @@ export default {
       // } else {
       //   $.toast('确认收货后才能评论', 'forbidden')
       // }
+    },
+    radioPay(v) {
+      // console.log(1, v, this.payType)
+      let msg = '应付金额'
+      // 初始化支付数目
+      this.totalPay = this.orderInfo.totalPrice + this.orderInfo.shipmentMoney
+      if (v === '积分支付') {
+        // 积分支付逻辑处理
+        let pointPay = this.totalPay * 1.1
+        if (this.point < pointPay) {
+          weui.alert('积分不足', function() {
+            this.payType = '微信支付'
+          }.bind(this))
+        } else {
+          this.totalPay = parseInt(pointPay)
+          msg = '应付积分'
+        }
+      } else if (v === '佣金支付') {
+        // 佣金支付逻辑处理
+        if (this.brokerage === 0) {
+          weui.alert('佣金不足', function() {
+            this.payType = '微信支付'
+          }.bind(this))
+        } else if (this.brokerage >= this.totalPay) {
+          msg = '应付佣金'
+        } else if (this.brokerage < this.totalPay) {
+        }
+      }
+      this.payTips = msg
     },
     /*
      * 发起微信支付
@@ -171,7 +250,7 @@ export default {
                 // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
                 $.toast('支付成功')
                 setTimeout(() => {
-                  zhis.$router.push({name: 'OrderList', params: {orderAct: 1}})
+                  zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
                 }, 2000)
               } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
                 // 取消
@@ -291,6 +370,19 @@ export default {
 }
 
 .button-sp-area {
-  margin-top: 20px; padding:20px;
+  margin-top: 10px; padding:20px;
+}
+.weui-cells__title {
+  background: #fff;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  border-bottom: 1px solid #eee;
+  color: #999;
+  margin-top:10px;
+  margin-bottom: -0.1em;
+}
+.weui-check__label {
+  padding-left: 22px;
 }
 </style>

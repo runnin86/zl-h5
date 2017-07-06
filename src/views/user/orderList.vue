@@ -104,7 +104,7 @@ export default {
     // this.queryList()
   },
   activated() {
-    this.orderAct = this.$route.params.orderAct
+    this.orderAct = this.$route.query.orderAct
     this.orderList = []
     this.pagenum = 0
     if (this.$parent.fromPath !== '/shopOrdDet' || this.orderList.length === 0) {
@@ -114,7 +114,7 @@ export default {
   },
   methods: {
     orderType (oType) {
-      this.$route.params.orderAct = false
+      this.$route.query.orderAct = false
       this.orderAct = oType
       this.orderList = []
       this.pagenum = 0

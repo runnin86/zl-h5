@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="title" class="weui-cells__title">{{ title }}</div>
-		<div class="weui-cells weui-cells_radio">
+		<div class="weui-cells weui-cells_radio" @change="$parent.$emit(fnName, currentValue)">
 			<label v-for="(option, index) in options" class="weui-cell weui-check__label">
         <div class="weui-cell__bd">
             <p>{{ option.label || option }}</p>
@@ -26,7 +26,11 @@ export default {
       default: 'left'
     },
     options: Array,
-    value: String
+    value: String,
+    fnName: {
+      type: String,
+      default: 'radio'
+    }
   },
 
   data () {
