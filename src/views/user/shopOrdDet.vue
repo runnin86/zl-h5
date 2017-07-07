@@ -74,8 +74,8 @@
           <li v-if="orderInfo.shippingNo">配送单号：{{orderInfo.shippingNo}}</li>
           <li v-if="orderInfo.shipmentMoney>0">配送费用：¥ {{orderInfo.shipmentMoney}}</li>
           <li>商品总价：¥ {{orderInfo.totalPrice}}</li>
-          <!-- <li>已用优惠：￥{{orderInfo.offset}}</li> -->
-          <li>{{payTips}}：¥ {{totalPay}}</li>
+          <li v-if="discount>0&&discountDesc">{{discountDesc}}：- {{discount}}</li>
+          <li>待付金额：¥ {{totalPay}}</li>
         </ul>
       </div>
       <div>
@@ -103,11 +103,11 @@ export default {
       orderNo: this.$route.query.orderNo,
       orderInfo: null,
       orderDetail: null,
-      totalPay: 0,
-      brokerage: 0,
-      point: 0,
-      wechatMoney: 0,
-      payTips: '应付金额',
+      totalPay: 0, // 微信支付金额
+      brokerage: 0, // 佣金
+      point: 0, // 积分
+      discount: 0, // 抵扣数目
+      discountDesc: null, // 抵扣说明
       payType: '微信支付',
       payOptions: [{
         label: '微 信',
@@ -115,11 +115,11 @@ export default {
       }, {
         label: '积 分',
         value: '积分支付',
-        disabled: true
+        disabled: false
       }, {
         label: '佣 金',
         value: '佣金支付',
-        disabled: true
+        disabled: false
       }]
     }
   },
@@ -129,9 +129,8 @@ export default {
   activated() {
     loading = weui.loading('加载中')
     this.orderNo = this.$route.query.orderNo
-    this.totalPay = this.brokerage = this.point = this.wechatMoney = 0
-    this.orderInfo = this.orderDetail = null
-    this.payTips = '应付金额'
+    this.totalPay = this.brokerage = this.point = this.discount = 0
+    this.orderInfo = this.orderDetail = this.discountDesc = null
     this.payType = '微信支付'
     // 获取组件的事件通信
     this.$on('radioPay', function (v) {
@@ -153,10 +152,10 @@ export default {
         }
       }).then(({data: {code, data, msg}}) => {
         if (code === 1) {
-          this.point = data.point
-          this.brokerage = data.brokerage
-          this.payOptions[1].label += '(' + data.point + ')'
-          this.payOptions[2].label += '(' + data.brokerage + ')'
+          this.point = Number(data.point.replace(/,/gi, ''))
+          this.brokerage = Number(data.brokerage.replace(/,/gi, ''))
+          this.payOptions[1].label = '积 分(' + this.point + ')'
+          this.payOptions[2].label = '佣 金(' + this.brokerage + ')'
         }
       }).catch((e) => {
         console.error('获取账户失败:' + e)
@@ -198,35 +197,53 @@ export default {
     },
     radioPay(v) {
       // console.log(1, v, this.payType)
-      let msg = '应付金额'
       // 初始化支付数目
-      this.totalPay = this.orderInfo.totalPrice + this.orderInfo.shipmentMoney
+      let orderPrice = this.orderInfo.totalPrice
+      this.discount = 0
       if (v === '积分支付') {
-        // 积分支付逻辑处理
-        let pointPay = this.totalPay * 1.1
+        /*
+         * 积分支付逻辑处理
+         */
+        this.discountDesc = '积分抵扣'
+        let pointPay = parseInt(orderPrice / 1.1)
         if (this.point < pointPay) {
           weui.alert('积分不足', function() {
             this.payType = '微信支付'
           }.bind(this))
         } else {
-          this.totalPay = parseInt(pointPay)
-          msg = '应付积分'
+          // 积分支付不允许组合支付,但是要支付运费
+          this.discount = parseInt(pointPay)
+          this.totalPay = 0 + this.orderInfo.shipmentMoney
         }
       } else if (v === '佣金支付') {
-        // 佣金支付逻辑处理
+        /*
+         * 佣金支付逻辑处理
+         */
+        this.discountDesc = '佣金抵扣'
         if (this.brokerage === 0) {
           weui.alert('佣金不足', function() {
             this.payType = '微信支付'
           }.bind(this))
-        } else if (this.brokerage >= this.totalPay) {
-          msg = '应付佣金'
-        } else if (this.brokerage < this.totalPay) {
+        } else if (this.brokerage >= orderPrice) {
+          this.discount = orderPrice
+          // 佣金大于商品价格时,要支付运费
+          this.totalPay = 0 + this.orderInfo.shipmentMoney
+        } else if (this.brokerage < orderPrice) {
+          // 佣金小于商品价格时,要支付运费+抵扣过后
+          this.discount = this.brokerage
+          this.totalPay = orderPrice - this.brokerage + this.orderInfo.shipmentMoney
         }
+      } else if (v === '微信支付') {
+        /*
+         * 微信支付时还原所有设置
+         */
+        this.discount = 0
+        this.discountDesc = null
+        this.totalPay = orderPrice + this.orderInfo.shipmentMoney
       }
-      this.payTips = msg
     },
     /*
-     * 发起微信支付
+     * 发起支付
      */
     doWechatPay() {
       // 发送请求
@@ -236,7 +253,7 @@ export default {
         totalAmount: this.orderInfo.totalPrice + this.orderInfo.shipmentMoney // 金额
       }
       let zhis = this
-      this.$http.post('weChat/weChartPay', qs.stringify(postData), {
+      this.$http.post('weChat/weChatPay', qs.stringify(postData), {
         headers: {
           'x-token': window.localStorage.getItem('zlToken')
         }
