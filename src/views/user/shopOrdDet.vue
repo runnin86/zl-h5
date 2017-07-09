@@ -75,15 +75,16 @@
           <li v-if="orderInfo.shipmentMoney>0">配送费用：¥ {{orderInfo.shipmentMoney}}</li>
           <li>商品总价：¥ {{orderInfo.totalPrice}}</li>
           <li v-if="discount>0&&discountDesc">{{discountDesc}}：- {{discount}}</li>
-          <li>待付金额：¥ {{totalPay}}</li>
+          <li>应付金额：¥ {{totalPay}}</li>
+          <li v-if="orderInfo.payStatus > 0">支付方式：{{orderInfo.moneySource}}</li>
         </ul>
       </div>
-      <div>
+      <div v-if="orderInfo.payStatus === 0">
         <wv-radio title="选择支付方式" :fnName="'radioPay'"
           v-model="payType" :options="payOptions"></wv-radio>
       </div>
       <div class="button-sp-area" v-if="orderInfo.payStatus === 0">
-        <a @click="doWechatPay" class="weui-btn weui-btn_primary">{{payType}}</a>
+        <a @click="doPay" class="weui-btn weui-btn_primary">{{payType}}</a>
       </div>
     </div>
   </div>
@@ -198,7 +199,7 @@ export default {
     radioPay(v) {
       // console.log(1, v, this.payType)
       // 初始化支付数目
-      let orderPrice = this.orderInfo.totalPrice
+      let orderPrice = this.orderInfo.totalPrice + this.orderInfo.shipmentMoney
       this.discount = 0
       if (v === '积分支付') {
         /*
@@ -209,11 +210,12 @@ export default {
         if (this.point < pointPay) {
           weui.alert('积分不足', function() {
             this.payType = '微信支付'
+            this.totalPay = orderPrice
           }.bind(this))
         } else {
-          // 积分支付不允许组合支付,但是要支付运费
-          this.discount = parseInt(pointPay)
-          this.totalPay = 0 + this.orderInfo.shipmentMoney
+          // 积分支付不允许组合支付
+          this.discount = pointPay
+          this.totalPay = 0
         }
       } else if (v === '佣金支付') {
         /*
@@ -223,15 +225,15 @@ export default {
         if (this.brokerage === 0) {
           weui.alert('佣金不足', function() {
             this.payType = '微信支付'
+            this.totalPay = orderPrice
           }.bind(this))
         } else if (this.brokerage >= orderPrice) {
           this.discount = orderPrice
-          // 佣金大于商品价格时,要支付运费
-          this.totalPay = 0 + this.orderInfo.shipmentMoney
+          this.totalPay = 0
         } else if (this.brokerage < orderPrice) {
-          // 佣金小于商品价格时,要支付运费+抵扣过后
+          // 佣金小于商品价格时,要组合支付
           this.discount = this.brokerage
-          this.totalPay = orderPrice - this.brokerage + this.orderInfo.shipmentMoney
+          this.totalPay = orderPrice - this.brokerage
         }
       } else if (v === '微信支付') {
         /*
@@ -239,8 +241,64 @@ export default {
          */
         this.discount = 0
         this.discountDesc = null
-        this.totalPay = orderPrice + this.orderInfo.shipmentMoney
+        this.totalPay = orderPrice
       }
+    },
+    /*
+     * 发起支付
+     */
+    doPay() {
+      // 发送请求
+      loading = weui.loading('加载中')
+      let postData = {
+        orderNo: this.orderNo,
+        payType: this.payType
+      }
+      let zhis = this
+      this.$http.post('order/orderPay', qs.stringify(postData), {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(({data: {data, code, msg}}) => {
+        console.log(code, msg, data)
+        if (code === 1) {
+          if (data.weChatPrePay) {
+            window.WeixinJSBridge.invoke('getBrandWCPayRequest', data.weChatPrePay.jsApiParameters,
+            function(res) {
+              // err_code,err_desc,err_msg
+              if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+                $.toast('支付成功')
+                setTimeout(() => {
+                  zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
+                }, 2000)
+              } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+                // 取消
+                $.toast('用户取消支付', 'cancel')
+              } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+                // 支付失败
+                $.toast(res.err_msg, 'forbidden')
+              } else {
+                weui.alert(!res.err_msg ? '支付回调错误,请刷新重试!' : res.err_msg)
+              }
+            })
+          } else {
+            $.toast(msg)
+            setTimeout(() => {
+              zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
+            }, 2000)
+          }
+        } else {
+          weui.alert(!msg ? '支付请求异常,请刷新重试!' : msg)
+          console.error(msg)
+        }
+        loading.hide()
+      }, (response) => {
+        loading.hide()
+        $.toast('服务器异常', 'forbidden')
+        // error callback
+        console.log(response)
+      })
     },
     /*
      * 发起支付
