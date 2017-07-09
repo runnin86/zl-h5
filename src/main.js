@@ -122,6 +122,8 @@ router.beforeEach((to, from, next) => {
     '/searchGoods',
     '/userCenter/accountManage',
     '/userCenter/addressList',
+    '/userCenter/withdrawIndex',
+    '/userCenter/withdrawIndex/withdraw',
     '/shopOrdDet',
     '/nhhDetail'
   ]

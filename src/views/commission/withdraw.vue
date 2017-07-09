@@ -13,11 +13,14 @@
 			<table>
 				<tr>
 					<td>可提现金额</td>
-					<td>￥329.00</td>
+					<td>￥{{totalMoney}}</td>
 				</tr>
 				<tr>
 					<td>本次提现</td>
-					<td><input class="form-control" v-model="nowMoney" placeholder="单笔最高2万" /></td>
+					<td>
+						<input class="form-control" v-model="nowMoney"
+						  type="number" placeholder="单笔最高2万" />
+					</td>
 				</tr>
 				<tr>
 					<td>提现账户</td>
@@ -31,16 +34,17 @@
 					</td>
 				</tr>
 			</table>
-			<a href="javascript:void(0);" class="rightCash">立即提现</a>
+			<a :disabled="nowMoney>0" class="rightCash">立即提现</a>
 		</div>
-	</div>	
+	</div>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      nowMoney: '',
+      totalMoney: 0,
+      nowMoney: 0,
       commiAccount: []
     }
   }
@@ -52,5 +56,5 @@ export default {
 	.withDraw table{ width:100%;}
 	.withDraw table td{ padding:7px 5px; }
 	.withDraw table td:first-child{ width:80px; text-align: right; padding-right:5px; }
-	.rightCash{ display:block; background: #d6244f; width:100px; height:36px; line-height: 36px; color:#fff; margin:0 auto; text-align: center; border-radius:4px; margin-top:18px;}
+	.rightCash{ display:block; background: #d6244f; width:140px; height:36px; line-height: 36px; color:#fff; margin:0 auto; text-align: center; border-radius:4px; margin-top:18px;}
 </style>

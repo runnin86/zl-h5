@@ -6,7 +6,7 @@
 					<i class="iconfont-yzg icon-yzg-back"></i>
 				</a>
 		    </div>
-		    <div class="col-xs-8 loginTitle">提现</div>
+		    <div class="col-xs-8 loginTitle">佣金提现</div>
 		    <div class="col-xs-2"></div>
 		</div>
 		<div class="cashIndex row">
@@ -15,19 +15,22 @@
 					<td>
 						可提现金额<br/><span class="redColor availMoney">￥329.00</span>
 					</td>
-					<td>提现
-						<i class="iconfont-yzg icon-yzg-arrow"></i>
+					<td>
+						<router-link to="/userCenter/withdrawIndex/withdraw">
+							提现
+							<i class="iconfont-yzg icon-yzg-arrow"></i>
+					  </router-link>
 					</td>
 				</tr>
 				<tr>
-					<td>已结算收入</td>
+					<td>已结算佣金</td>
 					<td>
 						<span class="redColor">￥188.43</span>
 						<i class="iconfont-yzg icon-yzg-arrow"></i>
 					</td>
 				</tr>
 				<tr>
-					<td>未结算收入</td>
+					<td>未结算佣金</td>
 					<td>
 						<span class="redColor">￥188.43</span>
 						<i class="iconfont-yzg icon-yzg-arrow"></i>
@@ -41,7 +44,7 @@
 				</tr>
 			</table>
 		</div>
-		<div class="cashIndex row">
+		<div class="cashIndex row" style="display: none;">
 			<table>
 				<tr>
 					<td>绑定银行卡</td>
@@ -69,7 +72,7 @@
 				</tr>
 			</table>
 		</div>
-	</div>	
+	</div>
 </template>
 
 <script>

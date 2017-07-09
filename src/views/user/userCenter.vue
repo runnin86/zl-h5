@@ -22,27 +22,43 @@
     </div>
     <div class="ucenter_seller" v-if="accountInfo">
       <div class="row month-order">
-        <!-- <router-link to="/userCenter/sellerIncome"> -->
-          <div class="col-xs-4">
-            <span v-if="parseFloat(accountInfo.advance) > 0">{{accountInfo.advance}}</span>
-            <span v-else>0.00</span>
-            <p>保证金</p>
-          </div>
-        <!-- </router-link> -->
-        <router-link to="/userCenter/sellerIncome">
-          <div class="col-xs-4">
-            <span v-if="parseFloat(accountInfo.brokerage) > 0">{{accountInfo.brokerage}}</span>
-            <span v-else>0.00</span>
-            <p>佣金</p>
-          </div>
-        </router-link>
-        <!-- <router-link to="/userCenter/sellerIncome"> -->
-          <div class="col-xs-4">
-            <span v-if="parseFloat(accountInfo.point) > 0">{{accountInfo.point}}</span>
-            <span v-else>0.00</span>
-            <p>积分</p>
-          </div>
-        <!-- </router-link> -->
+        <div class="col-xs-4">
+          <span v-if="parseFloat(accountInfo.advance) > 0">{{accountInfo.advance}}</span>
+          <span v-else>0.00</span>
+          <p>保证金</p>
+        </div>
+        <div class="col-xs-4">
+          <span v-if="parseFloat(accountInfo.brokerage) > 0">{{accountInfo.brokerage}}</span>
+          <span v-else>0.00</span>
+          <p>佣金</p>
+        </div>
+        <div class="col-xs-4">
+          <span v-if="parseFloat(accountInfo.point) > 0">{{accountInfo.point}}</span>
+          <span v-else>0.00</span>
+          <p>积分</p>
+        </div>
+      </div>
+      <div class="row iconroom">
+        <div class="col-xs-4">
+          <router-link to="/userCenter/sellerIncome">
+            <i class="iconfont-yzg icon-yzg-yongjin"></i>
+            <span>我的佣金</span>
+          </router-link>
+        </div>
+        <div class="col-xs-4">
+          <router-link to="/userCenter/withdrawIndex">
+          <a href="javascript:void(0);">
+            <i class="iconfont-yzg icon-yzg-shangchengxitongtubiaozitihuayuanwenjian62-copy"></i>
+            <span>佣金提现</span>
+          </a>
+          </router-link>
+        </div>
+        <div class="col-xs-4" @click="building()" >
+          <router-link to="">
+            <i class="iconfont-yzg icon-yzg-jifen"></i>
+            <span>我的积分</span>
+          </router-link>
+        </div>
       </div>
     </div>
     <div class="row ucenter_buyer">
@@ -110,7 +126,7 @@
         </ul>
       </div>
     </div>
-    <div class="row quit" style="margin-top:4px;">
+    <div class="row quit" style="margin-top:4px;margin-bottom:40px;">
       <div class="col-xs-12">
         <a @click="logout()" class="btn">退出当前账号</a>
       </div>
@@ -248,8 +264,18 @@ export default {
 
 <style scoped>
 @import '/static/style/ucenter.css';
-.pull-left{float: left;}
-.self_sign{font-size:12px;height:36px;overflow: hidden}
-.self_sign span{font-size:12px;}
-.ucenter_buyer{ background: #f8f8f8 }
+.pull-left{
+  float: left;
+}
+.self_sign{
+  font-size: 12px;
+  height: 36px;
+  overflow: hidden
+}
+.self_sign span{
+  font-size: 12px;
+}
+.ucenter_buyer{
+  background: #f8f8f8;
+}
 </style>

@@ -207,7 +207,7 @@ export default new Router({
         require(['@/views/user/shopOrdDet'], resolve)
       }
     }, {
-      path: '/withdraw',
+      path: '/userCenter/withdrawIndex/withdraw',
       meta: {requiresAuth: true},
       component(resolve) {
         require(['@/views/commission/withdraw'], resolve)
