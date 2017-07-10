@@ -13,7 +13,7 @@
 			<table>
 				<tr>
 					<td>
-						可提现金额<br/><span class="redColor availMoney">￥329.00</span>
+						可提现金额<br/><span class="redColor availMoney">￥{{moneyInfo?moneyInfo.brokerage:0}}</span>
 					</td>
 					<td>
 						<router-link to="/userCenter/withdrawIndex/withdraw">
@@ -25,14 +25,14 @@
 				<tr>
 					<td>已结算佣金</td>
 					<td>
-						<span class="redColor">￥188.43</span>
+						<span class="redColor">￥{{moneyInfo?moneyInfo.settled:0}}</span>
 						<i class="iconfont-yzg icon-yzg-arrow"></i>
 					</td>
 				</tr>
 				<tr>
 					<td>未结算佣金</td>
 					<td>
-						<span class="redColor">￥188.43</span>
+						<span class="redColor">￥{{moneyInfo?moneyInfo.unsettled:0}}</span>
 						<i class="iconfont-yzg icon-yzg-arrow"></i>
 					</td>
 				</tr>
@@ -76,11 +76,37 @@
 </template>
 
 <script>
+import $ from 'zepto'
+
 export default {
   data() {
     return {
-      nowMoney: '',
-      commiAccount: []
+      moneyInfo: null
+    }
+  },
+  activated() {
+    this.moneyInfo = null
+    this.getWithdrawMoney()
+  },
+  methods: {
+    /*
+     * 获取提现金额汇总
+     */
+    getWithdrawMoney() {
+      this.$http.post('user/withdrawMoney', {}, {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(({data: {code, data, msg}}) => {
+        if (code === 1) {
+          // console.log(data)
+          this.moneyInfo = data
+        } else {
+          $.toast(msg, 'forbidden')
+        }
+      }).catch((e) => {
+        console.error('获取提现金额汇总失败:', e)
+      })
     }
   }
 }
