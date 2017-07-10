@@ -55,8 +55,8 @@
         </div>
         <div class="col-xs-4" @click="building()" >
           <router-link to="">
-            <i class="iconfont-yzg icon-yzg-jifen"></i>
-            <span>我的积分</span>
+            <i class="iconfont-yzg icon-yzg-womendetuandui"></i>
+            <span>我的团队</span>
           </router-link>
         </div>
       </div>
