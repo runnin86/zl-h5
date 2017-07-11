@@ -138,6 +138,7 @@
 import $ from 'zepto'
 import weui from 'weui.js'
 
+let loading
 export default {
   activated() {
     this.counter = 0
@@ -214,6 +215,7 @@ export default {
      * 退出
      */
     logout () {
+      loading = weui.loading('退出中')
       let token = this.$store.getters.token
       this.$http.delete('user/logout', {
         headers: {
@@ -227,7 +229,9 @@ export default {
           this.$router.push({path: '/category', replace: true})
         }
         $.toast(msg)
+        loading.hide()
       }).catch((e) => {
+        loading.hide()
         console.error('用户退出失败:' + e)
       })
     },

@@ -62,6 +62,7 @@ import qs from 'qs'
 import weui from 'weui.js'
 import * as config from './../../config'
 
+let loading
 export default {
   data() {
     return {
@@ -135,11 +136,12 @@ export default {
         'upass': this.userPwd,
         'code': this.oauthCode
       }
+      loading = weui.loading('登录中')
       this.$http.post('user/login', qs.stringify(loginParam))
       .then(function({data: {data, code, msg}}) {
         if (code === 1) {
           if (data.user.status === 0) {
-            $.toast('账户暂时不可用', 'cancel')
+            weui.alert('账户暂时不可用')
           } else if (data.user.status === 1) {
             $.toast('登录成功')
             window.localStorage.setItem('zlUser', JSON.stringify(data.user))
@@ -147,9 +149,11 @@ export default {
             this.$router.replace({path: '/category'})
           }
         } else {
-          $.toast(msg, 'forbidden')
+          weui.alert(msg)
         }
+        loading.hide()
       }.bind(this)).catch(function(e) {
+        loading.hide()
         weui.alert('无法连接到服务器...')
         console.error('无法连接服务器:' + e)
       })
