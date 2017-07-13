@@ -90,6 +90,12 @@ export default new Router({
         require(['@/views/commission/withdrawIndex'], resolve)
       }
     }, {
+      path: '/userCenter/withdrawIndex/record',
+      meta: {requiresAuth: true},
+      component(resolve) {
+        require(['@/views/commission/withdrawRecord'], resolve)
+      }
+    }, {
       path: '/userCenter/personnelsManage',
       component(resolve) {
         require(['@/views/user/personnelsManage'], resolve)
