@@ -89,8 +89,8 @@ export default {
         return false
       }
     },
-    gotoAddress (path) {
-      this.$router.push(path)
+    gotoAddress (path, query) {
+      this.$router.push({path: path, query: query})
     },
     back () {
       this.$router.back()

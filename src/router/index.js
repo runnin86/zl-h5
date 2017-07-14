@@ -90,6 +90,12 @@ export default new Router({
         require(['@/views/commission/withdrawIndex'], resolve)
       }
     }, {
+      path: '/userCenter/withdrawIndex/settledRecord',
+      meta: {requiresAuth: true},
+      component(resolve) {
+        require(['@/views/commission/settledRecord'], resolve)
+      }
+    }, {
       path: '/userCenter/withdrawIndex/record',
       meta: {requiresAuth: true},
       component(resolve) {

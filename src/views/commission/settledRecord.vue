@@ -7,48 +7,38 @@
       </a>
     </div>
     <div class="col-xs-8 shop-name">
-      <span>提现记录</span>
+      <span>{{pageType===0?'未':'已'}}结算佣金</span>
     </div>
   </div>
 
   <div class="row" style="margin-top:-14px;">
-    <div class="order-list_content"
-      v-infinite-scroll="loadRecord"
-      infinite-scroll-immediate-check="false"
-      infinite-scroll-disabled="busy"
-      infinite-scroll-distance="30">
-      <!-- 列表 -->
-      <div class="team-order_list">
-        <div class="list_items">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>提现账户</th>
-                <th>提现金额</th>
-                <th>状态</th>
-                <th>日期</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="r in recordList" style="height:46px">
-                <td>{{r.withdrawType | typeWithdrawFilter}}</td>
-                <td>￥{{r.withdrawMoney}}</td>
-                <td>{{r.withdrawStatus | statusWithdrawFilter}}</td>
-                <td>{{r.withdrawDate / 1000 | dateFilter(2)}}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <!-- 列表 -->
+    <div class="team-order_list">
+      <div class="list_items">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th>佣金</th>
+              <th>订单号</th>
+              <th>状态</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in recordList" style="height:46px">
+              <td>{{item.time}}</td>
+              <td>￥{{item.money}}</td>
+              <td>{{item.ono}}</td>
+              <td>{{item.status===0?'冻结':'正常'}}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
   <div style="margin-top: -20px;">
-    <div class="weui-loadmore" v-if="showLoading&&pagenum>-1">
-      <i class="weui-loading"></i>
-      <span class="weui-loadmore__tips">正在加载</span>
-    </div>
-    <div class="weui-loadmore weui-loadmore_line" v-if="pagenum===-1">
-      <span class="weui-loadmore__tips">暂时没有提现记录</span>
+    <div class="weui-loadmore weui-loadmore_line" v-if="recordList.length===0">
+      <span class="weui-loadmore__tips">暂时没有佣金记录</span>
     </div>
   </div>
 </div>
@@ -102,58 +92,39 @@ export default {
       recordList: [],
       pagenum: 0,
       showLoading: false,
-      busy: true
+      busy: true,
+      pageType: 0
     }
   },
   activated() {
     this.recordList = []
     this.pagenum = 0
+    this.pageType = this.$route.query.type
     /* 获取用户提现记录 */
     this.loadRecord()
   },
   methods: {
     loadRecord() {
-      try {
-        // 查询前设置滚动为busy(禁止多次滚动进入方法);出现读取图标
-        this.busy = this.showLoading = true
-        // 页码加1，默认为0
-        this.pagenum = this.pagenum + 1
-        if (this.pagenum === -1) {
-          // 分页条码为负均不加载
-          return
+      // 获取数据
+      this.$http.get('user/brokerageListByStatus', {
+        params: {
+          s: this.pageType
+        },
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
         }
-        // 获取数据
-        this.$http.get('user/withdrawList', {
-          params: {
-            pagenum: this.pagenum,
-            pagesize: 20
-          },
-          headers: {
-            'x-token': window.localStorage.getItem('zlToken')
-          }
-        })
-        .then(({data: {code, data, msg}}) => {
-          if (code === 1) {
-            console.log(data)
-            if (data.length === 0) {
-              // 返回数据长度为0时,设置页码为-1
-              this.pagenum = -1
-              return
-            }
-            for (let m of data) {
-              this.recordList.push(m)
-            }
-          } else {
-            $.toast(msg, 'forbidden')
-            console.error('获取提现列表失败:' + msg)
-          }
-          this.busy = this.showLoading = false
-        }, (response) => {
-          // error callback
-          console.log(response)
-        })
-      } finally {
-      }
+      })
+      .then(({data: {code, data, msg}}) => {
+        if (code === 1) {
+          console.log(data)
+          this.recordList = data
+        } else {
+          $.toast(msg, 'forbidden')
+        }
+      }, (response) => {
+        // error callback
+        console.log(response)
+      })
     }
   }
 }

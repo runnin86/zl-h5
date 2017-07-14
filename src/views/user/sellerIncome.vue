@@ -35,7 +35,7 @@
           </tfoot>
 
           <tbody>
-            <tr v-for="item in monthIncome">
+            <tr v-for="item in monthIncome" style="height:36px">
               <td>{{item.time}}</td>
               <td>￥{{item.money}}</td>
               <td>{{item.ono}}</td>
@@ -62,7 +62,7 @@ export default {
   computed: {
     total () {
       return this.monthIncome.reduce((total, b) => {
-        return total + b.money
+        return Math.floor((total + b.money) * 100) / 100
       }, 0)
     }
   },

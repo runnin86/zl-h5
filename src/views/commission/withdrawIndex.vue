@@ -20,14 +20,14 @@
           <i class="iconfont-yzg icon-yzg-arrow"></i>
         </td>
       </tr>
-      <tr>
+      <tr @click="$parent.gotoAddress('/userCenter/withdrawIndex/settledRecord', {type:1})">
         <td>已结算佣金</td>
         <td>
           <span class="redColor">￥{{moneyInfo?moneyInfo.settled:0}}</span>
           <i class="iconfont-yzg icon-yzg-arrow"></i>
         </td>
       </tr>
-      <tr>
+      <tr @click="$parent.gotoAddress('/userCenter/withdrawIndex/settledRecord', {type:0})">
         <td>未结算佣金</td>
         <td>
           <span class="redColor">￥{{moneyInfo?moneyInfo.unsettled:0}}</span>
