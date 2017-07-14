@@ -46,8 +46,6 @@ export default {
     // 去后台获取签名等信息
     axios.get('weChat/wxJssdkConfig', {
       params: {
-        appid: config.appId,
-        appsecret: config.appSecret,
         reqUrl: url
       }
     }).then(({data: {data, code, msg}}) => {

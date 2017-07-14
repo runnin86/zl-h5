@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  <div class="row mainContent">
+  <div class="row mainContent" style="margin-top: 2px;">
     <div class="receiverInfor">
       <div class="addressDetails">
         <table class="addFillIn">
@@ -45,8 +45,9 @@
             </td>
           </tr>
         </table>
-        <div class="saveNew">
-          <a @click="saveAddress()" class="redBgColor">保存收货地址</a>
+        <div>
+          <a @click="saveAddress()"
+            class="btn redBgColor" style="display:block;">保存收货地址</a>
         </div>
       </div>
     </div>
