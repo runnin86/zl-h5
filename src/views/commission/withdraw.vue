@@ -80,11 +80,11 @@ export default {
      * 获取提现金额汇总
      */
     submitWithdraw() {
-      // if (this.withdrawMoney < 100) {
-      //   weui.alert('提现金额必须大于100元!')
-      //   this.withdrawMoney = null
-      //   return
-      // }
+      if (this.withdrawMoney < 100) {
+        weui.alert('提现金额必须大于100元!')
+        this.withdrawMoney = null
+        return
+      }
       if (this.withdrawMoney > parseFloat(this.totalMoney)) {
         weui.alert('提现金额大于可提现金额!')
         this.withdrawMoney = null
