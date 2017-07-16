@@ -28,7 +28,7 @@
             <tr v-for="item in recordList" style="height:46px">
               <td>{{item.time}}</td>
               <td>￥{{item.money}}</td>
-              <td>{{item.ono}}</td>
+              <td>{{item.oid==='advance'?'保证金解冻':item.ono}}</td>
               <td>{{item.status===0?'冻结':'正常'}}</td>
             </tr>
           </tbody>
