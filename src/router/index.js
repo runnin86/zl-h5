@@ -4,35 +4,10 @@ import Demo from '@/views/demo/demo'
 
 Vue.use(Router)
 
-// 滚动行为:这个功能只在 HTML5 history 模式下可用。
-const scrollBehavior = (to, from, savedPosition) => {
-  if (savedPosition) {
-    // savedPosition is only available for popstate navigations.
-    return savedPosition
-  } else {
-    const position = {}
-    // new navigation.
-    // scroll to anchor by returning the selector
-    if (to.hash) {
-      position.selector = to.hash
-    }
-    // check if any matched route config has meta that requires scrolling to top
-    if (to.matched.some(m => m.meta.scrollToTop)) {
-      // cords will be used if no selector is provided,
-      // or if the selector didn't match any element.
-      position.x = 0
-      position.y = 0
-    }
-    // if the returned position is falsy or an empty object,
-    // will retain current scroll position.
-    return position
-  }
-}
-
 export default new Router({
-  mode: 'history', // hash,history,abstract
+  // base: '/app',
+  mode: 'hash', // hash,history,abstract
   transitionName: 'fade', // 页面切换动画名称
-  scrollBehavior,
   routes: [
     {
       path: '/',
@@ -146,6 +121,7 @@ export default new Router({
     }, {
       path: '/category',
       name: 'Category',
+      meta: {requiresAuth: true},
       component(resolve) {
         require(['@/views/shopping/category'], resolve)
       }
@@ -157,7 +133,7 @@ export default new Router({
       }
     }, {
       path: '/shopping/goods',
-      meta: {scrollToTop: true},
+      meta: {requiresAuth: true, scrollToTop: true},
       name: 'Goods',
       component(resolve) {
         require(['@/views/shopping/goods'], resolve)
@@ -230,17 +206,17 @@ export default new Router({
         require(['@/views/commission/cashRecord'], resolve)
       }
     }, {
-      path: '/weChatBind',
+      path: '/userCenter/withdrawIndex/weChatBind',
       component(resolve) {
         require(['@/views/commission/weChatBind'], resolve)
       }
     }, {
-      path: '/alipayBind',
+      path: '/userCenter/withdrawIndex/alipayBind',
       component(resolve) {
         require(['@/views/commission/alipayBind'], resolve)
       }
     }, {
-      path: '/bankBind',
+      path: '/userCenter/withdrawIndex/bankBind',
       component(resolve) {
         require(['@/views/commission/bankBind'], resolve)
       }

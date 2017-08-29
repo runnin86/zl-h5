@@ -124,7 +124,6 @@ export default {
   },
   mounted () {
     // 模板编译之后，代替了之前的ready*
-    window.localStorage.setItem('landing_page', window.location.href)
     this.$nextTick(function() {
       if (this.$parent.fromPath !== '/shopping/goods' || this.goods_list.length === 0) {
         // 非详情页或数据为空要加载数据
@@ -144,10 +143,10 @@ export default {
       // this.cid = this.$route.params.cid
       this.changeCid(this.$route.params.cid)
     }
-    $(window).scrollTop(this.$parent.scrollTop)
     let _this = this
+    $(window).scrollTop(this.$parent.scrollTop)
     $(document).ready(function () {
-      $('.navbar-location').css({'position': 'relative', 'width': 'auto'})
+      $('.navbar-location').css({'position': 'relative', 'width': 'auto', 'top': '-3px'})
       $(window).scroll(function () {
         // 滑动菜单不展开
         _this.$refs.menuComp.subitemsExpanded = false

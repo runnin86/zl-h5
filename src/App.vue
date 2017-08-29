@@ -106,6 +106,15 @@ export default {
         pwd += $chars.charAt(Math.floor(Math.random() * maxPos))
       }
       return pwd
+    },
+    getShareImg () {
+      // 分享图片地址
+      let imgUrl = window.location.origin + '/static/images/logo-new1.jpeg'
+      if (window.localStorage.getItem('zlUser') !== null) {
+        // 默认展示用户头像
+        imgUrl = JSON.parse(window.localStorage.getItem('zlUser')).headImgUrl
+      }
+      return imgUrl
     }
   },
   // dynamically set transition based on route change
@@ -113,20 +122,36 @@ export default {
     '$route' (to, from) {
       this.toPath = to.path
       this.fromPath = from.path
-      // 进入详情页时需要记录滚动条距离头部距离
-      if (from.path === '/category') {
-        this.scrollTop = $('.container').scrollTop()
+      // 进入详情页或列表页时需要记录滚动条距离头部距离
+      if (to.path === '/category' || to.path === '/shopping/goods') {
+        this.scrollTop = $(window).scrollTop()
+      }
+      // 页面需要滚动到顶部
+      if (to.matched.some(m => m.meta.scrollToTop)) {
+        setTimeout(_ => {
+          document.body.scrollTop = 0
+        }, 300)
       }
       // 默认全局分享
-      let ignoreUrl = ['/favicon.ico']
-      if (!ignoreUrl.includes(window.location.pathname)) {
+      let ignoreUrl = [
+        '/index',
+        '/index/sevenPanicBuy',
+        '/shopping/goods',
+        '/userCenter/shareQRCode',
+        '/oauth',
+        '/favicon.ico'
+      ]
+      if (!ignoreUrl.includes(to.path)) {
+        let base = this.$router.options.base ? this.$router.options.base : ''
+        // 分享图片地址
+        let imgUrl = this.getShareImg()
         // 默认全局分享
         let desc = '【足力购】帅哥美女们，快来足力购逛逛，捧个场吧！'
-        let link = window.location.origin + '/category'
+        let link = window.location.origin + base + '/?#/category'
         this.initWechatShare(
           '足力购商城欢迎您',
           desc,
-          window.location.origin + '/static/images/logo-new1.jpeg',
+          imgUrl,
           link
         )
       }

@@ -26,17 +26,21 @@ Vue.config.debug = true
 Vue.config.productionTip = false
 
 Vue.use(WeVue)
+Vue.prototype.$weChatShareDesc = () => {
+  let desc = '【足力购】帅哥美女们，快来足力购逛逛，捧个场吧！'
+  return desc
+}
 Vue.prototype.$http = axios
 Vue.prototype.initWechatShare = (title, desc, imgUrl, link) => {
-  util.wxShareReady({
-    title, desc, imgUrl, link
-  }, (res) => {
-    console.log('分享完成')
-  }, (res) => {
-    console.log('取消分享')
-  }, (res) => {
-    console.error(JSON.stringify(res))
-  })
+  // util.wxShareReady({
+  //   title, desc, imgUrl, link
+  // }, (res) => {
+  //   console.log('分享完成')
+  // }, (res) => {
+  //   console.log('取消分享')
+  // }, (res) => {
+  //   console.error(JSON.stringify(res))
+  // })
 }
 
 Vue.directive('infiniteScroll', infiniteScroll)
@@ -90,16 +94,6 @@ router.beforeEach((to, from, next) => {
   const tLength = toPath.replace(/[^/]/g, '').length
   const fLength = fromPath.replace(/[^/]/g, '').length
 
-  if (toPath !== '/oauth' && window.localStorage.getItem('zlUser') === null) {
-    // 需要登录
-    // console.log('需要登录', to, from)
-    // let oauthUrl = '/oauth'
-    // if (to.query.seller_id) {
-    //   oauthUrl += '?seller_id=' + to.query.seller_id
-    // }
-    // window.location.href = oauthUrl
-  }
-
   let pushUrl = ['/login', '/searchGoods']
   let bounceUrl = ['/goods', '/shopOrdDet', '/nhhDetail']
   // 页面切换效果
@@ -135,11 +129,21 @@ router.beforeEach((to, from, next) => {
     store.commit('CHANGE_IS_INDEX', true)
   }
   // 登录校验
+  let base = router.options.base ? router.options.base : ''
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (window.localStorage.getItem('zlUser') === null) {
+    if (util.getStore('zlUser') === null && util.is_weixin()) {
+      store.commit('CHANGE_IS_INDEX', false)
+      // 需要登录,并且记录hash参数
+      if (!util.getStore('url_hash_zl')) {
+        if (location.pathname !== '/') {
+          // 适配旧的分享链接
+          util.setStore('url_hash_zl', '#' + location.pathname + location.search)
+        } else {
+          util.setStore('url_hash_zl', location.hash === '#/' ? '' : location.hash)
+        }
+      }
       // 需要登录
-      Object.assign(to.query, {toPath: to.path})
-      next({path: '/login', query: to.query})
+      location.href = location.origin + base + '/?#/oauth' + location.search
     } else {
       next()
     }
@@ -151,7 +155,7 @@ router.beforeEach((to, from, next) => {
 // // 注册一个全局的 after 钩子
 router.afterEach((route) => {
   // let title = route.meta.title ? route.meta.title : ''
-  setWechatTitle('足力购')
+  setWechatTitle('')
   // 更新store中的route状态
   // store.commit([ROUTE_UPDATE_ROUTE], route)
 })

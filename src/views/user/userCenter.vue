@@ -2,13 +2,13 @@
   <div class="ucenter ucenter_buyer" @click="clearStorage">
     <div class="row" v-show="userInfo" v-cloak>
       <div class="col-xs-12 ucenter-top ">
-        <a @click="building()">
-          <img class="pull-left" src="static/images/store/user_pa.jpg"/>
+        <a @click="building()" v-if="userInfo">
+          <img class="pull-left" :src="userInfo.headImgUrl"/>
           <div class="pull-left top-title clearfix">
             <div class="title clearfix" style=" color:#fff; position:relative;">
               <p v-if="userInfo">
-                <span v-if="userInfo.name">{{userInfo.name}}</span>
-                <span v-else>{{userInfo.phone}}</span>
+                <span v-if="userInfo.nickName">{{userInfo.nickName}}</span>
+                <span v-else>{{userInfo.name}}</span>
               </p>
               <p class="self_sign">
                 个性签名:
@@ -126,11 +126,11 @@
         </ul>
       </div>
     </div>
-    <div class="row quit" style="margin-top:4px;margin-bottom:40px;">
+    <!-- <div class="row quit" style="margin-top:4px;margin-bottom:40px;">
       <div class="col-xs-12">
         <a @click="logout()" class="btn">退出当前账号</a>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

@@ -4,7 +4,7 @@
     <!--img src="/images/share_wx.png" class="share_wx_add"/-->
   </div>
   <!--头部标题-->
-  <div class="row yzg-title" style="position:relative;width:auto;">
+  <div class="row yzg-title" style="position:fixed;">
     <div class="col-xs-2 backBtn">
       <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>

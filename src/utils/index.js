@@ -32,10 +32,50 @@ export default {
     window.localStorage.removeItem(name)
   },
 
+  getQueryString(str, name) {
+		var reg = new RegExp('(^|&)'+ name + '=([^&]*)(&|$)')
+		var r = str.substr(1).match(reg)
+		if(r !== null) {
+			return  unescape(r[2])
+		} else {
+			return null
+		}
+	},
+
+  /**
+	 * 判断微信浏览器
+	 */
+	is_weixin() {
+		let ua = window.navigator.userAgent.toLowerCase()
+		if (ua.indexOf('micromessenger') !== -1) {
+			return true
+		} else {
+			return false
+		}
+	},
+
+  /**
+	 * 重新授权
+	 */
+	reOauth() {
+		if (window.localStorage.getItem('zlUser') !== null) {
+			// 清除用户对象
+			window.localStorage.removeItem('zlUser')
+			setTimeout(function () {
+				location.reload()
+			}, 200)
+		}
+	},
+
 	/**
 	 * 微信jssdk分享初始化
 	 */
   wxShareReady({title, desc, imgUrl, link}, success, cancel, fail) {
+    if (link.indexOf('/#/') !== -1) {
+			// 解决微信支付多路径问题,分享出去的hash地址必须在#前加？
+			let sLink = link.split('/#/')
+			link = sLink[0] + '/?#/' + (sLink[1] ? sLink[1] : '')
+		}
     let u = navigator.userAgent
     let isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1 // android终端
     let isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) // ios终端

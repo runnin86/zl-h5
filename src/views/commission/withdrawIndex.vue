@@ -44,29 +44,38 @@
       </tr>
     </table>
   </div>
-  <div class="cashIndex row" style="display: none;">
+  <div class="cashIndex row">
     <table>
       <tr>
         <td>绑定银行卡</td>
         <td>
-          <router-link :to="{ path:'/bankBind'}">
-            去设置 <i class="iconfont-yzg icon-yzg-arrow"></i>
+          <router-link :to="{ path:'/userCenter/withdrawIndex/bankBind'}">
+            <span :class="userInfo && userInfo.bankCard ? 'blueColor' : ''">
+              {{userInfo && userInfo.bankCard ? '已成功绑定' : '去设置'}}
+            </span>
+            <i class="iconfont-yzg icon-yzg-arrow"></i>
           </router-link>
         </td>
       </tr>
       <tr>
         <td>绑定支付宝</td>
         <td>
-          <router-link :to="{ path:'/alipayBind'}">
-            去设置 <i class="iconfont-yzg icon-yzg-arrow"></i>
+          <router-link :to="{ path:'/userCenter/withdrawIndex/alipayBind'}">
+            <span :class="userInfo && userInfo.alipayId ? 'blueColor' : ''">
+              {{userInfo && userInfo.alipayId ? '已成功绑定' : '去设置'}}
+            </span>
+            <i class="iconfont-yzg icon-yzg-arrow"></i>
           </router-link>
         </td>
       </tr>
       <tr>
         <td>绑定微信</td>
         <td>
-          <router-link :to="{ path:'/weChatBind'}">
-            <span class="blueColor">已成功绑定</span>
+          <router-link :to="{ path:'/userCenter/withdrawIndex/weChatBind'}">
+            <span :class="userInfo && userInfo.weChat ? 'blueColor' : ''">
+              {{userInfo && userInfo.weChat ? '已成功绑定' : '去设置'}}
+            </span>
+            <i class="iconfont-yzg icon-yzg-arrow"></i>
           </router-link>
         </td>
       </tr>
@@ -82,11 +91,13 @@ import weui from 'weui.js'
 export default {
   data() {
     return {
-      moneyInfo: null
+      moneyInfo: null,
+      userInfo: null
     }
   },
   activated() {
     this.moneyInfo = null
+    this.userInfo = JSON.parse(window.localStorage.getItem('zlUser'))
     this.getWithdrawMoney()
   },
   methods: {
