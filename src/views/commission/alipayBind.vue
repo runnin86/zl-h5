@@ -46,6 +46,7 @@ export default {
         weui.alert('请填写支付宝账号')
         return false
       }
+      let zhis = this
       let aid = this.userInfo.alipayId
       let param = {
         'alipayId': aid,
@@ -58,12 +59,14 @@ export default {
       }).then(function({data: {data, code, msg}}) {
         if (code === 1) {
           // 没有缓存强制
-          if (!JSON.parse(window.localStorage.getItem('zlUser')).alipayId || JSON.parse(window.localStorage.getItem('zlUser')).alipayId === '') {
-            let winUserNhh = JSON.parse(window.localStorage.getItem('zlUser'))
-            winUserNhh['alipayId'] = aid
-            window.localStorage.setItem('zlUser', JSON.stringify(winUserNhh))
-          }
+          let winUserNhh = JSON.parse(window.localStorage.getItem('zlUser'))
+          winUserNhh['alipayId'] = aid
+          window.localStorage.setItem('zlUser', JSON.stringify(winUserNhh))
+          // 提示和跳转
           weui.toast('绑定成功')
+          setTimeout(() => {
+            zhis.$parent.back()
+          }, 2500)
         } else {
           weui.alert(msg)
         }

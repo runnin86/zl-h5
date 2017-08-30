@@ -10,7 +10,7 @@
 		    <div class="col-xs-2"></div>
 		</div>
 		<div class="withDraw row">
-			<table>
+			<table v-if="userInfo">
         <tr>
           <td>微信账号</td>
           <td>
@@ -49,6 +49,7 @@ export default {
     */
     chatBind() {
       if (this.inputValid(this.userInfo.name, this.userInfo.weChat)) {
+        let zhis = this
         let name = this.userInfo.name
         let wc = this.userInfo.weChat
         let param = {
@@ -63,13 +64,15 @@ export default {
         }).then(function({data: {data, code, msg}}) {
           if (code === 1) {
             // 没有缓存强制
-            if (!JSON.parse(window.localStorage.getItem('zlUser')).wc || JSON.parse(window.localStorage.getItem('zlUser')).wc === '') {
-              let winUserNhh = JSON.parse(window.localStorage.getItem('zlUser'))
-              winUserNhh['wc'] = wc
-              winUserNhh['name'] = name
-              window.localStorage.setItem('zlUser', JSON.stringify(winUserNhh))
-            }
+            let winUserNhh = JSON.parse(window.localStorage.getItem('zlUser'))
+            winUserNhh['weChat'] = wc
+            winUserNhh['name'] = name
+            window.localStorage.setItem('zlUser', JSON.stringify(winUserNhh))
+            // 提示和跳转
             weui.toast('绑定成功')
+            setTimeout(() => {
+              zhis.$parent.back()
+            }, 2500)
           } else {
             weui.alert(msg)
           }

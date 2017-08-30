@@ -63,7 +63,7 @@ export default {
           'x-token': window.localStorage.getItem('zlToken')
         }
       }).then(({data: {data, code, msg}}) => {
-        console.log(data)
+        // console.log(data)
         if (code === 1) {
           this.bankList = data
         } else {
@@ -82,6 +82,7 @@ export default {
       let name = this.userInfo.bankAccountName
       let idCardNo = this.userInfo.idCardNo
       if (this.isIdno(bCode, card, name, idCardNo)) {
+        let zhis = this
         let binkParam = {
           'code': bCode,
           'card': card,
@@ -103,7 +104,11 @@ export default {
             winUserNhh['bankCard'] = card
             winUserNhh['idCardNo'] = idCardNo
             window.localStorage.setItem('zlUser', JSON.stringify(winUserNhh))
+            // 提示和跳转
             weui.toast('绑定成功')
+            setTimeout(() => {
+              zhis.$parent.back()
+            }, 2500)
           } else {
             weui.alert(msg)
           }
