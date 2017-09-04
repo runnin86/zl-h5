@@ -24,6 +24,12 @@ export default new Router({
         require(['@/views/user/userCenter'], resolve)
       }
     }, {
+      path: '/userCenter/active',
+      meta: {requiresAuth: true},
+      component(resolve) {
+        require(['@/views/user/active'], resolve)
+      }
+    }, {
       path: '/userCenter/addressList',
       meta: {requiresAuth: true},
       component(resolve) {

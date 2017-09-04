@@ -25,7 +25,7 @@
     <!--轮播图及内容-->
     <div>
       <div style="position:relative">
-        <div class="detail-img">
+        <div class="detail-img" style="margin-top: 50px;">
           <wv-swipe class="demo-swipe" :height="300" :auto="4000">
             <wv-swipe-item class="demo-swipe-item" v-for="img in photo" :key="img.id">
               <img :src="imgBase64" :style="{backgroundImage: 'url(' + img_domain + img.resource + ')'}">

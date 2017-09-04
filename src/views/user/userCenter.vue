@@ -138,15 +138,24 @@
 import $ from 'zepto'
 import weui from 'weui.js'
 
-let loading
+let weuiObj
 export default {
+  deactivated() {
+    if (weuiObj) {
+      weuiObj.hide()
+    }
+  },
   activated() {
     this.counter = 0
     this.userInfo = JSON.parse(window.localStorage.getItem('zlUser'))
     if (this.userInfo) {
       let token = window.localStorage.getItem('zlToken')
-      // 获取账户
-      this.getUseAccount(token)
+      if (this.userInfo.status === 0) {
+        this.$router.push('/userCenter/active')
+      } else {
+        // 获取账户
+        this.getUseAccount(token)
+      }
     } else {
       // 进入登录页面
       this.$router.push('login')
@@ -215,7 +224,7 @@ export default {
      * 退出
      */
     logout () {
-      loading = weui.loading('退出中')
+      weuiObj = weui.loading('退出中')
       let token = this.$store.getters.token
       this.$http.delete('user/logout', {
         headers: {
@@ -229,9 +238,9 @@ export default {
           this.$router.push({path: '/category', replace: true})
         }
         $.toast(msg)
-        loading.hide()
+        weuiObj.hide()
       }).catch((e) => {
-        loading.hide()
+        weuiObj.hide()
         console.error('用户退出失败:' + e)
       })
     },
@@ -239,7 +248,7 @@ export default {
       this.counter += 1
       if (this.counter === 20) {
         let zhis = this
-        weui.dialog({
+        weuiObj = weui.dialog({
           title: '当前用户缓存',
           content: JSON.stringify(this.userInfo) + window.localStorage.getItem('zlToken'),
           className: 'custom-classname',
@@ -280,6 +289,6 @@ export default {
   font-size: 12px;
 }
 .ucenter_buyer{
-  background: #f8f8f8;
+  /*background: #f8f8f8;*/
 }
 </style>

@@ -87,23 +87,19 @@ export default {
       this.$http.post('user/login', qs.stringify(loginParam))
       .then(function({data: {data, code, msg}}) {
         if (code === 1) {
-          if (data.user.status === 0) {
-            weui.alert('账户暂时不可用')
-          } else if (data.user.status === 1) {
-            $.toast('登录成功')
-            window.localStorage.setItem('zlUser', JSON.stringify(data.user))
-            window.localStorage.setItem('zlToken', data.token)
+          $.toast('登录成功')
+          window.localStorage.setItem('zlUser', JSON.stringify(data.user))
+          window.localStorage.setItem('zlToken', data.token)
 
-            // 定义
-            let hash = util.getStore('url_hash_zl')
-            let path = hash || '#/category'
-            // 跳转前删除hash
-            util.removeStore('url_hash_zl')
-            // 最终跳转
-            let base = this.$router.options.base ? this.$router.options.base : ''
-            console.log('最终跳转', location.origin + base + '/?' + path)
-            location.href = location.origin + base + '/?' + path
-          }
+          // 定义
+          let hash = util.getStore('url_hash_zl')
+          let path = hash || '#/category'
+          // 跳转前删除hash
+          util.removeStore('url_hash_zl')
+          // 最终跳转
+          let base = this.$router.options.base ? this.$router.options.base : ''
+          console.log('最终跳转', location.origin + base + '/?' + path)
+          location.href = location.origin + base + '/?' + path
         } else {
           weui.alert(msg)
         }
