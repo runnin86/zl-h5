@@ -31,17 +31,19 @@
         </td>
       </tr>
       <tr>
-        <td colspan="2" style="text-align:left;">
-          请仔细填写上述信息,一旦确认后不可更改! 请仔细填写上述信息,一旦确认后不可更改!请仔细填写上述信息,一旦确认后不可更改! 请仔细填写上述信息,一旦确认后不可更改!
+        <td colspan="2" style="text-align:left;color: #FF0000;">
+          请仔细填写上述信息,一旦确认后不可更改!
+          激活需要缴纳200元保证金!
         </td>
       </tr>
     </table>
-    <a @click="userActive()" class="rightCash">立即激活</a>
+    <a @click="userActivate()" class="rightCash">立即激活</a>
   </div>
 </div>
 </template>
 
 <script>
+import $ from 'zepto'
 import qs from 'qs'
 import weui from 'weui.js'
 
@@ -58,32 +60,49 @@ export default {
     /*
      * 绑定微信
      */
-    userActive() {
+    userActivate() {
       if (this.inputValid(this.phone, this.parentPhone, this.name)) {
         let zhis = this
-        let name = this.phone
-        let wc = this.name
         let param = {
-          'name': name,
-          'weChat': wc,
-          'type': 'weChat'
+          name: this.name,
+          phone: this.phone,
+          parentPhone: this.parentPhone
         }
-        this.$http.post('user/bindInfo', qs.stringify(param), {
+        this.$http.post('user/activate', qs.stringify(param), {
           headers: {
             'x-token': window.localStorage.getItem('zlToken')
           }
         }).then(function({data: {data, code, msg}}) {
           if (code === 1) {
-            // 没有缓存强制
-            let winUserNhh = JSON.parse(window.localStorage.getItem('zlUser'))
-            winUserNhh['weChat'] = wc
-            winUserNhh['name'] = name
-            window.localStorage.setItem('zlUser', JSON.stringify(winUserNhh))
-            // 提示和跳转
-            weui.toast('绑定成功')
-            setTimeout(() => {
-              zhis.$parent.back()
-            }, 2500)
+            if (data.weChatPrePay) {
+              // 更新缓存用户对象
+              window.localStorage.setItem('zlUser', JSON.stringify(data.user))
+              // 微信支付
+              window.WeixinJSBridge.invoke('getBrandWCPayRequest', data.weChatPrePay.jsApiParameters,
+              function(res) {
+                // err_code,err_desc,err_msg
+                if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                  // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+                  $.toast('支付成功')
+                  setTimeout(() => {
+                    zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
+                  }, 2000)
+                } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+                  // 取消
+                  $.toast('用户取消支付', 'cancel')
+                } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+                  // 支付失败
+                  $.toast(res.err_msg, 'forbidden')
+                } else {
+                  weui.alert(!res.err_msg ? '支付回调错误,请刷新重试!' : res.err_msg)
+                }
+              })
+            } else {
+              $.toast(msg)
+              setTimeout(() => {
+                zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
+              }, 2000)
+            }
           } else {
             weui.alert(msg)
           }
@@ -102,6 +121,10 @@ export default {
       }
       if (!parentPhone || !(/^1(3|4|5|7|8)\d{9}$/.test(parentPhone))) {
         weui.alert('推荐人手机号码为空或推荐人手机号格式填写不正确')
+        return false
+      }
+      if (phone === parentPhone) {
+        weui.alert('手机号码不能和推荐人手机号一致')
         return false
       }
       if (!name) {
