@@ -126,6 +126,9 @@ export default {
   },
   updated () {
   },
+  deactivated() {
+    this.$parent.scrollTop = $(window).scrollTop()
+  },
   /*
    * 激活
    */

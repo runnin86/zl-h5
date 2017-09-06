@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import $ from 'zepto'
+// import $ from 'zepto'
 import {mapGetters} from 'vuex'
 import thumbSmall from 'static/weui/images/icon_tabbar.png'
 
@@ -122,10 +122,6 @@ export default {
     '$route' (to, from) {
       this.toPath = to.path
       this.fromPath = from.path
-      // 进入详情页或列表页时需要记录滚动条距离头部距离
-      if (to.path === '/category' || to.path === '/shopping/goods') {
-        this.scrollTop = $(window).scrollTop()
-      }
       // 页面需要滚动到顶部
       if (to.matched.some(m => m.meta.scrollToTop)) {
         setTimeout(_ => {
