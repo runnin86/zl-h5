@@ -1,9 +1,9 @@
 <template>
 <div class="allSort">
   <div class="sortMenu clearfix">
-    <ul class="sortMenu-ul" :style="{'min-width': sortMenu.length*100+'px'}">
-      <li class="cell" v-for="(item, key) in sortMenu" :key="item.id"
-        :style="{'padding-right': (key===sortMenu.length-1&&isSortName?60:0)+'px'}"
+    <ul class="sortMenu-ul" :style="{'min-width': sortMenu.length*89+'px'}">
+      <li class="cell" v-for="(item, index) in sortMenu" :key="item.id"
+        :style="{'padding-right': (index===sortMenu.length-1&&isSortName?60:0)+'px'}"
         :class="item.id===activeId?'active':''"
         @click="$parent.$emit(fnName, item.id)">
         <a>{{item.name}}</a>
@@ -14,8 +14,11 @@
     </div>
     <div v-show="subitemsExpanded" class="pull-down">
       <ul class="pull-down-sort">
-        <li class="" v-for="pulldow in sortName">
-          <a @click="$parent.$emit(fnName, pulldow.id),subitemsExpanded=false">{{pulldow.name}}</a>
+        <li class="" v-for="(pulldow, index) in sortName">
+          <a @click="$parent.$emit(fnName, pulldow.id),scrollPosition(index)"
+            :style="{color: pulldow.id===activeId?'#353a40':''}">
+            {{pulldow.name}}
+          </a>
         </li>
       </ul>
     </div>
@@ -24,6 +27,8 @@
 </template>
 
 <script type="text/babel">
+import $ from 'zepto'
+
 export default {
   name: 'wv-scroll-menu',
   props: {
@@ -44,7 +49,12 @@ export default {
       subitemsExpanded: false
     }
   },
-  method: {
+  methods: {
+    scrollPosition(i) {
+      // $('.sortMenu').css('left', (i * 82 * -1) + 'px')
+      // $('.sortMenu').animate({scrollLeft: i * 82}, 500)
+      $('.sortMenu').scrollLeft(i * 82)
+    }
   }
 }
 </script>
@@ -96,8 +106,8 @@ export default {
 
 .sortMenu .all {
   right: 0;
-  top: 3px;
-  height: 40px;
+  top: -2px;
+  height: 45px;
   width: 40px;
   position: absolute;
   background: #fff;
@@ -105,6 +115,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow:2px -6px 10px #aaa;
 }
 
 .sortMenu .all:before {
@@ -112,7 +123,7 @@ export default {
   height: 28px;
   width: 1px;
   position: absolute;
-  box-shadow: 1px 0px 1px #e0e0e0;
+  /*box-shadow: 1px 0px 1px #e0e0e0;*/
   left: 0px;
 }
 
@@ -123,7 +134,7 @@ export default {
 
 .sortMenu .pull-down {
   position: absolute;
-  top: 40px;
+  top: 44px;
   height: auto;
   width: 100%;
   background: #fff;

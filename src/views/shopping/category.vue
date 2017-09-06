@@ -71,13 +71,6 @@ import $ from 'zepto'
 import qs from 'qs'
 // import weui from 'weui.js'
 
-// import Vue from 'vue'
-// import progressive from './../../directives/progressive-image'
-//
-// Vue.use(progressive, {
-//   removePreview: true,
-//   scale: true
-// })
 let menuList = [{
   id: 0,
   name: '全部商品'
