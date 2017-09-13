@@ -98,6 +98,10 @@
       <div class="help-center my-shop">
         <ul>
           <li>
+            <i class="iconfont-yzg icon-yzg-share"></i>
+            <router-link to="/userCenter/shareQRCode">二维码</router-link>
+          </li>
+          <li>
             <i class="iconfont-yzg icon-yzg-dizhiguanli"></i>
             <router-link to="/userCenter/addressList">地址管理</router-link>
           </li>
@@ -113,10 +117,10 @@
             <i class="iconfont-yzg icon-yzg-shezhi"></i>
             <router-link to="/userCenter/changePwd">修改密码</router-link>
           </li> -->
-          <li @click="building()">
+          <!-- <li @click="building()">
             <i class="iconfont-yzg icon-yzg-guanyuwomen"></i>
             <router-link to="">关于我们</router-link>
-          </li>
+          </li> -->
           <li>
             <i class="iconfont-yzg icon-yzg-kefu"></i>
             <a href="tel:0312-7333023">

@@ -129,9 +129,9 @@ router.beforeEach((to, from, next) => {
     store.commit('CHANGE_IS_INDEX', true)
   }
   // 登录校验
-  let base = router.options.base ? router.options.base : ''
+  // let base = router.options.base ? router.options.base : ''
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (util.getStore('zlUser') === null && util.is_weixin()) {
+    if (util.getStore('zlUser') === null) {
       store.commit('CHANGE_IS_INDEX', false)
       // 需要登录,并且记录hash参数
       if (!util.getStore('url_hash_zl')) {
@@ -142,8 +142,11 @@ router.beforeEach((to, from, next) => {
           util.setStore('url_hash_zl', location.hash === '#/' ? '' : location.hash)
         }
       }
-      // 需要登录
-      location.href = location.origin + base + '/?#/oauth' + location.search
+      if (util.is_weixin()) {
+        next({path: '/oauth'})
+      } else {
+        alert('非法访问')
+      }
     } else {
       next()
     }

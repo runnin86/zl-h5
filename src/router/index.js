@@ -36,6 +36,12 @@ export default new Router({
         require(['@/views/user/addressList'], resolve)
       }
     }, {
+      path: '/userCenter/shareQRCode',
+      meta: {requiresAuth: true},
+      component(resolve) {
+        require(['@/views/user/shareQRCode'], resolve)
+      }
+    }, {
       path: '/nhhDetail',
       meta: {scrollToTop: true, title: '成为汇商'},
       component(resolve) {

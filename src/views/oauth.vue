@@ -42,7 +42,9 @@ export default {
     doWeChatAuth() {
       console.log('开始微信授权')
       // 逻辑处理
-      if (this.$route.query.code) {
+      if (location.search) {
+        location.href = location.origin + '/?#/oauth' + location.search
+      } else if (this.$route.query.code) {
         // 业务登录
         this.doLogin(this.$route.query.code)
       } else {
