@@ -73,8 +73,7 @@ export default {
     return {
       thumbSmall,
       toPath: null,
-      fromPath: null,
-      scrollTop: 0
+      fromPath: null
     }
   },
   methods: {
