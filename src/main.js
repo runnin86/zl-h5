@@ -32,15 +32,15 @@ Vue.prototype.$weChatShareDesc = () => {
 }
 Vue.prototype.$http = axios
 Vue.prototype.initWechatShare = (title, desc, imgUrl, link) => {
-  // util.wxShareReady({
-  //   title, desc, imgUrl, link
-  // }, (res) => {
-  //   console.log('分享完成')
-  // }, (res) => {
-  //   console.log('取消分享')
-  // }, (res) => {
-  //   console.error(JSON.stringify(res))
-  // })
+  util.wxShareReady({
+    title, desc, imgUrl, link
+  }, (res) => {
+    console.log('分享完成')
+  }, (res) => {
+    console.log('取消分享')
+  }, (res) => {
+    console.error(JSON.stringify(res))
+  })
 }
 
 Vue.directive('infiniteScroll', infiniteScroll)

@@ -124,6 +124,9 @@ export default {
       'bottom': this.moveY + 'px'
     })
   },
+  deactivated() {
+    loading.hide()
+  },
   data() {
     return {
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=',
@@ -158,7 +161,7 @@ export default {
           this.initWechatShare(
             data.main.productName + '-足力购商城',
             desc,
-            this.img_domain + data.photo[0].resource,
+            this.img_domain + (data.photo.length > 0 ? data.photo[0].resource : ''),
             window.location.href)
         } else {
           $.toast(msg, 'forbidden')
