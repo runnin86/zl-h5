@@ -27,7 +27,8 @@
       <tr>
         <td>推荐人</td>
         <td>
-          <input class="form-control" type="number" v-model="parentPhone" placeholder="请填写推荐人手机号码" />
+          <input class="form-control" type="number" v-model="parentPhone"
+            :disabled="parentPhone?true:false" placeholder="请填写推荐人手机号码" />
         </td>
       </tr>
       <tr>
@@ -48,7 +49,10 @@ import qs from 'qs'
 import weui from 'weui.js'
 
 export default {
-  activated() {},
+  activated() {
+    // 去获取用户信息
+    this.getUserInfo()
+  },
   data() {
     return {
       phone: null,
@@ -57,6 +61,30 @@ export default {
     }
   },
   methods: {
+    /*
+     * 获取用户信息
+     */
+    getUserInfo() {
+      let param = {
+        mid: this.$route.query.mid ? this.$route.query.mid : '',
+        phone: ''
+      }
+      this.$http.post('user/userInfo', qs.stringify(param), {
+        headers: {
+          'x-token': window.localStorage.getItem('zlToken')
+        }
+      }).then(function({data: {data, code, msg}}) {
+        if (code === 1) {
+          this.phone = data.redisUser.phone
+          this.name = data.redisUser.name
+          this.parentPhone = data.parentUser.phone
+        } else {
+          console.error(this.$route.query.mid, '根据mid获取用户失败!')
+        }
+      }.bind(this)).catch(function(e) {
+        console.error(e)
+      })
+    },
     /*
      * 绑定微信
      */
