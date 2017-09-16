@@ -1,6 +1,6 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// import $ from 'zepto'
+import $ from 'zepto'
 import App from './App'
 import Vue from 'vue'
 import axios from 'axios'
@@ -80,6 +80,11 @@ axios.interceptors.request.use(function (config) {
 axios.interceptors.response.use(function (response) {
   // Do something with response data
   // console.log('response:' + response.config.url, '状态:' + response.status + '->' + response.statusText)
+  if (response.data.msg === '用户未登录或登录已失效') {
+    $.toast('会话失效<br/>即将重新登录', 'forbidden')
+    // 清空再次鉴权
+    util.reOauth()
+  }
   return response
 }, function (error) {
   // $.toast('网络错误', 'forbidden')
