@@ -6,21 +6,21 @@
       </keep-alive>
     </transition>
 
-    <wv-tabbar v-if="showIndex" style="position: fixed;table-layout: fixed;">
+    <wv-tabbar v-if="showIndex" style="position: fixed;table-layout: fixed;box-shadow:0 -5px 30px rgba(0,0,0,0.1);">
       <wv-tabbar-item to="/category" :is-on="$route.path==='/category'">
-        <span slot="icon" style="display: inline-block; position: relative; height:34px; padding-top:5px">
-          <!-- <img class="weui-tabbar__icon" src="static/weui/images/icon_nav_search_bar.png" slot="icon"> -->
-          <i class="iconfont-yzg icon-yzg-goods" style="font-size:26px"></i>
+        <span slot="icon" class="botMenu">
+          <img v-if="$route.path==='/category'" src="/static/images/sale_c.png"/>
+          <img v-else src="/static/images/sale.png"/>
         </span>
         购物
       </wv-tabbar-item>
 
       <wv-tabbar-item to="/cart" :is-on="$route.path==='/cart'">
-        <span slot="icon" style="display: inline-block; position: relative; height:34px; padding-top:5px">
-          <!-- <img class="weui-tabbar__icon" :src="thumbSmall" slot="icon"> -->
-          <i class="iconfont-yzg icon-yzg-msnui-cart" style="font-size:26px"></i>
+        <span slot="icon" class="botMenu">
+          <img v-if = "$route.path==='/cart'" src="/static/images/shop_c.png"/>
+          <img v-else src="/static/images/shop.png"/>
           <wv-badge v-show="cartBadgeNum"
-            style="position: absolute;top: -2px;right: -16px;padding:.15em .53em;">{{cartBadgeNum}}</wv-badge>
+            style="position: absolute;top: 0;right: -10px;padding:.10em .43em;">{{cartBadgeNum}}</wv-badge>
         </span>
          购物车
       </wv-tabbar-item>
@@ -34,10 +34,10 @@
       </wv-tabbar-item> -->
 
       <wv-tabbar-item to="/userCenter" :is-on="$route.path==='/userCenter'">
-        <span slot="icon" style="display: inline-block; position: relative; height:34px; padding-top:5px">
-          <!-- <img class="weui-tabbar__icon" :src="thumbSmall" slot="icon"> -->
-          <i class="iconfont-yzg icon-yzg-wode" style="font-size:26px"></i>
-          <wv-badge is-dot style="position: absolute;top: 0;right: -6px;">8</wv-badge>
+        <span slot="icon" class="botMenu">
+          <img v-if = "$route.path==='/userCenter'" src="/static/images/user_c.png"/>
+          <img v-else src="/static/images/user.png"/>
+          <!-- <wv-badge is-dot style="position: absolute;top: 0;right: -6px;">8</wv-badge> -->
         </span>
          我的
       </wv-tabbar-item>
@@ -247,6 +247,7 @@ img {
 /*.weui-tabbar__item.weui-bar__item_on > span > i {
   color: #09bb07;
 }*/
-.weui-tabbar__item.weui-bar__item_on .weui-tabbar__icon, .weui-tabbar__item.weui-bar__item_on .weui-tabbar__icon>i, .weui-tabbar__item.weui-bar__item_on .weui-tabbar__label{ color:#ed3366; }
+.weui-tabbar__item.weui-bar__item_on .weui-tabbar__icon, .weui-tabbar__item.weui-bar__item_on .weui-tabbar__icon>i, .weui-tabbar__item.weui-bar__item_on .weui-tabbar__label{ color:#666; }
 .weui-tabbar__item img{ width:26px; }
+.botMenu{display: inline-block; position: relative; height:30px; padding-top:5px}
 </style>

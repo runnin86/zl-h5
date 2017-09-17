@@ -3,7 +3,7 @@
     <div class="row" v-show="userInfo" v-cloak>
       <div class="col-xs-12 ucenter-top ">
         <a @click="building()" v-if="userInfo">
-          <img class="pull-left" :src="userInfo.headImgUrl"/>
+          <img class="pull-left" v-show="userInfo" :src="userInfo.headImgUrl"/>
           <div class="pull-left top-title clearfix">
             <div class="title clearfix" style=" color:#fff; position:relative;">
               <p v-if="userInfo">

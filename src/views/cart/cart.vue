@@ -355,7 +355,7 @@ export default {
 
 .goods-alert_title .goods-alert_pic {
   width: 150px;
-  margin: 40px auto 10px;
+  margin: 40px auto 2px;
 }
 
 .goods-alert_title .goods-alert_pic img {
@@ -364,9 +364,9 @@ export default {
 }
 
 .goods-alert_title .goods-alert_content .no-goods_cart {
-  font-size: 18px;
+  font-size: 16px;
   color: #666;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .goods-alert_title .goods-alert_content .random-stroll_shop {
