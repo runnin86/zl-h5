@@ -164,8 +164,6 @@ router.beforeEach((to, from, next) => {
 router.afterEach((route) => {
   // let title = route.meta.title ? route.meta.title : ''
   setWechatTitle('')
-  // 更新store中的route状态
-  // store.commit([ROUTE_UPDATE_ROUTE], route)
 })
 
 // Filters

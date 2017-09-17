@@ -28,7 +28,7 @@
         <td>推荐人</td>
         <td>
           <input class="form-control" type="text" v-model="parentPhone"
-            :disabled="parentPhone?true:false" placeholder="请填写推荐人手机号码" />
+            :disabled="parentPhone?false:false" placeholder="请填写推荐人手机号码" />
         </td>
       </tr>
       <tr>
@@ -104,8 +104,6 @@ export default {
         }).then(function({data: {data, code, msg}}) {
           if (code === 1) {
             if (data.weChatPrePay) {
-              // 更新缓存用户对象
-              window.localStorage.setItem('zlUser', JSON.stringify(data.user))
               // 微信支付
               window.WeixinJSBridge.invoke('getBrandWCPayRequest', data.weChatPrePay.jsApiParameters,
               function(res) {
@@ -113,9 +111,9 @@ export default {
                 if (res.err_msg === 'get_brand_wcpay_request:ok') {
                   // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
                   $.toast('支付成功')
+                  // 清除用户对象
+                  window.localStorage.removeItem('zlUser')
                   setTimeout(() => {
-                    // 清除用户对象
-                    window.localStorage.removeItem('zlUser')
                     zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
                   }, 2000)
                 } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
