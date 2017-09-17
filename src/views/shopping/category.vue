@@ -117,7 +117,7 @@ export default {
     if (this.$route.params.cid) {
       this.changeCid(this.$route.params.cid)
     }
-    if (this.mescroll) {
+    if (this.mescroll && this.$parent.fromPath === '/shopping/goods') {
       this.mescroll.scrollTo(this.scrollTop)
     }
   },
