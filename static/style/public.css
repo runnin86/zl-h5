@@ -6,7 +6,150 @@
   font-family: '微软雅黑';
 }
 
-body {}
+
+/**
+ * 字号 颜色
+ * @type {[type]}
+ */
+
+.c1 {
+  color: #999;
+}
+
+.c2 {
+  color: #666
+}
+
+.c3 {
+  color: #333
+}
+
+.c4 {
+  color: #000
+}
+
+.c5 {
+  color: #ef4b4b
+}
+
+
+/* 红色 */
+
+.c6 {
+  color: #e5e7f0
+}
+
+.c7 {
+  color: #fff
+}
+
+.c8 {
+  color: #fff;
+  opacity: 0.5
+}
+
+.c9 {
+  color: #e8e8e8
+}
+
+.c10 {
+  color: #4870f6
+}
+
+
+/* 蓝色 */
+
+.c11 {
+  color: #c8975c
+}
+
+
+/* 黄色 */
+
+.h1 {
+  font-size: 0.68376rem
+}
+
+
+/* 16px */
+
+.h2 {
+  font-size: 0.68376rem;
+  font-weight: bold;
+}
+
+.h3 {
+  font-size: 0.598rem
+}
+
+
+/* 14px */
+
+.h4 {
+  font-size: 0.598rem;
+  font-weight: lighter;
+}
+
+.h5 {
+  font-size: 0.5128rem
+}
+
+
+/* 12px */
+
+.h5_b {
+  font-size: 0.5128rem;
+  font-weight: bold
+}
+
+.h6 {
+  font-size: 0.5128rem;
+  font-weight: lighter;
+}
+
+.h7 {
+  font-size: 0.4274rem
+}
+
+
+/* 10px */
+
+.h8 {
+  font-size: 0.4274rem;
+  font-weight: bold
+}
+
+.h9 {
+  font-size: 0.385rem;
+  font-weight: bold
+}
+
+
+/* 9px */
+
+.h10 {
+  font-size: 2.13675rem;
+  font-weight: bold
+}
+
+
+/* 50px */
+
+.h12 {
+  font-size: 1.2393rem;
+  font-weight: bold
+}
+
+
+/* 29px */
+
+.h13 {
+  font-size: 0.598rem;
+  font-weight: bold
+}
+
+
+/* 14px */
 
 p {
   margin: 0;
@@ -282,10 +425,14 @@ input[type=search] {
 }
 
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
-  padding: 8px;
-  line-height: 1.4;
+  padding: 0 8px;
+  line-height: 2rem;
+  height: 2rem;
+  overflow: hidden;
   vertical-align: top;
   border-top: 1px solid #ddd;
+  color: #444;
+  text-align: left
 }
 
 th {
@@ -294,7 +441,8 @@ th {
 
 .table>thead>tr>th {
   vertical-align: bottom;
-  border-bottom: 2px solid #ddd
+  border-bottom: 2px solid #ddd;
+  color: #333
 }
 
 .checkbox label, .radio label {
@@ -320,7 +468,7 @@ th {
 
 .btn-danger {
   color: #fff;
-  background: #d43f3a;
+  background: #ed3366;
 }
 
 .pull-left {
@@ -336,23 +484,95 @@ th {
     height: 157px;
     width: 157px;
   }
-  .goods-img img {
-    height: 100%;
-  }
-  .goods-lists .sub-goods_list {
-    overflow: hidden;
+}
+
+@media screen and (min-width:330px) and (max-width: 400px) {
+  .goods-lists .goods-img {
+    height: 186px;
+    width: 186px;
   }
 }
 
-@media screen and (min-width:330px) and (max-width: 420px) {
+@media screen and (min-width:400px) and (max-width: 420px) {
   .goods-lists .goods-img {
-    height: 176px;
-    width: 176px;
+    height: 206px;
+    width: 206px;
   }
-  .goods-img img {
-    height: 100%;
-  }
-  .goods-lists .sub-goods_list {
-    overflow: hidden;
-  }
+}
+
+.goods-img img {
+  height: 100%;
+}
+
+.goods-lists .sub-goods_list {
+  overflow: hidden;
+}
+
+
+/*我的收入选中样式*/
+
+.selectedCss {
+  border-bottom: 2px solid #ed3366;
+  position: relative;
+}
+
+.selectedCss:after {
+  position: absolute;
+  content: '';
+  width: 0;
+  height: 0;
+  bottom: -10px;
+  border-style: solid;
+  border-color: #ed3366 transparent transparent transparent;
+  border-width: 4px;
+  left: 0;
+  right: 0;
+  margin: 0 auto
+}
+
+.order_name {
+  width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+}
+
+
+/*分享提示小弹框*/
+
+.pullList {
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  max-width: 640px;
+  min-width: 320px;
+  height: 100%;
+  z-index: 600;
+}
+
+.shareText {
+  position: absolute;
+  bottom: 125px;
+  right: 8px;
+  background: #ed3366;
+  color: #fff;
+  height: 30px;
+  width: 100px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.shareText::before {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  right: 16px;
+  height: 0;
+  width: 0;
+  border-color: #ed3366 transparent transparent;
+  border-width: 8px;
+  border-style: solid;
 }

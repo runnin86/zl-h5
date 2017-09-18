@@ -1,106 +1,104 @@
 <template>
-  <div>
+<div>
   <!-- 头部导航栏 -->
-    <div class="row index-title">
-      <div class="shop-name" v-if="storeinfo">
-        <a class="contact_img clearfix" href="tel:4006226777">
-          <img src="/static/images/lxkf_top.png"/>
-          <p>客服</p>
-        </a>
-        <a class="contact_img clearfix" :href="'tel:' + storeinfo.mobile" style="left:2.3rem">
-          <img src="/static/images/lxdz_top.png"/>
-          <p>店主</p>
-        </a>
-        <div class="user-img">
-          <img :src="imgBase64" :style="{backgroundImage: 'url(' + (storeinfo.avatar ? storeinfo.avatar : '/static/images/store/user_pa.jpg') + ')'}">
-        </div>
-        <router-link to="/searchGoods" class="search-icon">
-          <img src="/static/images/search_top.png"/>
-          <p>搜索</p>
-        </router-link>
+  <div class="row index-title">
+    <div class="shop-name">
+      <a class="contact_img clearfix" href="tel:0312-7333023">
+        <img src="/static/images/lxkf_top.png"/>
+        <p>客服</p>
+      </a>
+      <a class="contact_img clearfix" href="tel:0312-7333023" style="left:2.3rem">
+        <img src="/static/images/lxdz_top.png"/>
+        <p>店主</p>
+      </a>
+      <div class="user-img">
+        <img :src="imgBase64" style="backgroundImage: url('/static/images/store/user_pa.jpg')">
       </div>
-      <div class="unshop-name" v-if="loadComplete&&!storeinfo">南华汇商城</div>
-      <div class="shop-detail clearfix" v-if="storeinfo">
-        <div class="shop-info">
-          <span class="nhh-store_name" v-if="store_detail.store_name">{{store_detail.store_name}}</span>
-          <span class="nhh-store_name" v-else>南华汇商城</span>
-          <span class="info">{{storeinfo.signature ? storeinfo.signature : '终于等到了主人的莅临~'}}</span>
-        </div>
-      </div>
+      <router-link to="/searchGoods" class="search-icon">
+        <img src="/static/images/search_top.png" />
+        <p>搜索</p>
+      </router-link>
     </div>
-    <!-- 滑动菜单 -->
-    <div class="row navbar-location" v-show="loadComplete&&sortMenu.length>0">
-      <div class="navbar-yzg-default">
-        <wv-scroll-menu ref="menuComp" :sortMenu="sortMenu" :sortName="sortName"
-          :fnName="'changeCid'" :activeId="-1"></wv-scroll-menu>
-      </div>
-    </div>
-    <!--轮播图-->
-    <div class="row slider-box" style="padding-bottom: 0.2167rem">
-      <wv-swipe class="demo-swipe bannerImg" :auto="4000">
-        <wv-swipe-item class="demo-swipe-item"  v-for="bn in turnsInfo" :key="bn.banner">
-          <router-link :to="bn.turns_link">
-            <img :src="img_domain + bn.banner">
-          </router-link>
-        </wv-swipe-item>
-      </wv-swipe>
-    </div>
-    <!--通知栏-->
-    <div class="row notice-box">
-      <div class="notice">
-        <img class="notice_img" src="/static/images/notice.png"/>
-        <span><i>通知</i></span>
-      </div>
-      <wv-scroll-notice :content="content_text" :scrollamount="scrollamount" :direction="direction"></wv-scroll-notice>
-      <div class="arrows">
-        <img class="arrows_img" src="/static/images/arrows.png"/>
-      </div>
-    </div>
-    <!--早8点-->
-    <div class="row eight-morning" v-if="add_new_list.length !== 0">
-      <img :src="img_domain + banner"/>
-      <div class="goods-lists clearfix">
-        <div class="sub-goods_list" v-for="n in add_new_list">
-          <router-link :to="{name: 'Goods', path: '/shopping/goods', query: {gid: n.upc_id}} " class="list-link">
-            <div class="goods-img">
-              <img :src="n.img_url ? n.img_url : '/static/images/no_picture.jpg'">
-            </div>
-            <div class="goods-price">
-              {{n.shop_price}}
-              <span class="goods-price_origin">{{n.market_price}}</span>
-            </div>
-            <div class="goods-brief">{{n.goods_brief}}</div>
-            <div class="goods-title">{{n.goods_name}}</div>
-          </router-link>
-        </div>
-      </div>
-    </div>
-    <!-- 楼层专场 -->
-    <wv-floor-goods :composeFloorArr="composeFloorArr" @redirectTo="redirectTo"></wv-floor-goods>
-    <!--分享二维码-->
-    <div class="shareQ" @click="freshQRCodeShow" style="display:none;">
-      <img style="width:3.0769rem" src="/static/images/fenxiang.png"/>
-    </div>
-    <div class="shopShare" v-show="qrShareShow">
-      <div class="shopShareBg" @click="qrShareShow=!qrShareShow"></div>
-      <div class="shopShareCont">
-        <wv-compose-image ref="composeImage" :width="640" :height="900"
-          :imageArr="shopImgs"
-          :textArr="shopText"
-          :qrLeft="250" :qrTop="380" :qrSize="122"
-          bgColor="#f9f9fc"
-          :qrValue="qrShareValue">
-        </wv-compose-image>
+    <div class="shop-detail clearfix">
+      <div class="shop-info">
+        <span class="nhh-store_name">店铺名称</span>
+        <span class="info">终于等到了主人的莅临~</span>
       </div>
     </div>
   </div>
+  <!-- 滑动菜单 -->
+  <div class="row navbar-location" v-show="loadComplete&&sortMenu.length>0">
+    <div class="navbar-yzg-default">
+      <wv-scroll-menu ref="menuComp" :sortMenu="sortMenu" :sortName="sortName" :fnName="'changeCid'" :activeId="-1"></wv-scroll-menu>
+    </div>
+  </div>
+  <!--轮播图-->
+  <div class="row slider-box" style="padding-bottom: 0.2167rem">
+    <wv-swipe class="demo-swipe bannerImg" :auto="4000">
+      <wv-swipe-item class="demo-swipe-item" v-for="bn in turnsInfo" :key="bn.banner">
+        <router-link :to="bn.turns_link">
+          <img :src="img_domain + bn.banner">
+        </router-link>
+      </wv-swipe-item>
+    </wv-swipe>
+  </div>
+  <!--通知栏-->
+  <div class="row notice-box">
+    <div class="notice">
+      <img class="notice_img" src="/static/images/notice.png" />
+      <span>
+        <i>通知</i>
+      </span>
+    </div>
+    <wv-scroll-notice :content="content_text" :scrollamount="scrollamount" :direction="direction">
+    </wv-scroll-notice>
+    <div class="arrows">
+      <img class="arrows_img" src="/static/images/arrows.png" />
+    </div>
+  </div>
+  <!--早8点-->
+  <div class="row eight-morning" v-if="add_new_list.length !== 0">
+    <img :src="img_domain + banner">
+    <div class="goods-lists clearfix">
+      <div class="sub-goods_list" v-for="n in add_new_list">
+        <router-link :to="{name: 'Goods', path: '/shopping/goods', query: {gid: n.upc_id}} " class="list-link">
+          <div class="goods-img">
+            <img :src="n.img_url ? n.img_url : '/static/images/no_picture.jpg'">
+          </div>
+          <div class="goods-price">
+            {{n.shop_price}}
+            <span class="goods-price_origin">{{n.market_price}}</span>
+          </div>
+          <div class="goods-brief">{{n.goods_brief}}</div>
+          <div class="goods-title">{{n.goods_name}}</div>
+        </router-link>
+      </div>
+    </div>
+  </div>
+  <!-- 楼层专场 -->
+  <wv-floor-goods :composeFloorArr="composeFloorArr" @redirectTo="redirectTo"></wv-floor-goods>
+  <!--分享二维码-->
+  <div class="shareQ" @click="freshQRCodeShow" style="display:none;">
+    <img style="width:3.0769rem" src="/static/images/fenxiang.png" />
+  </div>
+  <div class="shopShare" v-show="qrShareShow">
+    <div class="shopShareBg" @click="qrShareShow=!qrShareShow"></div>
+    <div class="shopShareCont">
+      <wv-compose-image ref="composeImage" :width="640" :height="900"
+        :imageArr="shopImgs" :textArr="shopText"
+        :qrLeft="250" :qrTop="380" :qrSize="122"
+        bgColor="#f9f9fc" :qrValue="qrShareValue">
+      </wv-compose-image>
+    </div>
+  </div>
+</div>
 </template>
 
 <script type="text/babel">
 import $ from 'zepto'
 
 export default {
-  data () {
+  data() {
     return {
       direction: 'up',
       scrollamount: 1,
@@ -115,60 +113,53 @@ export default {
       is_shopkeeper: 1,
       storeinfo: null,
       store_detail: null,
-      topValue: '44',
       loadComplete: false,
-      sevenActive: [],  // 77活动
       sortMenu: [],
       sortName: [],
       qrShareShow: false,
       qrShareValue: '',
       shopImgs: [],
       shopText: [],
-      composeFloorArr: [],
-      user_auction: [],  // 推荐的拍卖活动
-      onlooker_num: null,  // 拍卖围观人数
-      buy_person_num: null  // 拍卖出价次数
+      composeFloorArr: []
     }
   },
-  init () {
-    // console.log('初始化')
-  },
-  created () {
-    // console.log('创建')
-  },
-  mounted () {
+  mounted() {
     // 模板编译之后，代替了之前的ready*
   },
-  updated () {
-    // 组件更新完毕
-  },
-  activated () {
+  activated() {
     // 滑动菜单不展开
     this.$refs.menuComp.subitemsExpanded = false
-    this.$on('changeCid', function (id) {
+    this.$on('changeCid', function(id) {
       // 接受组件通知方法
       if (id !== '-1') { // 当点击的id不是-1（首页），跳转到相应分类列表
-        this.$router.push({name: 'Category', path: '/category', params: {cid: id}})
+        this.$router.push({
+          name: 'Category',
+          path: '/category',
+          params: {cid: id}
+        })
       }
     })
-    this.loadData()
+    // this.loadData()
     let _this = this
-    $(document).ready(function () {
-      $('.navbar-location').css({'position': 'relative', 'width': 'auto'})
-      $(window).scroll(function () {
+    $(document).ready(function() {
+      $('.navbar-location').css({
+        'position': 'relative',
+        'width': 'auto'
+      })
+      $(window).scroll(function() {
         // 滑动菜单不展开
         _this.$refs.menuComp.subitemsExpanded = false
         let scrollT = $(window).scrollTop()
         if (scrollT < 44) {
-          $('.navbar-location').css({'position': 'relative', 'width': 'auto'})
-          if (_this.storeinfo) {
-            _this.topValue = '147'
-          } else {
-            _this.topValue = '44'
-          }
+          $('.navbar-location').css({
+            'position': 'relative',
+            'width': 'auto'
+          })
         } else {
-          $('.navbar-location').css({'position': 'fixed', 'width': '100%'})
-          _this.topValue = '0'
+          $('.navbar-location').css({
+            'position': 'fixed',
+            'width': '100%'
+          })
         }
       })
     })
@@ -275,55 +266,9 @@ export default {
     }, 300)
   },
   methods: {
-    linkChange (len, act_id) {
-      if (len.split(',').length === 1) {
-        this.$http.get('favourable_goods.php', {
-          params: {
-            id: act_id
-          }
-        })
-        .then(({data: {data, errcode, msg}}) => {
-          if (errcode === 0) {
-            this.$router.push({name: 'Goods', path: '/shopping/goods', query: {gid: data.goods_list[0].upc_id}})
-          } else {
-            console.error('获取商品列表失败:' + msg)
-          }
-        }, (response) => {
-          // error callback
-          console.log(response)
-        })
-      }
-      if (len.split(',').length > 1) {
-        this.$router.push({name: 'PanicBuy', path: 'index/panicBuy', query: {id: act_id}})
-      }
-    },
-    // 77活动
-    sevenLinkChange (len, act_id) {
-      if (len === 1) {
-        this.$http.get('distribution_goods.php', {
-          params: {
-            id: act_id
-          }
-        })
-        .then(({data: {data, errcode, msg}}) => {
-          if (errcode === 0) {
-            this.$router.push({name: 'Goods', path: '/shopping/goods', query: {gid: data.goods_list[0].upc_id}, params: {targetSource: 'distribution'}})
-          } else {
-            console.error('获取商品列表失败:' + msg)
-          }
-        }, (response) => {
-          // error callback
-          console.log(response)
-        })
-      }
-      if (len > 1) {
-        this.$router.push({name: 'sevenPanicBuy', path: 'index/sevenPanicBuy', query: {id: act_id}})
-      }
-    },
-    loadData () {
+    loadData() {
       // 获取数据
-      this.$http.get('store_index.php')
-      .then(({data: {data, errcode, msg}}) => {
+      this.$http.get('store_index.php').then(({data: {data, errcode, msg}}) => {
         if (errcode === 0) {
           this.goods_list = data.goods_list
           this.active = data.active
@@ -336,18 +281,6 @@ export default {
           this.loadComplete = true
           // 组合各个楼层数据
           this.composeFloor(data.hufu, data.getixihu, data.yinyang, data.shipin, data.meizhuang, data.shenghuo, data.muyin)
-          this.topVal()  // 根据是否开店确定top值
-          // 获取推荐的拍卖活动
-          if (data.user_auction.length === 2) {
-            this.user_auction.push(data.user_auction[0])
-            this.user_auction.push(data.user_auction[1])
-          } else {
-            this.user_auction.push(data.user_auction[0])
-            this.user_auction.push(data.user_auction[1])
-            this.user_auction.push(data.user_auction[2])
-          }
-          this.onlooker_num = data.onlooker_num
-          this.buy_person_num = data.buy_person_num
         } else {
           $.toast(msg, 'forbidden')
           console.warn(errcode, msg, data)
@@ -357,16 +290,21 @@ export default {
         // error callback
         console.log(response)
       })
-      this.$http.get('get_category.php')
-      .then(({data: {data, errcode, msg}}) => {
+      this.$http.get('get_category.php').then(({data: {data, errcode, msg}}) => {
         if (errcode === 0) {
           // console.log(data)
           this.sortMenu = [{id: '-1', name: '首页'}]
           this.sortName = [{id: '0', name: '全部商品'}]
           for (let m of data.parent_cat) {
             // 组装菜单
-            this.sortMenu.push({id: m.cat_id, name: m.cat_name})
-            this.sortName.push({id: m.cat_id, name: m.cat_name})
+            this.sortMenu.push({
+              id: m.cat_id,
+              name: m.cat_name
+            })
+            this.sortName.push({
+              id: m.cat_id,
+              name: m.cat_name
+            })
           }
         } else {
           $.toast(msg, 'forbidden')
@@ -376,30 +314,9 @@ export default {
         // error callback
         console.log(response)
       })
-      // 77分销活动
-      this.$http.get('distribution.php')
-      .then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
-          this.sevenActive = data.active
-        } else {
-          $.toast(msg, 'forbidden')
-          console.warn(errcode, msg, data)
-        }
-      }, (response) => {
-        // error callback
-        console.log(response)
-      })
-      // 77分销活动结束
-    },
-    topVal () {
-      if (this.storeinfo) {
-        this.topValue = '147'
-      } else {
-        this.topValue = '44'
-      }
     },
     // 刷新二维码 重新绘制图像
-    freshQRCodeShow () {
+    freshQRCodeShow() {
       // 刷新数据
       this.shopText[0].text = window.localStorage.getItem('store_name_nhh') ? window.localStorage.getItem('store_name_nhh') : '南华汇'
       this.shopImgs[1].src = window.localStorage.getItem('store_avatar_nhh')
@@ -410,7 +327,7 @@ export default {
     /**
      * [composeFloor 组合每个楼层的数据,数据由store_index.php接口获得]
      */
-    composeFloor (hufu, getixihu, yinyang, shipin, meizhuang, shenghuo, muyin) {
+    composeFloor(hufu, getixihu, yinyang, shipin, meizhuang, shenghuo, muyin) {
       this.floorAddEle(hufu, '/static/images/floorBanner/skin_care.jpg', '护肤专场')
       this.floorAddEle(getixihu, '/static/images/floorBanner/individual_care.jpg', '个人护理')
       this.floorAddEle(yinyang, '/static/images/floorBanner/nutrition.jpg', '营养保健')
@@ -425,7 +342,7 @@ export default {
      * @param  {[type]} banner
      * @param  {[type]} title  [楼层标题]
      */
-    floorAddEle (objArr, banner, title) {
+    floorAddEle(objArr, banner, title) {
       objArr['banner'] = banner
       objArr['title'] = title
       this.composeFloorArr.push(objArr)
@@ -437,67 +354,181 @@ export default {
      */
     redirectTo(type, id) {
       if (type === 'category') {
-        this.$router.push({name: 'Category', path: '/category', params: {cid: id}})
+        this.$router.push({
+          name: 'Category',
+          path: '/category',
+          params: {
+            cid: id
+          }
+        })
       } else {
-        this.$router.push({path: 'shopping/goods', query: {gid: id}})
+        this.$router.push({
+          path: 'shopping/goods',
+          query: {
+            gid: id
+          }
+        })
       }
-    },
-    // 获取每位数字
-    getEveryNumber (number) {
-      let arr = []
-      let str = number + ''
-      arr = str.split('')
-      return arr
     }
   },
-  watch: {
-  }
+  watch: {}
 }
 </script>
 
 <style scoped>
 /*轮播图*/
-.demo-swipe-item img{
-  width:100%;
+.demo-swipe-item img {
+  width: 100%;
 }
-.arrows{
-  width:3rem;height:1.28rem;text-align:center;
+
+.arrows {
+  width: 3rem;
+  height: 1.28rem;
+  text-align: center;
 }
-.arrows_img{
-  width:0.512rem;height:0.512rem;display:inline-block;vertical-align:-webkit-baseline-middle;
+
+.arrows_img {
+  width: 0.512rem;
+  height: 0.512rem;
+  display: inline-block;
+  vertical-align: -webkit-baseline-middle;
 }
+
 /*影响其他导航条*/
-.navbar-yzg-default ul li a:hover:before,.navbar-yzg-default .active a:before{
-  content:"";
+.navbar-yzg-default ul li a:hover:before,
+.navbar-yzg-default .active a:before {
+  content: "";
   position: absolute;
-  width:100%;
-  height:2px;
-  bottom:-11px;
-  background:#ed3366;
+  width: 100%;
+  height: 2px;
+  bottom: -11px;
+  background: #ed3366;
 }
-/*end*/
-.navbar-yzg-default ul li a:hover{
-  color:#353a40;
+
+.navbar-yzg-default ul li a:hover {
+  color: #353a40;
   font-weight: bold;
 }
-.navbar-location{ background: #f6f6f6 }
-.shopShare{position: fixed; top: 0; left: 0; z-index: 501; text-align: center; height: 100%;}
-.shopShare .shopShareBg { position: absolute; width: 100%; background: rgba(0,0,0,.5); height: 100%; z-index: 501}
-.shopShare .shopShareCont { position:relative; width: 70%; left: 0; top: 0; margin: 0 auto; margin-top: 35%; z-index: 502}
-.auction{ margin-top: 0.2167rem;}
-.auction .auctionImg{ position:relative;display: block;background-color: #fff;}
-.auctionImg>img{ width:100%;vertical-align:bottom;}
-.auctionImg .countUpNumber{ position:absolute;bottom:16px;left:0;width:100%;}
-.auctionImg .countUpNumber i{ display:inline-block;background:url(/static/images/numberBg.png);width:17px;height:17px;background-size:100%;text-align: center;line-height: 17px;font-style:normal;margin-right: 5px;}
-.auctionImg .countUpNumber i:last-child{ margin-right: 0 }
-.auction .auctionContent{padding:5px 0 5px 5px;background-color:#fff;}
-.auctionContent .goods{padding-left:0;padding-right:5px;}
-.goods .goodsImg{position:relative;}
-.goods .goodsImg img{width:100%;height:120px;vertical-align:bottom;}
-.goodsImg .goodsCountUpNumber{position:absolute;top:0;left:0;height:18px;line-height:18px;padding:0 5px;color:#fff;font-size:12px;}
-.goodsImg .goodsCountUpNumber.unstartBg {background-color:#5B7952;}
-.goodsImg .goodsCountUpNumber.doingBg {background-color:#E86A6A;}
-.goodsImg .goodsCountUpNumber.doneBg {background-color:#3D3D3D;}
-.goodsInfo .title{height:34px;line-height: 17px; overflow:hidden;}
-.goodsInfo .number{margin-top:-3px;}
+
+.navbar-location {
+  background: #f6f6f6;
+}
+
+.shopShare {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 501;
+  text-align: center;
+  height: 100%;
+}
+
+.shopShare .shopShareBg {
+  position: absolute;
+  width: 100%;
+  background: rgba(0, 0, 0, .5);
+  height: 100%;
+  z-index: 501
+}
+
+.shopShare .shopShareCont {
+  position: relative;
+  width: 70%;
+  left: 0;
+  top: 0;
+  margin: 0 auto;
+  margin-top: 35%;
+  z-index: 502;
+}
+
+.auction {
+  margin-top: 0.2167rem;
+}
+
+.auction .auctionImg {
+  position: relative;
+  display: block;
+  background-color: #fff;
+}
+
+.auctionImg>img {
+  width: 100%;
+  vertical-align: bottom;
+}
+
+.auctionImg .countUpNumber {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  width: 100%;
+}
+
+.auctionImg .countUpNumber i {
+  display: inline-block;
+  background: url(/static/images/numberBg.png);
+  width: 17px;
+  height: 17px;
+  background-size: 100%;
+  text-align: center;
+  line-height: 17px;
+  font-style: normal;
+  margin-right: 5px;
+}
+
+.auctionImg .countUpNumber i:last-child {
+  margin-right: 0;
+}
+
+.auction .auctionContent {
+  padding: 5px 0 5px 5px;
+  background-color: #fff;
+}
+
+.auctionContent .goods {
+  padding-left: 0;
+  padding-right: 5px;
+}
+
+.goods .goodsImg {
+  position: relative;
+}
+
+.goods .goodsImg img {
+  width: 100%;
+  height: 120px;
+  vertical-align: bottom;
+}
+
+.goodsImg .goodsCountUpNumber {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 5px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.goodsImg .goodsCountUpNumber.unstartBg {
+  background-color: #5B7952;
+}
+
+.goodsImg .goodsCountUpNumber.doingBg {
+  background-color: #E86A6A;
+}
+
+.goodsImg .goodsCountUpNumber.doneBg {
+  background-color: #3D3D3D;
+}
+
+.goodsInfo .title {
+  height: 34px;
+  line-height: 17px;
+  overflow: hidden;
+}
+
+.goodsInfo .number {
+  margin-top: -3px;
+}
 </style>

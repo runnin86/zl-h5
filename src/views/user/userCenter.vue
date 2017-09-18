@@ -14,7 +14,7 @@
       <div class="shop-info" v-if="userInfo">
         <span class="nhh-store_name" v-if="userInfo.nickName">{{userInfo.nickName}}</span>
         <span class="nhh-store_name" v-else>{{userInfo.name}}</span>
-        <span class="info">足力购欢迎您~</span>
+        <span class="info">&nbsp;</span>
       </div>
     </div>
   </div>
@@ -348,6 +348,7 @@ export default {
 .shop-info .nhh-store_name {
   font-size: 0.6rem;
   display: block;
+  margin-top: 0.2rem;
   margin-bottom: 0.1rem;
   font-weight: light;
   color: #fff;
