@@ -44,6 +44,9 @@ import Footer from './footer/index.js'
 import CountDown from './countdown/index.js'
 import Qrcode from './qrcode/index.js'
 import ScrollMenu from './scroll-menu/index.js'
+import ScrollNotice from './scroll-notice/index.js'
+import FloorGoods from './floor-goods/index.js'
+import ComposeImage from './compose-image/index.js'
 // import '../src/assets/font/iconfont.css'
 
 const install = function (Vue) {
@@ -90,6 +93,9 @@ const install = function (Vue) {
   Vue.component(CountDown.name, CountDown)
   Vue.component(Qrcode.name, Qrcode)
   Vue.component(ScrollMenu.name, ScrollMenu)
+  Vue.component(ScrollNotice.name, ScrollNotice)
+  Vue.component(FloorGoods.name, FloorGoods)
+  Vue.component(ComposeImage.name, ComposeImage)
   // Vue.use(Lazyload, {
   //   loading: require('../../static/img/loading-spin.svg'),
   //   try: 3
@@ -152,5 +158,8 @@ export default {
   Footer,
   CountDown,
   Qrcode,
-  ScrollMenu
+  ScrollMenu,
+  ScrollNotice,
+  FloorGoods,
+  ComposeImage
 }
