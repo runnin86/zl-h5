@@ -263,7 +263,7 @@ export default {
   position: fixed;
   top: 88px;
   bottom: 50px;
-  height: auto;
+  /*height: auto;*/
   width: 100%;
 }
 
