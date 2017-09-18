@@ -1,6 +1,6 @@
 <template>
 <div class="container container-content">
-  <div class="row yzg-title" style="position:relative;width:auto;margin-bottom: 6px;">
+  <div class="row yzg-title" style="position:relative;width:auto;margin-bottom: 4px;">
     <div class="col-xs-2 backBtn">
       <!-- <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
