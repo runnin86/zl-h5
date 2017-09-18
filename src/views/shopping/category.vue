@@ -52,35 +52,7 @@
 import $ from 'zepto'
 import qs from 'qs'
 import MeScroll from 'static/mescroll/meScroll.min'
-
-let menuList = [{
-  id: 0,
-  name: '全部商品'
-}, {
-  id: 1,
-  name: '新能源系列'
-}, {
-  id: 2,
-  name: '五金卫浴'
-}, {
-  id: 3,
-  name: '家电系列'
-}, {
-  id: 4,
-  name: '生活用品'
-}, {
-  id: 8,
-  name: '零食食品'
-}, {
-  id: 5,
-  name: '母婴产品'
-}, {
-  id: 6,
-  name: '酒水类'
-}, {
-  id: 7,
-  name: '特色产品'
-}]
+import * as data from './../../data'
 
 export default {
   data () {
@@ -89,8 +61,8 @@ export default {
       img_domain: 'http://img.zulibuy.com/images/',
       title_name: '全部商品',
       cid: 0,
-      sortMenu: menuList,
-      sortName: menuList,
+      sortMenu: data.menuList,
+      sortName: data.menuList,
       mescroll: null,
       scrollTop: 0
     }
@@ -114,6 +86,19 @@ export default {
   activated () {
     // 当组件在 <keep-alive> 内被切换，
     // 它的 activated(激活) 和 deactivated(解散) 这两个生命周期钩子函数将会被对应执行。
+    this.sortMenu = [{id: 0, name: '全部商品'}]
+    this.sortName = [{id: 0, name: '全部商品'}]
+    for (let m of data.menuList) {
+      // 组装菜单
+      this.sortMenu.push({
+        id: m.id,
+        name: m.name
+      })
+      this.sortName.push({
+        id: m.id,
+        name: m.name
+      })
+    }
     if (this.$route.params.cid) {
       this.changeCid(this.$route.params.cid)
     }

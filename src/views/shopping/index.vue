@@ -27,7 +27,7 @@
     </div>
   </div>
   <!-- 滑动菜单 -->
-  <div class="row navbar-location" v-show="loadComplete&&sortMenu.length>0">
+  <div class="row navbar-location" v-show="sortMenu.length>0">
     <div class="navbar-yzg-default">
       <wv-scroll-menu ref="menuComp" :sortMenu="sortMenu" :sortName="sortName" :fnName="'changeCid'" :activeId="-1"></wv-scroll-menu>
     </div>
@@ -96,6 +96,7 @@
 
 <script type="text/babel">
 import $ from 'zepto'
+import * as data from './../../data'
 
 export default {
   data() {
@@ -114,8 +115,8 @@ export default {
       storeinfo: null,
       store_detail: null,
       loadComplete: false,
-      sortMenu: [],
-      sortName: [],
+      sortMenu: data.menuList,
+      sortName: data.menuList,
       qrShareShow: false,
       qrShareValue: '',
       shopImgs: [],
@@ -127,11 +128,24 @@ export default {
     // 模板编译之后，代替了之前的ready*
   },
   activated() {
+    this.sortMenu = [{id: -1, name: '首页'}]
+    this.sortName = [{id: 0, name: '全部商品'}]
+    for (let m of data.menuList) {
+      // 组装菜单
+      this.sortMenu.push({
+        id: m.id,
+        name: m.name
+      })
+      this.sortName.push({
+        id: m.id,
+        name: m.name
+      })
+    }
     // 滑动菜单不展开
     this.$refs.menuComp.subitemsExpanded = false
     this.$on('changeCid', function(id) {
       // 接受组件通知方法
-      if (id !== '-1') { // 当点击的id不是-1（首页），跳转到相应分类列表
+      if (id !== -1) { // 当点击的id不是-1（首页），跳转到相应分类列表
         this.$router.push({
           name: 'Category',
           path: '/category',
@@ -285,30 +299,6 @@ export default {
           $.toast(msg, 'forbidden')
           console.warn(errcode, msg, data)
           console.log(data)
-        }
-      }, (response) => {
-        // error callback
-        console.log(response)
-      })
-      this.$http.get('get_category.php').then(({data: {data, errcode, msg}}) => {
-        if (errcode === 0) {
-          // console.log(data)
-          this.sortMenu = [{id: '-1', name: '首页'}]
-          this.sortName = [{id: '0', name: '全部商品'}]
-          for (let m of data.parent_cat) {
-            // 组装菜单
-            this.sortMenu.push({
-              id: m.cat_id,
-              name: m.cat_name
-            })
-            this.sortName.push({
-              id: m.cat_id,
-              name: m.cat_name
-            })
-          }
-        } else {
-          $.toast(msg, 'forbidden')
-          console.warn(errcode, msg, data)
         }
       }, (response) => {
         // error callback
