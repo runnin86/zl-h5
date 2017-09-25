@@ -95,7 +95,7 @@ export default {
 
           // 定义
           let hash = util.getStore('url_hash_zl')
-          let path = hash || '#/category'
+          let path = hash || '#/index'
           // 跳转前删除hash
           util.removeStore('url_hash_zl')
           // 最终跳转

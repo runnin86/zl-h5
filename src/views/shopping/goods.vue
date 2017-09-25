@@ -16,7 +16,7 @@
       <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: pid}}" class="double_title">买家评论</router-link> -->
     </div>
     <div class="col-xs-2 shop-bag">
-      <router-link :to="{name: 'Category',path: '/category'}">
+      <router-link :to="{path: '/index'}">
         <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
       </router-link>
     </div>

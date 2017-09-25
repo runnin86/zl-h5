@@ -2,18 +2,18 @@
 <div class="container container-content">
   <div class="row yzg-title" style="position:relative;width:auto;margin-bottom: 4px;">
     <div class="col-xs-2 backBtn">
-      <!-- <a @click="$parent.back()">
+      <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
-      </a> -->
+      </a>
     </div>
     <div class="col-xs-8 shop-name">
       <span>{{title_name}}</span>
     </div>
-    <!-- <div class="col-xs-2 shop-bag">
+    <div class="col-xs-2 shop-bag">
       <router-link :to="{ name: 'Index',path: '/index'}">
-        <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
+        <span class="iconfont-yzg icon-yzg-goods"></span>
       </router-link>
-    </div> -->
+    </div>
   </div>
 
   <!-- 滑动菜单 -->

@@ -3,7 +3,7 @@
   <div v-show="oauthCode">
     <div class="row yzg-title" style="position:relative;width:auto;">
       <div class="col-xs-2 backBtn">
-        <router-link :to="{path: '/category'}">
+        <router-link :to="{path: '/index'}">
           <i class="iconfont-yzg icon-yzg-back"></i>
         </router-link>
       </div>
@@ -11,7 +11,7 @@
         <span>登录</span>
       </div>
       <div class="col-xs-2 shop-bag">
-        <router-link :to="{path: '/category'}">
+        <router-link :to="{path: '/index'}">
           <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
         </router-link>
       </div>
@@ -146,7 +146,7 @@ export default {
             $.toast('登录成功')
             window.localStorage.setItem('zlUser', JSON.stringify(data.user))
             window.localStorage.setItem('zlToken', data.token)
-            this.$router.replace({path: '/category'})
+            this.$router.replace({path: '/index'})
           }
         } else {
           weui.alert(msg)

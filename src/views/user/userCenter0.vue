@@ -239,7 +239,7 @@ export default {
         if (code === 1) {
           window.localStorage.removeItem('zlUser')
           window.localStorage.removeItem('zlToken')
-          this.$router.push({path: '/category', replace: true})
+          this.$router.push({path: '/index', replace: true})
         }
         $.toast(msg)
         weuiObj.hide()

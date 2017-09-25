@@ -7,9 +7,9 @@
     </transition>
 
     <wv-tabbar v-if="showIndex" style="position: fixed;table-layout: fixed;box-shadow:0 -5px 30px rgba(0,0,0,0.1);">
-      <wv-tabbar-item to="/category" :is-on="$route.path==='/category'">
+      <wv-tabbar-item to="/index" :is-on="$route.path==='/index' || $route.path==='/category'">
         <span slot="icon" class="botMenu">
-          <img v-if="$route.path==='/category'" src="/static/images/sale_c.png"/>
+          <img v-if="$route.path==='/index'" src="/static/images/sale_c.png"/>
           <img v-else src="/static/images/sale.png"/>
         </span>
         购物

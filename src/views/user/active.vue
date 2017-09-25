@@ -5,7 +5,7 @@
     </div>
     <div class="col-xs-8 loginTitle">激活</div>
     <div class="col-xs-2 shop-bag">
-      <router-link :to="{path: '/category'}">
+      <router-link :to="{path: '/index'}">
         <span class="iconfont-yzg icon-yzg-goods"></span>
       </router-link>
     </div>

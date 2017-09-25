@@ -1,21 +1,27 @@
 <template>
 <div>
   <div class="row recommend-goods" v-for="floor in composeFloorArr">
-    <div class="floor_title"><span><img src="/static/images/floor_title.png"/>{{floor.title}}</span></div>
-    <img :src="floor.banner" @click="redirectTo('category', floor.cat_id)">
+    <div class="floor_title">
+      <span>
+        <img src="/static/images/floor_title.png"/>
+        {{floor.name}}
+      </span>
+    </div>
+    <img :src="'http://img.zulibuy.com/floor/' + floor.img" @click="redirectTo('category', 0)">
     <div class="goods-lists clearfix">
-      <div class="sub-goods_list" v-for="g in floor.goods_list" :key="g.goods_id" @click="redirectTo('goods', g.upc_id)">
+      <div class="sub-goods_list" v-for="g in floor.productList" :key="g.product_id"
+        @click="redirectTo('goods', g.product_id)">
         <div class="goods-img">
-          <img :src="g.img_url?g.img_url:'/static/images/no_picture.jpg'">
+          <img :src="g.img?'http://img.zulibuy.com/images/'+g.img:'/static/images/no_picture.jpg'">
         </div>
         <div class="goods-price">
           {{g.shop_price}}
           <span class="goods-price_origin">{{g.market_price}}</span>
         </div>
-        <div class="goods-brief">{{g.goods_brief}}</div>
-        <div class="goods-title">{{g.goods_name}}</div>
+        <div class="goods-brief">{{g.price}}</div>
+        <div class="goods-title">{{g.product_name}}</div>
       </div>
-      <div @click="redirectTo('category', floor.cat_id)" class="sub-goods_list">
+      <div @click="redirectTo('category', 0)" class="sub-goods_list">
         <div class="goods-more_list">
           <img src="/static/images/lettle_bg.png">
           <p class="see_more">
@@ -35,7 +41,8 @@
 export default {
   name: 'wv-floor-goods',
   props: {
-    composeFloorArr: Array
+    composeFloorArr: Array,
+    img_domain: 'http://img.zulibuy.com/floor/'
   },
   methods: {
     redirectTo(type, id) {

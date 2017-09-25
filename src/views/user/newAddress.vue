@@ -10,7 +10,7 @@
       <span>新增地址</span>
     </div>
     <div class="col-xs-2 shop-bag">
-      <router-link :to="{ name: 'Category',path: '/category'}">
+      <router-link :to="{path: '/index'}">
         <span class="iconfont-yzg icon-yzg-goods"></span>
       </router-link>
     </div>

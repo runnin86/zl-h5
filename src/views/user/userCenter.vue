@@ -210,13 +210,7 @@ export default {
         headers: {
           'x-token': token
         }
-      }).then(({
-        data: {
-          code,
-          data,
-          msg
-        }
-      }) => {
+      }).then(({data: {code, data, msg}}) => {
         if (code === 1) {
           // console.log(data)
           this.accountInfo = data
@@ -259,19 +253,13 @@ export default {
         headers: {
           'x-token': token
         }
-      }).then(({
-        data: {
-          data,
-          code,
-          msg
-        }
-      }) => {
+      }).then(({data: {data, code, msg}}) => {
         console.log(code, data, msg)
         if (code === 1) {
           window.localStorage.removeItem('zlUser')
           window.localStorage.removeItem('zlToken')
           this.$router.push({
-            path: '/category',
+            path: '/index',
             replace: true
           })
         }

@@ -10,7 +10,7 @@
         <span>购物订单列表</span>
       </div>
       <div class="col-xs-2 shop-bag">
-        <router-link :to="{path: '/category'}">
+        <router-link :to="{path: '/index'}">
           <span class="iconfont-yzg icon-yzg-goods"></span>
         </router-link>
       </div>
