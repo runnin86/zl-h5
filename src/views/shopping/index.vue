@@ -164,7 +164,7 @@ export default {
       .then(({data: {code, data, msg}}) => {
         console.log(data)
         if (code === 1) {
-          // this.floorList = data.floor
+          this.floorList = data.floor
         } else {
           console.error('获取轮播图失败:' + msg)
         }
