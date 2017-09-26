@@ -150,7 +150,7 @@ router.beforeEach((to, from, next) => {
       if (util.is_weixin()) {
         next({path: '/oauth'})
       } else {
-        alert('非法访问')
+        alert('请在微信中打开')
       }
     } else {
       next()
@@ -164,6 +164,20 @@ router.beforeEach((to, from, next) => {
 router.afterEach((route) => {
   // let title = route.meta.title ? route.meta.title : ''
   setWechatTitle('')
+  // 1.自动添加问号(?);2.自动把分隔符由#!变成#;3.分隔符后面，自动判断是否为斜杠(/)，没有则添加上
+  let paths = window.location.href.split('#')
+  paths[1] = paths[1] || '/'
+  // 老式的#!分隔跳转
+  if (paths[0].charAt(paths[0].length - 1) !== '?') {
+    paths[0] = `${paths[0]}?`
+  }
+  if (paths[1].charAt(0) === '!') {
+    paths[1] = paths[1].substr(1)
+  }
+  let url = `${paths[0]}#${paths[1]}`
+  if (window.location.href !== url) {
+    window.location.href = url
+  }
 })
 
 // Filters

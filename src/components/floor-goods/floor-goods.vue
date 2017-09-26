@@ -1,13 +1,13 @@
 <template>
 <div>
-  <div class="row recommend-goods" v-for="floor in composeFloorArr">
+  <div v-if="floor.productList.length>0" class="row recommend-goods" v-for="floor in composeFloorArr">
     <div class="floor_title">
       <span>
         <img src="/static/images/floor_title.png"/>
         {{floor.name}}
       </span>
     </div>
-    <img :src="'http://img.zulibuy.com/floor/' + floor.img" @click="redirectTo('category', 0)">
+    <img v-if="floor.img" :src="'http://img.zulibuy.com/floor/' + floor.img" @click="redirectTo('category', 0)">
     <div class="goods-lists clearfix">
       <div class="sub-goods_list" v-for="g in floor.productList" :key="g.product_id"
         @click="redirectTo('goods', g.product_id)">

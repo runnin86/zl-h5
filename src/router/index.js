@@ -11,7 +11,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/category'
+      redirect: '/index'
     }, {
       path: '/oauth',
       component(resolve) {
