@@ -3,7 +3,7 @@
   <div class="row nav-center">
     <div class="col-xs-2 backBtn">
     </div>
-    <div class="col-xs-8 loginTitle">激活</div>
+    <div class="col-xs-8 loginTitle">绑定</div>
     <div class="col-xs-2 shop-bag">
       <router-link :to="{path: '/index'}">
         <span class="iconfont-yzg icon-yzg-goods"></span>
@@ -24,21 +24,20 @@
           <input class="form-control" type="number" v-model="phone" placeholder="请填写手机号码" />
         </td>
       </tr>
-      <tr>
+      <!-- <tr>
         <td>推荐人</td>
         <td>
           <input class="form-control" type="text" v-model="parentPhone"
             :disabled="parentPhone?false:false" placeholder="请填写推荐人手机号码" />
         </td>
-      </tr>
+      </tr> -->
       <tr>
-        <td colspan="2" style="text-align:left;color: #FF0000;">
-          请仔细填写上述信息,一旦确认后不可更改!
-          激活需要缴纳200元保证金!
+        <td colspan="2" style="text-align:center;color: #FF0000;">
+          请仔细填写上述信息,一旦绑定后不可更改!
         </td>
       </tr>
     </table>
-    <a @click="userActivate()" class="rightCash">立即激活</a>
+    <a @click="userActivate()" class="rightCash">立即绑定</a>
   </div>
 </div>
 </template>
@@ -51,7 +50,13 @@ import weui from 'weui.js'
 export default {
   activated() {
     // 去获取用户信息
-    this.getUserInfo()
+    // this.getUserInfo()
+    this.userInfo = JSON.parse(window.localStorage.getItem('zlUser'))
+    if (this.userInfo) {
+      if (this.userInfo.status === 1) {
+        this.$router.push({path: '/userCenter'})
+      }
+    }
   },
   data() {
     return {
@@ -103,35 +108,41 @@ export default {
           }
         }).then(function({data: {data, code, msg}}) {
           if (code === 1) {
-            if (data.weChatPrePay) {
-              // 微信支付
-              window.WeixinJSBridge.invoke('getBrandWCPayRequest', data.weChatPrePay.jsApiParameters,
-              function(res) {
-                // err_code,err_desc,err_msg
-                if (res.err_msg === 'get_brand_wcpay_request:ok') {
-                  // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
-                  $.toast('支付成功')
-                  // 清除用户对象
-                  window.localStorage.removeItem('zlUser')
-                  setTimeout(() => {
-                    zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
-                  }, 2000)
-                } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
-                  // 取消
-                  $.toast('用户取消支付', 'cancel')
-                } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
-                  // 支付失败
-                  $.toast(res.err_msg, 'forbidden')
-                } else {
-                  weui.alert(!res.err_msg ? '支付回调错误,请刷新重试!' : res.err_msg)
-                }
-              })
-            } else {
-              $.toast(msg)
-              setTimeout(() => {
-                zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
-              }, 2000)
-            }
+            $.toast(msg)
+            // 清除用户对象
+            window.localStorage.removeItem('zlUser')
+            setTimeout(() => {
+              zhis.$router.push({path: '/userCenter'})
+            }, 2000)
+            // if (data.weChatPrePay) {
+            //   // 微信支付
+            //   window.WeixinJSBridge.invoke('getBrandWCPayRequest', data.weChatPrePay.jsApiParameters,
+            //   function(res) {
+            //     // err_code,err_desc,err_msg
+            //     if (res.err_msg === 'get_brand_wcpay_request:ok') {
+            //       // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+            //       $.toast('支付成功')
+            //       // 清除用户对象
+            //       window.localStorage.removeItem('zlUser')
+            //       setTimeout(() => {
+            //         zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
+            //       }, 2000)
+            //     } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+            //       // 取消
+            //       $.toast('用户取消支付', 'cancel')
+            //     } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+            //       // 支付失败
+            //       $.toast(res.err_msg, 'forbidden')
+            //     } else {
+            //       weui.alert(!res.err_msg ? '支付回调错误,请刷新重试!' : res.err_msg)
+            //     }
+            //   })
+            // } else {
+            //   $.toast(msg)
+            //   setTimeout(() => {
+            //     zhis.$router.push({name: 'OrderList', query: {orderAct: 1}})
+            //   }, 2000)
+            // }
           } else {
             weui.alert(msg)
           }
@@ -148,10 +159,10 @@ export default {
         weui.alert('手机号码为空或手机号格式填写不正确')
         return false
       }
-      if (!parentPhone) {
-        weui.alert('推荐人信息不能为空')
-        return false
-      }
+      // if (!parentPhone) {
+      //   weui.alert('推荐人信息不能为空')
+      //   return false
+      // }
       if (phone === parentPhone) {
         weui.alert('手机号码不能和推荐人手机号一致')
         return false

@@ -164,10 +164,10 @@ export default {
     this.counter = 0
     this.userInfo = JSON.parse(window.localStorage.getItem('zlUser'))
     if (this.userInfo) {
-      let token = window.localStorage.getItem('zlToken')
       if (this.userInfo.status === 0) {
         this.$router.push('/userCenter/active')
       } else {
+        let token = window.localStorage.getItem('zlToken')
         // 获取账户
         this.getUseAccount(token)
       }

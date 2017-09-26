@@ -127,6 +127,7 @@ export default new Router({
     }, {
       path: '/index',
       name: 'Index',
+      meta: {requiresAuth: true},
       component(resolve) {
         require(['@/views/shopping/index'], resolve)
       }
