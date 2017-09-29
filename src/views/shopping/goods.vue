@@ -195,6 +195,11 @@ export default {
       }
     },
     addCartFn(pid) {
+      let userInfo = JSON.parse(window.localStorage.getItem('zlUser'))
+      if (!userInfo.parentId) {
+        $.toast('您还没有关联推荐人!', 'forbidden')
+        return
+      }
       if (this.main.productType === '1') {
         weui.alert('新能源系列商品,请进店咨询!')
       } else {
