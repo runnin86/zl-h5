@@ -5,7 +5,6 @@
 
 <script>
 import qs from 'qs'
-import $ from 'zepto'
 import weui from 'weui.js'
 import * as config from './../config'
 import util from './../utils'
@@ -89,7 +88,6 @@ export default {
       this.$http.post('user/login', qs.stringify(loginParam))
       .then(function({data: {data, code, msg}}) {
         if (code === 1) {
-          $.toast('登录成功')
           window.localStorage.setItem('zlUser', JSON.stringify(data.user))
           window.localStorage.setItem('zlToken', data.token)
 
