@@ -1,3 +1,9 @@
+/**
+  1 配置静态资源路径
+  2 生成cssLoaders用于加载.vue文件中的样式
+  3 生成styleLoaders用于加载不在.vue文件中的单独存在的样式文件
+ */
+
 var path = require('path')
 var config = require('../config')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
