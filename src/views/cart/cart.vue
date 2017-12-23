@@ -82,7 +82,7 @@
     </div>
     <div class="goods-alert_title" v-show="showTips">
       <div class="goods-alert_pic">
-        <img src="static/images/goods.png">
+        <img src="static/images/noGoods.png">
       </div>
       <div class="goods-alert_content">
         <p class="no-goods_cart">您的购物车空空如也</p>

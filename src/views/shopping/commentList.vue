@@ -7,7 +7,7 @@
         </a>
       </div>
       <div class="col-xs-8 shop-name">
-        <router-link :to="{ name: 'Goods',path: '/shopping/goods', query: { gid: this.goods_id }}" 
+        <router-link :to="{ name: 'Goods',path: '/shopping/goods', query: { gid: this.goods_id }}"
           class="double_title">
           商品详情
         </router-link>
@@ -73,7 +73,7 @@
       <div class="none-comment_box" v-if="this.all_comment_count === '0'">
         <div class="goods-alert_title">
           <div class="goods-alert_pic">
-            <img src="static/images/goods.png">
+            <img src="static/images/noGoods.png">
           </div>
           <div class="goods-alert_content">
             <p class="no-goods_cart">此商品还没有评论</p>
