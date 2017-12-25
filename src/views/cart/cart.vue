@@ -1,22 +1,8 @@
 <template>
 <div>
-  <div class="row yzg-title" style="position:relative;width:auto;">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-        <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
-    </div>
-    <div class="col-xs-8 shop-name">
-      <span>购物车</span>
-    </div>
-    <div class="col-xs-2 shop-bag">
-      <router-link :to="{path: '/index'}">
-        <span class="iconfont-yzg icon-yzg-goods"></span>
-      </router-link>
-    </div>
-  </div>
+  <wv-header title="购物车" @leftClick="$parent.back()"></wv-header>
 
-  <div class="row cart-contain">
+  <div class="row cart-contain" style="overflow: hidden">
     <div class="goods-box">
       <div v-if="cartList.length!=0"
         class="weui-cells weui-cells_checkbox goods-box_title">
@@ -32,7 +18,8 @@
           </div>
         </label>
       </div>
-      <div v-if="cartList" v-for="(pro, key) in cartList" :key="pro.pid" class="goods-box_body">
+      <div v-if="cartList" v-for="(pro, key) in cartList" :key="pro.pid"
+        ref="child" :id="pro.pid" :class="[{swipeleft: swipeId === pro.pid},'goods-box_body']">
         <div class="product-list">
           <div class="product-list_wrap">
             <div class="weui-cells weui-cells_checkbox product-list_checkbox">
@@ -45,38 +32,31 @@
                   </div>
                 </label>
             </div>
+
             <div class="product-content">
               <div class="product-box">
                 <div class="product-pic">
-                  <img :src="img_domain + pro.img" width="80" height="80">
+                  <img :src="$parent.imgBase64" :style="'background-image:url(' + img_domain + pro.img + ')'">
                 </div>
                 <div class="product-con">
-                  <span style="display: block;height: 30px;overflow: hidden;font-size: 14px;">
-                    {{pro.pName}}
-                  </span>
-                  <span style="display: block;height: 30px;overflow: hidden;font-size: 11px;">
-                    {{pro.pDesc}}
-                  </span>
-                  <p class="cell-price" v-if="pro.price">￥&nbsp;{{pro.price}}</p>
+                  <span class="product-title">{{pro.pName}}</span>
+                  <p class="cell-price">￥&nbsp;{{pro.price}}</p>
                 </div>
                 <div class="product-option">
-                  <div class="product-del">
-                    <a @click="delCartById(pro.pid)">
-                      <img src="static/images/del2.png">
-                    </a>
-                  </div>
                   <div class="product-num">
                     <a @click="updateCartNum(pro, -1)" class="num-reduce"></a>
-                    <input :value="pro.num" type="tel" disabled="disabled"
-                      min=1 max=9999 class="num-value" style="ime-mode:disabled;"
+                    <input :value="pro.num" disabled="disabled"
+                      type="tel" min=1 max=9999 class="num-value" style="ime-mode:disabled;"
                       onKeyPress="if(event.keyCode < 48 || event.keyCode > 57) event.returnValue = false;"
-                      onKeyUp="this.value=this.value.replace(/\D/g,'')"/>
+                      onKeyUp="this.value=this.value.replace(/\D/g,'')"
+                    />
                     <a @click="updateCartNum(pro, 1)" class="num-add"></a>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <div class="delete shanchu" @click.stop="delCartById(pro.pid)">删除</div>
         </div>
       </div>
     </div>
@@ -96,7 +76,7 @@
   <div class="row cart-footer" v-if="cartList.length!=0">
     <div class="col-xs-12 layout-footer">
       <div class="weui-cells_checkbox checkAll">
-        <label class="weui-cell">
+        <label class="weui-cell weui-check__label">
             <div class="weui-cell__hd">
               <input type="checkbox" class="weui-check" v-model="isSelectAll"
                 @change="checkPro('all', $event)">
@@ -107,7 +87,7 @@
             </div>
           </label>
       </div>
-      <div class="checkout-info" style="text-align:center;margin-right:60px;">
+      <div class="checkout-info">
         合计：<strong class="red" v-show="totalMoney>0"> ￥{{totalMoney}}</strong>
       </div>
       <a class="btn btn-checkout redBgColor" @click="checkoutCart()">
@@ -122,27 +102,32 @@
 import $ from 'zepto'
 import qs from 'qs'
 import weui from 'weui.js'
-import Indicator from '../../../src/components/indicator'
 
+let loading
 export default {
   /*
    * 激活
    */
   activated() {
-    this.cartList = []
+    this.$store.commit('CHANGE_IS_INDEX', false)
+
     // 去获取购物车数据
+    this.cartList = []
     this.getCarts()
-    this.$store.commit('CHANGE_IS_INDEX', true)
+
+    this.swipeId = null
+    this.initSwpipeDelete()
   },
   /*
    * 页面取消激活
    */
   deactivated() {
-    Indicator.close()
+    loading.close()
   },
   data() {
     return {
       cartList: [],
+      swipeId: null,
       showTips: false,
       isSelectAll: false,
       totalMoney: 0,
@@ -156,7 +141,7 @@ export default {
      * is_check->是否被选中结算(0：没有；1：是)
      */
     getCarts() {
-      Indicator.open('加载中')
+      loading = weui.loading('加载中')
       // 设置总金额和总数目为0
       this.totalMoney = this.selectCounts = 0
       this.$http.get('cart/cartList', {
@@ -181,7 +166,7 @@ export default {
             }
           }
           this.isSelectAll = (checkCount === data.length)
-          console.log(this.isSelectAll)
+          console.log(this.isSelectAll, this.totalMoney)
           this.$parent.cartBadgeNum = this.selectCounts
           this.cartList = data
           // 获取购物车数量
@@ -190,9 +175,9 @@ export default {
           $.toast(msg, 'forbidden')
           console.warn('获取购物车失败:' + msg)
         }
-        Indicator.close()
+        loading.hide()
       }).catch((e) => {
-        Indicator.close()
+        loading.hide()
         console.error('获取购物车失败:' + e)
       })
     },
@@ -269,12 +254,12 @@ export default {
     /*
      * 删除购物车商品
      */
-    delCartById(rid) {
+    delCartById(pid) {
       weui.confirm('您确实要把该商品移出购物车吗?', () => {
         // 确认
         this.$http.delete('cart/delCart', {
           params: {
-            pid: rid
+            pid: pid
           },
           headers: {
             'x-token': window.localStorage.getItem('zlToken')
@@ -308,6 +293,47 @@ export default {
           step: 'checkout'
         }
       })
+    },
+    // 初始化左滑删除
+    initSwpipeDelete() {
+      setTimeout(() => {
+        // 判断是否存在信息列表
+        if (this.$refs.child) {
+          this.$refs.child.forEach((element, index) => {
+            let x, y, X, Y, swipeX, swipeY
+            // 监听touchstart
+            element.addEventListener('touchstart', e => {
+              x = e.changedTouches[0].pageX
+              y = e.changedTouches[0].pageY
+              swipeX = true
+              swipeY = true
+            })
+            element.addEventListener('touchmove', e => {
+              X = event.changedTouches[0].pageX
+              Y = event.changedTouches[0].pageY
+              if (swipeX && Math.abs(X - x) - Math.abs(Y - y) > 0) {
+                // 阻止默认事件
+                e.stopPropagation()
+                // 右滑
+                if (X - x > 10) {
+                  e.preventDefault()
+                  this.swipeId = null
+                }
+                // 左滑
+                if (x - X > 10) {
+                  e.preventDefault()
+                  // 赋值滑动行的upc_id为需要滑动删除的
+                  this.swipeId = element.id
+                }
+                swipeY = false
+              }
+              if (swipeY && Math.abs(X - x) - Math.abs(Y - y) < 0) {
+                swipeX = false
+              }
+            })
+          })
+        }
+      }, 1000)
     }
   },
   // 监听事件，当商品全部选中时，全选选中，否则不选中
@@ -346,7 +372,7 @@ export default {
 
 <style>
 .red {
-  color: #ed3366;
+  color: #ef0021;
 }
 
 .goods-alert_title {
@@ -355,7 +381,7 @@ export default {
 
 .goods-alert_title .goods-alert_pic {
   width: 150px;
-  margin: 40px auto 2px;
+  margin: 40px auto 10px;
 }
 
 .goods-alert_title .goods-alert_pic img {
@@ -364,9 +390,9 @@ export default {
 }
 
 .goods-alert_title .goods-alert_content .no-goods_cart {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 4px;
+  font-size: 0.6837;
+  color: #999;
+  margin-bottom: 5px;
 }
 
 .goods-alert_title .goods-alert_content .random-stroll_shop {
@@ -379,33 +405,48 @@ export default {
 }
 
 .cart-contain {
-  /*margin-top: 44px;*/
-  background: #eee
+  padding-top: 44px;
 }
 
 .goods-box {}
 
 .goods-box .goods-box_title {
   background: #f6f6f6;
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
 .goods-box .goods-box_body {
   position: relative;
+  width: 100%;
+  transition: all 0.3s linear;
 }
 
 .goods-box .goods-box_body .product-list {
   display: -webkit-flex;
   display: flex;
-  padding: 10px 30px 10px 15px;
-  border-bottom: 1px solid #eee;
+  padding: 10px 1.3461rem 0.2rem 0.641rem;
   background: #fff;
+  height: 5.2rem
+}
+
+.goods-box .goods-box_body:before {
+  position: absolute;
+  content: '';
+  height: 1px;
+  width: 9rem;
+  background: #ddd;
+  bottom: 0;
+  right: 0
+}
+
+.goods-box .goods-box_body:last-child:before {
+  background: none
 }
 
 .goods-box .goods-box_title label {
   position: relative;
   margin-bottom: 0;
-  padding: 3px 15px;
+  padding: 7px 15px;
 }
 
 .goods-box .goods-box_body .uncheck-label:before,
@@ -468,18 +509,34 @@ export default {
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-pic {
-  margin-right: 10px;
+  margin-right: 0.2137rem;
+  flex: none;
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-pic img {
-  width: 80px;
+  width: 4.4rem;
+  height: 4.4rem;
+  background-size: cover;
+}
+
+.goods-box .goods-box_body .product-list_wrap .product-con {
+  flex: auto;
+}
+
+.goods-box .goods-box_body .product-list_wrap .product-con .product-title {
+  display: block;
+  height: 40px;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-con .cell-price {
-  padding-top: 0px;
-  margin-bottom: 0;
-  font-size: 14px;
-  color: #ef0021;
+  font-size: 0.598rem;
+  color: #333;
+  position: absolute;
+  bottom: 0.4rem;
+  font-weight: bold
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-option .product-del {
@@ -496,18 +553,25 @@ export default {
   position: absolute;
   right: 15px;
   bottom: 10px;
+  border: 1px solid #999;
+  width: 4.424rem;
+  height: 1.15rem;
+  line-height: 0.5rem;
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-reduce {
   margin: 0;
-  float: left;
-  width: 30px;
-  height: 30px;
-  text-align: center;
+  text-align: left;
   display: block;
   border: none;
-  background: #eee;
   border-radius: 0;
+  position: absolute;
+  top: 0px;
+  left: 0;
+  width: 1.25rem;
+  padding-left: 0.213rem;
+  padding-top: 0.213rem;
+  border-right: 1px solid #999;
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-reduce:before {
@@ -515,20 +579,24 @@ export default {
   display: inline-block;
   width: 15px;
   height: 20px;
-  background: url(/static/images/icon_detail.png) -86px -10px no-repeat;
+  background: url(/static/images/icon_detail.png) -84px -16px no-repeat;
   background-size: 100px 100px;
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-add {
   margin: 0;
-  float: left;
-  width: 30px;
-  height: 30px;
   text-align: center;
   display: block;
   border: none;
-  background: #eee;
   border-radius: 0;
+  position: absolute;
+  right: 0;
+  top: 0px;
+  width: 1.25rem;
+  text-align: right;
+  padding-right: 0.213rem;
+  padding-top: 0.213rem;
+  border-left: 1px solid #999;
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-add:before {
@@ -536,24 +604,27 @@ export default {
   display: inline-block;
   width: 15px;
   height: 20px;
-  background: url(/static/images/icon_detail.png) -86px -28px no-repeat;
+  background: url(/static/images/icon_detail.png) -86px -35px no-repeat;
   background-size: 100px 100px;
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-value {
-  float: left;
   border: 0;
   width: 40px;
-  font-size: 15px;
+  font-size: 0.512rem;
   color: #333;
-  line-height: 30px;
-  height: 30px;
+  outline: none;
+  text -align: center;
+  border-radius: 10px;
+  margin-left: 1.28rem;
+  margin-top: 0.3rem;
   text-align: center;
+  font-family: '微软雅黑'
 }
 
 .cart-footer {
   position: fixed;
-  bottom: 58px;
+  bottom: 0;
   width: 100%;
   max-width: 640px;
   min-width: 320px;
@@ -576,14 +647,15 @@ export default {
 
 .layout-footer label {
   position: relative;
-  margin-bottom: 2px;
+  margin-bottom: 0;
   padding: 0;
-  opacity: inherit;
 }
 
 .layout-footer .checkout-info {
   -webkit-flex: 1;
   flex: 1;
+  font-weight: bold;
+  padding-left: 2rem;
 }
 
 .layout-footer .checkout-info .price {
@@ -594,14 +666,19 @@ export default {
 
 .layout-footer .btn-checkout {
   display: block;
-  background: #ed3366;
+  background: #ef0021;
   color: #fff;
   align-self: center;
+  width: 4.6rem
 }
 
 .btn-checkout {
   padding: 0 12px;
   border-radius: 0;
+}
+
+.weui-cells {
+  background-color: transparent;
 }
 
 .weui-cells_checkbox .weui-icon-checked:before {
@@ -612,11 +689,12 @@ export default {
 .layout-footer .weui-cell__bd p {
   font-size: 14px;
   padding-top: 2px;
+  font-weight: bold;
 }
 
 .cart-contain .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before,
 .layout-footer .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before {
-  color: #ed3366;
+  color: #333;
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-list_checkbox {
@@ -642,5 +720,77 @@ export default {
 .layout-footer .weui-cells:before,
 .layout-footer .weui-cells:after {
   border: none;
+}
+
+.goodsNum {
+  position: absolute;
+  right: 15px;
+  bottom: 15px
+}
+
+.shop-bag a {
+  color: #333
+}
+
+.shop-bag a:hover,
+.shop-bag a:active {
+  color: #333;
+}
+
+.shop-bag a p {
+  text-align: center
+}
+
+.shanchu {
+  position: absolute;
+  text-align: center;
+  top: 0;
+  letter-spacing: 4px;
+  text-indent: 4px;
+  right: -3.16rem;
+  z-index: 1;
+  height: 5.2rem;
+  padding-top: 2.147rem;
+  width: 3.073rem;
+  background: #333;
+  color: #fff;
+}
+
+.swipeleft {
+  transform: translateX(-20%)
+}
+@media screen and (max-width:320px) {
+  .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-value{
+    margin-top: 0.25rem;
+    margin-left: 1.18rem;
+  }
+  .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-add,.goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-reduce{
+    padding-top: 0.113rem;
+  }
+}
+@media screen and (min-width:412px) {
+  .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-value{
+    margin-top: 0.25rem;
+    margin-left: 1.38rem;
+  }
+  .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-add,.goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-reduce{
+    padding-top: 0.3rem;
+  }
+  .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-add:before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 20px;
+    background: url(/static/images/icon_detail.png) -88px -36px no-repeat;
+    background-size: 100px 100px;
+  }
+  .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-reduce:before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 20px;
+    background: url(/static/images/icon_detail.png) -84px -18px no-repeat;
+    background-size: 100px 100px;
+  }
 }
 </style>
