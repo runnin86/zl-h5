@@ -36,7 +36,7 @@ export default {
       bgColor: '#fff',
       fgColor: '#000',
       logo: '', // this.$parent.getShareImg(),
-      value: window.location.origin + '/userCenter/active?mid=' + mid
+      value: window.location.origin + '/#/userCenter/active?mid=' + mid
     }
   },
   activated() {
