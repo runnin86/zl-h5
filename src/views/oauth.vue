@@ -6,7 +6,6 @@
 <script>
 import qs from 'qs'
 import weui from 'weui.js'
-import * as config from './../config'
 import util from './../utils'
 
 let loading
@@ -56,8 +55,7 @@ export default {
      */
     wechatRedirect() {
       let innerParam = ''
-      let appid = config.appId
-      // let redirect_uri = config.redirectUri
+      let appid = process.env.APP_ID
       let redirect_uri = encodeURIComponent(location.origin)
       // 应用授权作用域
       //   1:snsapi_base(不弹出授权页面,直接跳转,只能获取用户openid)

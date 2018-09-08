@@ -2,7 +2,6 @@
 import wx from 'wx'
 // import weui from 'weui.js'
 import axios from 'axios'
-import * as config from '../config'
 
 export default {
   /**

@@ -60,7 +60,6 @@
 import $ from 'zepto'
 import qs from 'qs'
 import weui from 'weui.js'
-import * as config from './../../config'
 
 let loading
 export default {
@@ -94,7 +93,7 @@ export default {
         /*
          * 3. 未登录->微信鉴权 051G0HDC1guKk00QzKDC1xlHDC1G0HDR
          */
-        let appid = config.appId
+        let appid = process.env.APP_ID
         let redirect_uri = encodeURIComponent(window.location.href)
         // 应用授权作用域
         //   1:snsapi_base(不弹出授权页面,直接跳转,只能获取用户openid)

@@ -9,7 +9,6 @@ import WeVue from './components'
 import router from './router'
 import FastClick from 'fastclick'
 import * as filters from './filters'
-import * as config from './config'
 import 'normalize.css/normalize.css'
 import 'assets/iconfont/iconfont.css'
 import infiniteScroll from './directives/infinite-scroll'
@@ -46,7 +45,7 @@ Vue.prototype.initWechatShare = (title, desc, imgUrl, link) => {
 Vue.directive('infiniteScroll', infiniteScroll)
 
 // axios全局配置
-axios.defaults.baseURL = config.apiUrl
+axios.defaults.baseURL = process.env.BASE_API
 // axios.defaults.headers.common['Authorization'] = 'AUTH_TOKEN'
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
