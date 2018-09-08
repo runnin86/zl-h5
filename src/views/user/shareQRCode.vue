@@ -1,20 +1,5 @@
 <template>
 <div>
-  <div class="row yzg-title">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-          <i class="iconfont-yzg icon-yzg-back"></i>
-        </a>
-    </div>
-    <div class="col-xs-8 shop-name">
-      <span>邀请</span>
-    </div>
-    <div class="col-xs-2 shop-bag">
-      <router-link :to="{ path: '/index' }">
-        <span class="iconfont-yzg icon-yzg-goods"></span>
-      </router-link>
-    </div>
-  </div>
   <div class="main_share">
     <div class="row">
       <div class="qrCode">
@@ -64,7 +49,7 @@ export default {
 <style scoped>
 .qrCode {
   text-align: center;
-  margin: 60px 0 0;
+  margin: 20px 0 0;
 }
 
 .qrCode p {

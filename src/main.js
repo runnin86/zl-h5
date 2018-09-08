@@ -161,8 +161,8 @@ router.beforeEach((to, from, next) => {
 
 // // 注册一个全局的 after 钩子
 router.afterEach((route) => {
-  // let title = route.meta.title ? route.meta.title : ''
-  setWechatTitle('')
+  let title = route.meta.title ? route.meta.title : ''
+  setWechatTitle(title)
   // 1.自动添加问号(?);2.自动把分隔符由#!变成#;3.分隔符后面，自动判断是否为斜杠(/)，没有则添加上
   let paths = window.location.href.split('#')
   paths[1] = paths[1] || '/'

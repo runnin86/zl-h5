@@ -1,22 +1,6 @@
 <template>
 <div>
-  <div class="row yzg-title" style="position:relative;width:auto;">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-        <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
-    </div>
-    <div class="col-xs-8 shop-name">
-      <span>收货地址管理</span>
-    </div>
-    <div class="col-xs-2 shop-bag">
-      <router-link :to="{path: '/index'}">
-        <span class="iconfont-yzg icon-yzg-goods"></span>
-      </router-link>
-    </div>
-  </div>
-
-  <div class="address" style="margin-top:16px">
+  <div class="address" style="margin-top:-6px">
     <div class="row singleAddress" v-for="(address, itemIndex) in addressList">
       <div>
         <p>

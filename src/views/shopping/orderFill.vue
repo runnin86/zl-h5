@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="row nav-center">
+  <!-- <div class="row nav-center">
     <div class="col-xs-2 backBtn">
       <a href="javascript:history.back(-1)">
         <i class="iconfont-yzg icon-yzg-back"></i>
@@ -16,7 +16,7 @@
       </span>
     </div>
     <div class="col-xs-2"></div>
-  </div>
+  </div> -->
 
   <div class="row mainContent" v-if="oneBuyType==='checkout'&&cartList.length>0">
     <div class="receiverInfor">
@@ -134,8 +134,8 @@
           </td>
           <td class="subDetails">
             <p>{{good.pName}}</p>
-            <p class="goodsQuantity">数量：{{good.num}}</p>
-            <p class="redColor">{{good.price}}</p>
+            <p class="goodsQuantity">×{{good.num}}</p>
+            <p class="redColor">¥{{good.price}}</p>
           </td>
         </tr>
       </table>
@@ -175,7 +175,8 @@
       </table>
     </div>
 
-    <div class="placeOrder">
+    <div class="placeOrder orderFillSub">
+      <p>应付金额：<span>￥{{totalPay + shippingMoney}}</span></p>
       <input type="button" value="提交订单" class="btn btn-danger loginBtn" @click="submitting()" />
     </div>
   </div>
@@ -193,7 +194,7 @@
         </li>
       </ul>
     </div> -->
-    <div class="orderClass" v-if="orderInfo">
+    <div class="orderInfor" v-if="orderInfo">
       <table>
         <tr>
           <td>订单号：{{orderInfo.orderNo}}</td>
@@ -216,7 +217,7 @@
         </tr>
       </table>
     </div>
-    <div class="orderClass totalMoney" v-if="orderInfo">
+    <div class="orderInfor totalMoney" v-if="orderInfo">
       <p>
         总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价：
         &nbsp;&nbsp;<span>{{orderInfo.totalPrice + orderInfo.shipmentMoney}}</span>
@@ -275,6 +276,7 @@ export default {
     // 获取账户
     this.getUseAccount()
     this.$store.commit('CHANGE_IS_INDEX', false)
+    this.$parent.setTitle('填写订单')
   },
   data() {
     return {
@@ -547,6 +549,7 @@ export default {
             console.log(data)
             zhis.oneBuyType = 'submit'
             zhis.orderInfo = data.info
+            this.$parent.setTitle('提交订单成功')
           } else {
             weui.alert(msg)
             console.error('结算商品失败:' + msg)
@@ -690,28 +693,40 @@ body {
   color: #3a3a3a;
   font-size: 14px
 }
-
-body,
-html,
-#allmap {
-  display: none;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  margin: 0;
-  font-family: "微软雅黑";
-}
-
-.addFillIn .cell_box {
+.addFillIn .cell_box{ width:80%; }
+.orderAccount table td span{ width:70px; }
+.addNewPng{ text-align: center; margin-left: -0.8547rem}
+.addNewPng img{ width: 1.88rem; margin-top: 0.512rem }
+.addNewPng p{color: #333; font-size: 0.598rem; font-weight: bold; font-family: '微软雅黑'; padding-bottom: 0.5rem}
+.orderFillSub{ position: fixed; max-width: 640px; min-width: 320px; width: 100%; bottom: 0; padding: 0; height: 2.1rem; background: #fff; text-align: left; padding-left: 0.8547rem; line-height: 2.1rem; font-size: 0.68376rem; border-top: 1px solid #f8f8f8}
+.orderFillSub p span{color: #ed3366}
+.orderFillSub input{position: absolute; right: 0; width: 5rem; height: 2.1rem; line-height: 2.1rem; bottom: 0; padding: 0; border: none; border-radius: 0; }
+/* 样式冲突 */
+.receiverInfor{ background: url(/static/images/icon_shoppingcat_mailer.png) no-repeat top center #fff; padding: 0.8547rem 0 0.8547rem 0.8547rem;}
+.addFillIn input {
   width: 80%;
 }
-
-.clear{
-  background:no-repeat center center url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAMAAADyHTlpAAAAflBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCtoPsAAAAKnRSTlMAAQIDBAUHCQoLDA0ODxASGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjOWCMFEAAABUklEQVR4Xo3U4W6CMBSG4a8dcyo4FUVAHCpa4bv/G1xiOJm1B9j7+0lz0rQHfibZlFeSzbnYriyGm2cPvtTmMfS+KgbVSwWatKPWIRgjOnGgy8yXXzcO5mJPPjhS9w0JUcPR2oVI88OJblFPUwH3YEyxeX/xckuFLXx5tLnY5EmPIg1M4UkDI/b8PLSXjQHEigSsDLUCkLEvhdg/aUr2lYB1DKwi2UVYkoFVJLnGhpqtAsk9SipWkaxxpWIVSQdHxSqSRMfAipyklZF7eAtOkbrFVZHquQ6lL+1zzlSxNTaKJBW7x1KTml3DulBqtouALJCqLV+e9l2kZ72njUpWjhEp9uXUi/8ND1ak2F7KocBu8HM3Igt5RPW/Vwai+/Qikubt9HqTFmNLM4HX5+C8zQxv2V2nyvwDYbMihNUceovMu4pHHmOkeFudHdmeT2lifPALZUK7MQNh4w4AAAAASUVORK5CYII=);
-  background-size: 15px 15px;
-  width:40px;
-  height:40px;
-  position: absolute;
-  margin: -30px 0 0 -20px;
+.addFillIn tr td:first-child {
+  width: 85px;
+  text-align: right;
 }
+.receiverInfor:after {
+  position: absolute;
+  content: "";
+  background: url(/static/images/icon_shoppingcat_mailer.png) no-repeat bottom center;
+  height: 4px;
+  width: 100%;
+  bottom: 1px; left: 0
+}
+.receiverInfor, .goodsDetail, .orderAccount, .fillNotice, .auctionAccount{ padding: 0.5rem 0 0.2rem 0.8547rem }
+.orderAccount .remark{
+  flex: 1;outline: none;border: none;text-align: right;
+}
+.addFillIn tr td{border-bottom: 1px solid #eee}
+.addFillIn tr td input{border: none; box-shadow: none; outline: none}
+.addFillIn tr td[data-v-36b56dfa]:first-child{ color: #666 }
+
+.auctionAccount {background: #fff;margin-top: 10px;}
+.auctionAccount table{width: 100%;}
+.auctionAccount table td span{float: right;margin-right: 30px;}
 </style>

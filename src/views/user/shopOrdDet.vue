@@ -1,23 +1,43 @@
 <template>
 <div>
-  <div class="row yzg-title" style="position:relative;width:auto;">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-        <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
+  <div class="returnAndExchangeBg">
+    <div class="iconBox">
+      <img src="/static/images/storeGoods/modify.png" />
     </div>
-    <div class="col-xs-8 shop-name">
-      <span>订单详情</span>
-    </div>
-    <div class="col-xs-2 shop-bag">
-      <router-link :to="{path: '/index'}">
-        <span class="iconfont-yzg icon-yzg-goods"></span>
-      </router-link>
-    </div>
+    <p class="c7" v-if="orderInfo">{{orderInfo.orderStatus | orderStatusFilter}}</p>
+    <!-- <span class="h7" v-if="true">三个工作日<br/>系统自动退款</span> -->
   </div>
 
   <div class="mainDet row" v-if="orderInfo">
-    <p class="title_p">订单信息</p>
+    <div class="shopDet orderAddress">
+      <img src="/static/images/orderAddress.png" alt="">
+      <ul v-if="true" class="h3 c3">
+        <li class="o_consigneeName">
+          收货人姓名：{{orderInfo.consignee}}
+          <!-- <span>{{orderInfo.consigneePhone}}</span> -->
+        </li>
+        <!-- <li>身份证号：{{'orderDet.order.idcard'}}</li> -->
+        <li>详细地址：{{orderInfo.shipmentAddress}}</li>
+        <li>联系电话：{{orderInfo.consigneePhone}}</li>
+      </ul>
+    </div>
+
+    <!-- 商品详情 -->
+    <div class="shopDet" style="padding:0">
+      <table>
+        <tr v-for="g in orderDetail">
+          <td>
+            <img :src="$parent.imgBase64" :style="'background-image:url(' + img_domain+g.img + ')'" />
+          </td>
+          <td>
+            <p class="g_name">{{g.product_name}}</p>
+            <span class="g_number">数量:&nbsp;{{g.nums}}</span>
+            <span class="g_price"> ¥ {{g.price}}</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+
     <div class="shopDet">
       <ul>
         <li>
@@ -41,34 +61,11 @@
         <li>
           订单状态：{{orderInfo.orderStatus | orderStatusFilter}}
         </li>
+        <li style="color: #ff0000;">备注： {{orderInfo.remarks ? orderInfo.remarks : '无'}}</li>
       </ul>
     </div>
-    <p class="title_p">收货人信息</p>
-    <div class="shopDet">
-      <ul>
-        <li>收货人姓名：{{orderInfo.consignee}}</li>
-        <li>联系电话：{{orderInfo.consigneePhone}}</li>
-        <li>详细地址：{{orderInfo.shipmentAddress}}</li>
-      </ul>
-    </div>
-    <p class="title_p">商品详情</p>
-    <div class="shopDet" style="padding:0">
-      <table>
-        <tr v-for="g in orderDetail">
-          <td><img :src="img_domain+g.img" /></td>
-          <td>
-            <p class="g_name">{{g.product_name}}</p>
-            <span class="g_number">数量: {{g.nums}}</span>
-            <span class="g_price"> ¥ {{g.price}}</span>
-          </td>
-          <td class="eval" v-if="1===2" @click="com_def">
-            <a href="javascript:void(0)">评价</a>
-          </td>
-        </tr>
-      </table>
-    </div>
+
     <div v-if="this.$route.query.orderNo">
-      <p class="title_p">其他信息</p>
       <div class="shopDet">
         <ul>
           <li v-if="orderInfo.shippingNo">配送单号：{{orderInfo.shippingNo}}</li>
@@ -128,6 +125,7 @@ export default {
    * 激活
    */
   activated() {
+    this.$parent.setTitle('订单详情')
     loading = weui.loading('加载中')
     this.orderNo = this.$route.query.orderNo
     this.totalPay = this.brokerage = this.point = this.discount = 0
@@ -356,15 +354,14 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .mainDet {
-  /*margin-top: 44px;*/
-  padding-bottom: 50px; background: #eee
+  /*padding-bottom: 50px;*/
 }
 
 .shopDet {
   background: #fff;
-  padding: 4px 10px 10px;
+  padding: 0.5rem; margin-top: 0.2rem
 }
 
 .title_p{
@@ -382,9 +379,7 @@ export default {
 }
 
 .shopDet ul li {
-  height: 34px;
-  line-height: 34px;
-  color: #333;
+  line-height: 1.9;
 }
 
 .shopDet table {
@@ -401,7 +396,7 @@ export default {
 
 .shopDet table tr td img {
   width: 100%;
-  height: auto;
+  height: auto; background-size: cover;
 }
 
 .shopDet table tr td:first-child {
@@ -411,7 +406,6 @@ export default {
 .shopDet table tr td .g_name {
   height: 18px;
   overflow: hidden;
-  margin-bottom: 4px
 }
 
 /*.shopDet table tr td .gd_name {
@@ -426,7 +420,7 @@ export default {
 
 .shopDet table tr td .g_price {
   display: block;
-  margin-top: 4px
+  margin-top: 12px
 }
 
 .shopDet table tr .eval {
@@ -445,19 +439,104 @@ export default {
 }
 
 .button-sp-area {
-  margin-top: 10px; padding:20px;
+  margin-top: 20px; padding:20px;
 }
-.weui-cells__title {
-  background: #fff;
-  height: 40px;
-  line-height: 40px;
-  padding: 0 10px;
-  border-bottom: 1px solid #eee;
-  color: #999;
-  margin-top:10px;
-  margin-bottom: -0.1em;
+.bottomCon{background: #fff; line-height: 1.93rem; position: fixed; width: 100%; bottom: 0;}
+.bottomCon a{float: right; width:3.2rem; margin: 0.321rem 5px 0.321rem 0; text-align: center; height: 1.0667rem; line-height: 0.9813rem; border-radius: 1.0667rem; color: #f55b29;border: 1px solid #f55b29;}
+.bottomCon a.grayTone {
+  color: #333;
+  border: 1px solid #999;
 }
-.weui-check__label {
-  padding-left: 22px;
+.contactBg{ background: rgba(0,0,0,.6); width: 100%; height: 100%;}
+.contactShop{position: fixed; width: 100%; height: 100%; left: 0; top: 0; z-index: 100}
+.contactShop img{position: absolute; left: 0; right: 0; top: 0; bottom: 0; margin: auto; width: 70%}
+/*新版订单详情*/
+.deliveryState {background: url(/static/images/storeGoods/yifahuo.png) no-repeat; background-size: 100%; padding-left: 1.98rem; padding:1.4rem 0 0.65rem 1.98rem; margin:0 -15px 0; height: 3.92rem}
+.Unprocessed { background: url(/static/images/storeGoods/daifahuo.png) no-repeat; background-size: 100%}
+.deliveryState p{line-height: 1.4}
+.o_consigneeName{position: relative;}
+.o_consigneeName span{position: absolute; top: 0; right: 0}
+.takeQrCode {
+  background-color: #fff;
+  text-align: center;
+  margin-top: 0.2137rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
+
+.returnAndExchangeBg {
+  background: url(/static/images/storeGoods/tuihuanhuo.png) no-repeat;
+  background-size: 100%;
+  display: flex;
+  margin: 0 -15px;
+  height: 3.2rem; position: relative;
+}
+.iconBox {
+  width: 2.1333rem;
+  height: 3.2rem;
+  position: relative;
+}
+.iconBox img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -0.4267rem;
+  margin-top: -0.512rem;
+  width: 0.8533rem;
+  height: 0.981rem;
+}
+.returnAndExchangeBg p {
+  flex: 1;
+  line-height: 3.2rem;
+}
+.returnAndExchangeBg span{position: absolute; top: 0; bottom: 0; margin: auto; right: 0.8rem; color: #fff; text-align: right; padding-top: 0.8rem}
+.returnProcess {
+  background-color: #fff;
+  margin: 0 -15px;
+  padding: 0 15px;
+}
+.returnProcess .processStage {
+  padding: 0.85533rem 0;
+  border-bottom: 1px solid #ccc;
+}
+.returnProcess .processStage:last-child {
+  border-bottom: none;
+}
+.processStage .result {
+  display: flex;
+}
+.result .handleTimeBox {
+  width: 88px;
+}
+.result .centerBox {
+  display: inline-block;
+  text-align: center;
+}
+.result .specificTime {
+  font-size: 0.5547rem;
+}
+.result .resultText {
+  flex: 1;
+  line-height: 1.536rem;
+}
+.result .stopTime {
+  color: #f55b29;
+  text-align: center;
+}
+.processStage .reason {
+  margin-left: 88px; margin-top: -0.4rem
+}
+.orderAddress{position: relative;}
+.orderAddress img{position: absolute; left: 0.6rem; top: 0; bottom: 0; margin: auto; width: 0.6rem}
+.orderAddress ul{padding-left: 1.3rem}
+.processStage .reason div {
+  font-size: 0.4693rem;
+}
+.orderAddress ul li{font-size: 0.55rem}
+</style>
+
+<style type="text/css">
+  .takeQrCode img {
+    vertical-align: middle;
+  }
 </style>

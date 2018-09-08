@@ -1,16 +1,5 @@
 <template>
 <div>
-  <div class="row yzg-title" style="position:relative;width:auto;margin-bottom: 6px;">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-        <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
-    </div>
-    <div class="col-xs-8 shop-name">
-      <span>{{pageType===0?'未':'已'}}结算佣金</span>
-    </div>
-  </div>
-
   <div class="row" style="margin-top:-14px;">
     <!-- 列表 -->
     <div class="team-order_list">

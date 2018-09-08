@@ -1,19 +1,5 @@
 <template>
 <div>
-  <div class="row yzg-title">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-        <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
-    </div>
-    <div class="col-xs-8 shop-name">
-      <span>我的佣金</span>
-    </div>
-    <div class="col-xs-2" id="showDatePicker">
-      <span class="iconfont-yzg icon-yzg-shijianshezhianniux icon-ajust-css"></span>
-    </div>
-  </div>
-
   <div class="row">
     <div class="fund-box">
       <div class="fund-content">

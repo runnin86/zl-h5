@@ -1,22 +1,6 @@
 <template>
 <div>
-  <div class="row yzg-title" style="position:relative;width:auto;">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-        <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
-    </div>
-    <div class="col-xs-8 shop-name">
-      <span>新增地址</span>
-    </div>
-    <div class="col-xs-2 shop-bag">
-      <router-link :to="{path: '/index'}">
-        <span class="iconfont-yzg icon-yzg-goods"></span>
-      </router-link>
-    </div>
-  </div>
-
-  <div class="row mainContent" style="margin-top: 2px;">
+  <div class="row mainContent" style="margin-top: -6px;">
     <div class="receiverInfor">
       <div class="addressDetails">
         <table class="addFillIn">

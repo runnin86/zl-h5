@@ -1,14 +1,5 @@
 <template>
 	<div>
-		<div class="row nav-center">
-		    <div class="col-xs-2 backBtn">
-		      <a href="javascript:history.back(-1)">
-					  <i class="iconfont-yzg icon-yzg-back"></i>
-				  </a>
-		    </div>
-		    <div class="col-xs-8 loginTitle">绑定银行卡</div>
-		    <div class="col-xs-2"></div>
-		</div>
 		<div class="withDraw row">
 			<table v-if="userInfo">
 				<tr>
@@ -226,7 +217,7 @@ export default {
 
 <style>
   a{ cursor: pointer; }
-	.withDraw{ margin-top:50px;  background: #fff; padding:10px;}
+	.withDraw{ background: #fff; padding:10px;}
 	.withDraw table{ width:100%;}
 	.withDraw table td{ padding:7px 5px; }
 	.withDraw table td:first-child{ width:80px; text-align: right; padding-right:5px; }

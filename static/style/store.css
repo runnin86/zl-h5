@@ -493,7 +493,7 @@
 /*sellerIncome.vue和sellerFundUse.vue*/
 
 .fund-box {
-  padding-top: 44px;
+  /* padding-top: 44px; */
 }
 
 .fund-box .fund-header {

@@ -1,16 +1,5 @@
 <template>
 <div>
-  <div class="row yzg-title" style="position:relative;width:auto;margin-bottom: 6px;">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-        <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
-    </div>
-    <div class="col-xs-8 shop-name">
-      <span>提现记录</span>
-    </div>
-  </div>
-
   <div class="row" style="margin-top:-14px;">
     <div class="order-list_content"
       v-infinite-scroll="loadRecord"

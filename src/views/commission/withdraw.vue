@@ -1,14 +1,5 @@
 <template>
 <div>
-  <div class="row nav-center">
-    <div class="col-xs-2 backBtn">
-      <a href="javascript:history.back(-1)">
-					<i class="iconfont-yzg icon-yzg-back"></i>
-				</a>
-    </div>
-    <div class="col-xs-8 loginTitle">提现</div>
-    <div class="col-xs-2"></div>
-  </div>
   <div class="withDraw row">
     <table>
       <tr>
@@ -127,7 +118,6 @@ export default {
 
 <style>
 .withDraw {
-  margin-top: 50px;
   background: #fff;
   padding: 10px;
 }

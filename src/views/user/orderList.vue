@@ -1,21 +1,5 @@
 <template>
 	<div>
-    <div class="row yzg-title" style="position:relative;width:auto;">
-      <div class="col-xs-2 backBtn">
-        <a @click="$parent.back()">
-          <i class="iconfont-yzg icon-yzg-back"></i>
-        </a>
-      </div>
-      <div class="col-xs-8 shop-name">
-        <span>购物订单列表</span>
-      </div>
-      <div class="col-xs-2 shop-bag">
-        <router-link :to="{path: '/index'}">
-          <span class="iconfont-yzg icon-yzg-goods"></span>
-        </router-link>
-      </div>
-    </div>
-
 		<div class="weui_tab orderTitle row"  id="orderTab"
 		  style="height:44px;top:4px;z-index:0;">
 				<div class="weui_navbar" style="height:44px; border-top:1px solid #ddd; background:#f4f4f4">

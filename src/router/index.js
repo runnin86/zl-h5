@@ -25,19 +25,19 @@ export default new Router({
       }
     }, {
       path: '/userCenter/active',
-      meta: {requiresAuth: true},
+      meta: {requiresAuth: true, title: '激活'},
       component(resolve) {
         require(['@/views/user/active'], resolve)
       }
     }, {
       path: '/userCenter/addressList',
-      meta: {requiresAuth: true},
+      meta: {requiresAuth: true, title: '收货地址管理'},
       component(resolve) {
         require(['@/views/user/addressList'], resolve)
       }
     }, {
       path: '/userCenter/shareQRCode',
-      meta: {requiresAuth: true},
+      meta: {requiresAuth: true, title: '邀请'},
       component(resolve) {
         require(['@/views/user/shareQRCode'], resolve)
       }
@@ -55,7 +55,7 @@ export default new Router({
       }
     }, {
       path: '/userCenter/addressList/newAddress',
-      meta: {requiresAuth: true},
+      meta: {requiresAuth: true, title: '新增地址'},
       component(resolve) {
         require(['@/views/user/newAddress'], resolve)
       }
@@ -67,24 +67,25 @@ export default new Router({
     }, {
       name: 'OrderList',
       path: '/userCenter/orderList',
-      meta: {requiresAuth: true},
+      meta: {requiresAuth: true, title: '购物订单列表'},
       component(resolve) {
         require(['@/views/user/orderList'], resolve)
       }
     }, {
       path: '/userCenter/withdrawIndex',
+      meta: {requiresAuth: true, title: '佣金提现'},
       component(resolve) {
         require(['@/views/commission/withdrawIndex'], resolve)
       }
     }, {
       path: '/userCenter/withdrawIndex/settledRecord',
-      meta: {requiresAuth: true},
+      meta: {requiresAuth: true, title: '结算佣金'},
       component(resolve) {
         require(['@/views/commission/settledRecord'], resolve)
       }
     }, {
       path: '/userCenter/withdrawIndex/record',
-      meta: {requiresAuth: true},
+      meta: {requiresAuth: true, title: '提现记录'},
       component(resolve) {
         require(['@/views/commission/withdrawRecord'], resolve)
       }
@@ -105,6 +106,7 @@ export default new Router({
       }
     }, {
       path: '/userCenter/sellerIncome',
+      meta: {requiresAuth: true, title: '我的佣金'},
       component(resolve) {
         require(['@/views/user/sellerIncome'], resolve)
       }
@@ -209,7 +211,7 @@ export default new Router({
       }
     }, {
       path: '/userCenter/withdrawIndex/withdraw',
-      meta: {requiresAuth: true},
+      meta: {requiresAuth: true, title: '提现'},
       component(resolve) {
         require(['@/views/commission/withdraw'], resolve)
       }
@@ -220,16 +222,19 @@ export default new Router({
       }
     }, {
       path: '/userCenter/withdrawIndex/weChatBind',
+      meta: {requiresAuth: true, title: '微信绑定'},
       component(resolve) {
         require(['@/views/commission/weChatBind'], resolve)
       }
     }, {
       path: '/userCenter/withdrawIndex/alipayBind',
+      meta: {requiresAuth: true, title: '支付宝绑定'},
       component(resolve) {
         require(['@/views/commission/alipayBind'], resolve)
       }
     }, {
       path: '/userCenter/withdrawIndex/bankBind',
+      meta: {requiresAuth: true, title: '绑定银行卡'},
       component(resolve) {
         require(['@/views/commission/bankBind'], resolve)
       }
