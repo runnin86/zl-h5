@@ -73,7 +73,8 @@ export default {
     return {
       thumbSmall,
       toPath: null,
-      fromPath: null
+      fromPath: null,
+      imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII='
     }
   },
   methods: {
@@ -114,6 +115,18 @@ export default {
         imgUrl = JSON.parse(window.localStorage.getItem('zlUser')).headImgUrl
       }
       return imgUrl
+    },
+    setTitle(t) {
+      document.title = t
+      var i = document.createElement('iframe')
+      // i.src = '//m.baidu.com/favicon.ico'
+      i.style.display = 'none'
+      i.onload = function() {
+        setTimeout(function() {
+          i.remove()
+        }, 9)
+      }
+      document.body.appendChild(i)
     }
   },
   // dynamically set transition based on route change

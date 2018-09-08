@@ -1,6 +1,6 @@
 <template>
 <div class="container container-content">
-  <div class="row yzg-title" style="position:relative;width:auto;margin-bottom: 4px;">
+  <!-- <div class="row yzg-title" style="position:relative;width:auto;margin-bottom: 4px;">
     <div class="col-xs-2 backBtn">
       <a @click="$parent.back()">
         <i class="iconfont-yzg icon-yzg-back"></i>
@@ -14,7 +14,7 @@
         <span class="iconfont-yzg icon-yzg-goods"></span>
       </router-link>
     </div>
-  </div>
+  </div> -->
 
   <!-- 滑动菜单 -->
   <div class="row navbar-location" v-show="sortMenu.length>0">
@@ -86,6 +86,8 @@ export default {
   activated () {
     // 当组件在 <keep-alive> 内被切换，
     // 它的 activated(激活) 和 deactivated(解散) 这两个生命周期钩子函数将会被对应执行。
+    // 设置网页标题
+    this.$parent.setTitle('全部商品')
     this.sortMenu = [{id: 0, name: '全部商品'}]
     this.sortName = [{id: 0, name: '全部商品'}]
     for (let m of data.menuList) {
@@ -128,6 +130,8 @@ export default {
       this.mescroll.hideTopBtn()
       // 菜单展开合并
       this.$refs.menuComp.subitemsExpanded = false
+      // 设置网页标题
+      this.$parent.setTitle(this.title_name)
     },
     /*
      * 初始化滚动条

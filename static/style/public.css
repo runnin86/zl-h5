@@ -272,6 +272,11 @@ li {
   color: #fff;
 }
 
+.gaibanBg{
+  background: #c61134;
+  color:#fff;
+}
+
 .redBorderColor {
   border-bottom: 1px solid #ed3366;
 }

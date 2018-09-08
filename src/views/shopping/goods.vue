@@ -1,93 +1,93 @@
 <template>
 <div>
-  <div onclick="xiaoshi()" id="is_first_div1" class="is_first_div_add">
-    <!--img src="/images/share_wx.png" class="share_wx_add"/-->
-  </div>
   <!--头部标题-->
-  <div class="row yzg-title" style="position:fixed;">
-    <div class="col-xs-2 backBtn">
-      <a @click="$parent.back()">
-        <i class="iconfont-yzg icon-yzg-back"></i>
-      </a>
-    </div>
-    <div class="col-xs-8 shop-name">
-      <span v-if="main">{{main.productName}}</span>
-      <!-- <span class="double_title buyer_comment">商品详情</span>
-      <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: pid}}" class="double_title">买家评论</router-link> -->
-    </div>
-    <div class="col-xs-2 shop-bag">
-      <router-link :to="{path: '/index'}">
-        <span class="iconfont-yzg icon-yzg-fudaoshangcheng"></span>
+  <!-- <wv-header :showBack="(this.$parent.fromPath !== '/auction/goodsDetails')?true:false"
+    @leftClick="$parent.back()"
+    @rightClick="$router.push('/index')"
+    rightIcon="icon-yzg-goods">
+    <div slot="title" class="col-xs-8 shop-name" v-if="'goodData.upc'">
+      <span class="double_title buyer_comment">商品详情</span>
+      <router-link :to="{name: 'CommentList', path: '/commentList', query: {gid: 'goodData.upc.upc_id', goods_id: 'goodData.upc.g_id'}}"
+        class="double_title" replace>
+        买家评论
       </router-link>
     </div>
-  </div>
-  <div v-show="main">
-    <!--轮播图及内容-->
-    <div>
-      <div style="position:relative">
-        <div class="detail-img" style="margin-top: 50px;">
-          <wv-swipe class="demo-swipe" :height="300" :auto="4000">
-            <wv-swipe-item class="demo-swipe-item" v-for="img in photo" :key="img.id">
-              <img :src="imgBase64" :style="{backgroundImage: 'url(' + img_domain + img.resource + ')'}">
-            </wv-swipe-item>
-          </wv-swipe>
-        </div>
+  </wv-header> -->
+  <!--轮播图及内容-->
+  <div class="goodsMain">
+    <div style="position:relative; background:#f9f8fd" class="row">
+      <div class="detail-img">
+        <wv-swipe class="demo-swipe" :height="300" :auto="4000" :continuous="continuous">
+          <wv-swipe-item class="demo-swipe-item" v-for="img in photo" :key="img.id">
+            <img :src="imgBase64" :style="{backgroundImage: 'url(' + img_domain + img.resource + ')'}">
+          </wv-swipe-item>
+        </wv-swipe>
       </div>
-      <div class="row" style="margin:0px; margin-top:10px">
-        <div class="col-xs-12 goodsTitle" v-if="main">
-          <p>
-            {{main.productName}}
-          </p>
-          <div class="shop_price">
-            ￥{{main.price}}
-            <span class="shop_price_span_add">
-              市场价￥{{main.marketPrice}}
-            </span>
-            <div class="goodNum">
-              <a class="add" @click="numberChange('del')">-</a>
-              <input type="text" v-model="buyNum" />
-              <a class="delete" style="cursor:pointer" @click="numberChange('add')">+</a>
-            </div>
-          </div>
+      <span class="sale_done h5" v-if="goodsCount === '0'">抢光了</span>
+    </div>
+    <!--轮播完 -->
+    <div class="row titleCont" style="margin:0px; margin-top:10px">
+      <div class="col-xs-12 goodsTitle" v-if="main">
+        <p>
+          {{main.productName}}
+        </p>
+        <a @click="collect(goodData.id)" class="shoucang">
+          <span v-bind:class="['iconfont-yzg', 'goodData.is_collect' ? 'icon-yzg-shoucang' : 'icon-yzg-shouc_no']"></span>
+          <span style="color:#333;font-size:10px;display: block;margin-top:-10px;">收藏</span>
+        </a>
+        <div class="shop_price">
+          ¥{{main.price}}
+          <span class="shop_price_span_add">¥{{main.marketPrice}}</span>
         </div>
       </div>
     </div>
+
     <div class="row info_goods">
-      <div class="col-xs-4" style="text-align:left">
-        <img src="/static/images/zheng.png">&nbsp;正品保证
-      </div>
-      <div class="col-xs-4" style="text-align:center;">
-        <img src="/static/images/qu.png">&nbsp;全球直采
-      </div>
-      <div class="col-xs-4" style="text-align:right;">
-        <img src="/static/images/bao.png">&nbsp;同城配送
-      </div>
+      <div class="col-xs-3" style="text-align:center;width:25%;"><img src="/static/images/zpbz.png" /><p>正品保证</p></div>
+      <div class="col-xs-3" style="text-align:center;width:25%;"><img src="/static/images/qqzc.png" /><p>全球直采</p></div>
+      <div class="col-xs-3" style="text-align:center;width:25%;"><img src="/static/images/gjjx.png" /><p>国际精选</p></div>
+      <div class="col-xs-3" style="text-align:center;width:25%;"><img src="/static/images/jsfh.png" /><p>极速发货</p></div>
     </div>
+
     <div class="goodsTxt">
-      <p class="redColor">#商品详情#</p>
+      <a class="col-xs-6" style="text-align:center">商品详情</a>
+      <a class="col-xs-6" style="text-align:center">服务体系</a>
+      <div class="blackLine"></div>
     </div>
-    <div class="goodsBrief" v-if="main" v-html="main.profile"></div>
+
+    <div class="tab-content">
+      <div class="goodsBrief" v-if="main" v-html="main.profile"></div>
+      <!-- <div class="goodsTxt">
+        <p class="redColor">#跨境贴士#</p>
+      </div> -->
+      <div class="serviceSystem" style="height:20rem;">
+        <img src="/static/images/service_system_m.png"/>
+      </div>
+    </div>
     <span class="red-dot"></span>
+
     <div class="cartBottom">
       <div class="cartImg clearfix">
+        <!-- 联系客服 -->
+        <a id="contactPic" class="cart_png" style="border-right:1px solid #ededed;">
+          <!-- <span v-bind:class="['iconfont-yzg', goodData.is_collect ? 'icon-yzg-shoucang' : 'icon-yzg-shouc_no']"></span> -->
+          <img src="/static/images/lxkf.png">
+          <span style="color:#333;font-size:10px;display: block;margin-top:-6px;">客服</span>
+        </a>
         <!-- 购物车图标 -->
         <router-link :to="'/cart'">
           <a class="cart_png addCartPng">
             <span class="iconfont-yzg icon-yzg-msnui-cart"></span>
-            <span class="quantity redBgColor" v-show="$store.getters.cartBadge>0">
+            <span class="quantity gaibanBg" v-show="$store.getters.cartBadge>0">
               {{$store.getters.cartBadge}}
             </span>
+            <span style="color:#333;font-size:10px;display: block;margin-top:-10px;">购物车</span>
           </a>
         </router-link>
-        <!-- 收藏图标 -->
-        <a @click="collect(pid)" class="cart_png">
-          <span v-if="main" :class="['iconfont-yzg', main.isSale === '上架' ? 'icon-yzg-shoucang' : 'icon-yzg-shouc_no']"></span>
-        </a>
       </div>
       <div class="clearfix" style=" padding-left:40%;">
         <div class="tbl-cell">
-          <a class="btn-cart redBgColor" @click="addCartFn(pid)"
-            style="border-radius: 4px;margin-top: -1px;">
+          <a class="btn-cart gaibanBg" @click="addCartFn(pid)">
             <span class="iconfont-yzg icon-yzg-msnui-cart"></span>
             加入购物车
           </a>
@@ -108,10 +108,8 @@ export default {
   init() {
     // console.log('初始化')
   },
-  created() {
-  },
-  beforeDestroy() {
-  },
+  created() {},
+  beforeDestroy() {},
   activated() {
     loading = weui.loading('加载中')
     this.main = this.photo = null
@@ -122,6 +120,31 @@ export default {
     $('.red-dot').css({
       'left': this.startX + 'px',
       'bottom': this.moveY + 'px'
+    })
+    /* 客服弹窗 */
+    $(document).ready(function () {
+      $('.goodsTxt a').each(function (index, item) {
+        $(item).click(function () {
+          console.log(index)
+          var infoScrollH = $('.tab-content div').eq(index).offset().top
+          console.log(infoScrollH)
+          $(window).scrollTop(infoScrollH)
+        })
+      })
+      $('.goodsTxt').css({'position': 'relative', 'width': 'auto'})
+      var txtTop = $('.goodsTxt').offset().top
+      $(document).on('scroll', function () {
+        if ($(window).scrollTop() < txtTop) {
+          $('.goodsTxt').css({'position': 'relative', 'width': 'auto', 'margin-left': '0px'})
+        } else {
+          $('.goodsTxt').css({'position': 'fixed', 'top': '0', 'width': '100%', 'margin-left': '-10px'})
+        }
+        if ($('.serviceSystem').offset().top - $(window).scrollTop() < 100) {
+          $('.blackLine').animate({left: '75%'}, 'slow')
+        } else {
+          $('.blackLine').animate({left: '25%'}, 'slow')
+        }
+      })
     })
   },
   deactivated() {
@@ -156,6 +179,8 @@ export default {
           console.log(data)
           this.main = data.main
           this.photo = data.photo
+          // 设置网页标题
+          this.$parent.setTitle(data.main.productName)
           // 微信分享初始化->(title, desc, imgUrl, link)
           let desc = '【足力购】帅哥美女们，快来足力购逛逛，捧个场吧！'
           this.initWechatShare(
@@ -293,11 +318,55 @@ export default {
 
 <style scoped>
 @import '/static/style/goods.css';
-.container-content {
-  background: #fff
-}
-
-.demo-swipe-item {
+.container-content{ background: #fff}
+.demo-swipe-item{
   text-align: center;
 }
+/*倒计时样式*/
+.time-count_down{color:#666;  padding:0 0.21333333rem; border-radius:0.41333333rem; text-align:center; height: auto; line-height: 1.8;margin-left:10px;}
+.seckill{ background: #ed3366;position: fixed; margin-left: -15px; bottom: 0; z-index: 99; max-width: 640px; min-width: 320px; padding: 5px 0; width: 100%;}
+.seckill-btn{ display: block; height: 35px; margin: 0 5px; line-height: 35px; color: #fff; text-align: center;  }
+.shopShare{position: fixed; top: 0; left: 0; z-index: 501; text-align: center; height: 100%;}
+.shopShare .shopShareBg { position: absolute; width: 100%; background: rgba(0,0,0,.5); height: 100%; z-index: 501}
+.shopShare .shopShareCont { position:relative; width: 78%; left: 0; top: 0; margin: 0 auto; margin-top: 25%; z-index: 502}
+.maskShade{ position:absolute; width:35%; height:100%; bottom:40px;}
+.maskShade:before{position: absolute; content: ''; width: 100%; height: 30%;}
+.maskShade_left{left: 0}
+.maskShade_right{right: 0}
+.maskShade_left:before{ top: 0; left: 100%; height: 50%}
+.maskShade_right:before{ bottom: 0; right: 100%}
+.dial_phone{position: absolute; width: 100%; height: 50px; bottom: 20px; display: block;}
+.timeSale{ padding: 11px 0px;padding-left:15px;border-top:5px solid #f8f8f8; }
+.timeSale i{ display: block; width: 100%; color: #fff; text-align: center; background: #000; font-size: 12px; padding: 4px; font-style: normal;}
+#recom{font-size: 0.512rem;color: #202020;padding: 0.42666667rem 0;line-height: 1.28rem;}
+.evaluatOrder {margin:0 -0.64rem;    border-bottom: 0.2133rem solid #f8f8f8;}
+.evaluatOrder .row div:last-child {text-align: right;font-size: 0.512rem;color: #adadad; position: relative;top: 3px;}
+.evaluatOrder .row span {color: #ff3000;font-size: 0.512rem;}
+.evaTop {margin: 0;border-bottom: 1px solid #ddd;padding:0.64rem 0;}
+.red-star{display: inline-block;background: url(/static/images/star2.png) no-repeat scroll left center; background-size: 15px;height: 15px;width: 15px;margin-right: 3px;
+}
+.slider{ width: 100%;height:200px;position: relative;user-select: none;}
+.slider .content{position: absolute;left: 0;right: 0;top: 0;bottom: 0;background:green;z-index: 100;transition: 0.3s;}
+.slider .remove{position: absolute; width:200px;  height:200px; background:red; right: 0;top: 0;color:#fff; text-align: center;font-size: 40px;line-height: 200px;}
+  .layer{
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index: 100;
+  background: url(/static/images/layer_two.png) no-repeat;
+  background-size: 100% 100%;
+}
+</style>
+
+<style type="text/css">
+  .shopShare img{border-radius: 4px 4px 0 0}
+  .titleCont .time-count_down span:last-child, .titleCont .time-count_down span:nth-child(3), .titleCont .time-count_down span:nth-child(4){ color: #fff; background: none; padding: 0; border-radius: 0; margin: 0 }
+  .goodsBrief iframe,.serviceSystem iframe{width:100%;}
+  .serviceSystem img{max-width: 100%}
+  .goodsTxt{height:40px;background: #fff;position: relative;}
+  .blackLine{position: absolute;width: 18px; height: 3px; background: #333; bottom: 0px; left: 25%; margin-left: -9px}
+  .timeSale .time-count_down .timeSpan{color:#fff;background: #333 !important;}
+  .titleCont .time-count_down span{margin:0 5px;padding:3px 4px;border-radius: 4px;}
 </style>

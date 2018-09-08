@@ -1,8 +1,8 @@
 <template>
 <div>
-  <wv-header title="购物车" @leftClick="$parent.back()"></wv-header>
+  <!-- <wv-header title="购物车" @leftClick="$parent.back()"></wv-header> -->
 
-  <div class="row cart-contain" style="overflow: hidden">
+  <div class="row cart-contain" style="overflow: hidden; margin-top:-7px">
     <div class="goods-box">
       <div v-if="cartList.length!=0"
         class="weui-cells weui-cells_checkbox goods-box_title">
@@ -40,6 +40,7 @@
                 </div>
                 <div class="product-con">
                   <span class="product-title">{{pro.pName}}</span>
+                  <p style="color:#999; font-size:12px">{{pro.pDesc}}</p>
                   <p class="cell-price">￥&nbsp;{{pro.price}}</p>
                 </div>
                 <div class="product-option">
@@ -110,6 +111,7 @@ export default {
    */
   activated() {
     this.$store.commit('CHANGE_IS_INDEX', false)
+    this.$parent.setTitle('购物车')
 
     // 去获取购物车数据
     this.cartList = []
@@ -247,8 +249,10 @@ export default {
           console.error(response)
         })
       } else {
-        // 友情提示
-        weui.alert('购买最小数量为1')
+        // 去执行删除
+        if (num === 0) {
+          this.delCartById(pid)
+        }
       }
     },
     /*
@@ -372,8 +376,10 @@ export default {
 
 <style>
 .red {
-  color: #ef0021;
+  color: #c61336;
 }
+</style>
+<style scoped>
 
 .goods-alert_title {
   text-align: center;
@@ -405,14 +411,15 @@ export default {
 }
 
 .cart-contain {
-  padding-top: 44px;
+  /*padding-top: 44px;*/
 }
 
 .goods-box {}
 
 .goods-box .goods-box_title {
-  background: #f6f6f6;
-  margin-top: 4px;
+  background: #fff;
+  margin-top: 7px;
+  border-bottom: 1px solid #eee
 }
 
 .goods-box .goods-box_body {
@@ -433,7 +440,7 @@ export default {
   position: absolute;
   content: '';
   height: 1px;
-  width: 9rem;
+  width: 14rem;
   background: #ddd;
   bottom: 0;
   right: 0
@@ -446,7 +453,7 @@ export default {
 .goods-box .goods-box_title label {
   position: relative;
   margin-bottom: 0;
-  padding: 7px 15px;
+  padding: 0.5rem 15px;
 }
 
 .goods-box .goods-box_body .uncheck-label:before,
@@ -528,12 +535,11 @@ export default {
   height: 40px;
   overflow: hidden;
   font-size: 13px;
-  font-weight: bold;
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-con .cell-price {
   font-size: 0.598rem;
-  color: #333;
+  color: #c61336;
   position: absolute;
   bottom: 0.4rem;
   font-weight: bold
@@ -556,7 +562,7 @@ export default {
   border: 1px solid #999;
   width: 4.424rem;
   height: 1.15rem;
-  line-height: 0.5rem;
+  line-height: 0.5rem; overflow: hidden
 }
 
 .goods-box .goods-box_body .product-list_wrap .product-option .product-num .num-reduce {
@@ -653,11 +659,8 @@ export default {
 
 .layout-footer .checkout-info {
   -webkit-flex: 1;
-  flex: 1;
-  font-weight: bold;
-  padding-left: 2rem;
+  flex: 1; text-align: right; padding-right: 0.4rem
 }
-
 .layout-footer .checkout-info .price {
   color: #ed3366;
   font-weight: 700;
@@ -666,10 +669,10 @@ export default {
 
 .layout-footer .btn-checkout {
   display: block;
-  background: #ef0021;
+  background: #c61336;
   color: #fff;
   align-self: center;
-  width: 4.6rem
+  width: 5.5rem
 }
 
 .btn-checkout {
@@ -689,7 +692,6 @@ export default {
 .layout-footer .weui-cell__bd p {
   font-size: 14px;
   padding-top: 2px;
-  font-weight: bold;
 }
 
 .cart-contain .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before,
@@ -793,4 +795,5 @@ export default {
     background-size: 100px 100px;
   }
 }
+.cart-contain .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before, .layout-footer .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{color: #e45773}
 </style>

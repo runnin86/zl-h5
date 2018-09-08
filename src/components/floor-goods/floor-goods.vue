@@ -9,17 +9,16 @@
     </div>
     <img v-if="floor.img" :src="'http://img.zulibuy.com/floor/' + floor.img" @click="redirectTo('category', 0)">
     <div class="goods-lists clearfix">
-      <div class="sub-goods_list" v-for="g in floor.productList" :key="g.product_id"
-        @click="redirectTo('goods', g.product_id)">
+      <div class="sub-goods_list" v-for="g in floor.productList" :key="g.product_id" @click="redirectTo('goods', g.product_id)">
         <div class="goods-img">
           <img :src="g.img?'http://img.zulibuy.com/images/'+g.img:'/static/images/no_picture.jpg'">
         </div>
         <div class="goods-price">
-          {{g.shop_price}}
-          <span class="goods-price_origin">{{g.market_price}}</span>
+          ¥{{g.price}}&nbsp;
+          <span class="goods-price_origin">¥{{g.market_price}}</span>
         </div>
-        <div class="goods-brief">{{g.price}}</div>
-        <div class="goods-title">{{g.product_name}}</div>
+        <div class="goods-brief">{{g.product_name}}</div>
+        <div class="goods-title">{{g.product_desc}}</div>
       </div>
       <div @click="redirectTo('category', 0)" class="sub-goods_list">
         <div class="goods-more_list">

@@ -1,13 +1,20 @@
 /*goods.dwt*/
 
+.back_home {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1;
+}
+
 .quantity {
   position: absolute;
   display: block;
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  top: -3px;
-  right: 15%;
+  top: 3px;
+  right: 20%;
   font-size: 10px;
   line-height: 16px;
   text-align: center;
@@ -47,19 +54,19 @@
 }
 
 .detail-img img {
-  width: 100%;
-  height: 100%;
+  width: 300px;
+  height: 300px;
   background-size: cover;
 }
 
 .goodsBrief {
   width: 100%;
   word-break: break-all;
-  padding-bottom: 50px;
 }
 
 .goodsBrief img {
-  max-width: 100%
+  max-width: 100%;
+  display: inherit;
 }
 
 .detailTab {
@@ -78,8 +85,7 @@
 }
 
 .shop-bag {
-  /*padding-right: 5px;*/
-  text-align: right
+  padding-right: 5px;
 }
 
 .store_recommend {
@@ -102,12 +108,42 @@
 
 .goodsTitle {
   padding: 0 0 10px;
+  position: relative;
+}
+
+.shoucang {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 36px;
+  border-left: 1px solid #eee;
+  text-align: right;
+}
+
+}
+
+.shoucang {
+  display: inline-block;
+  font-size: 10px;
+}
+
+.shoucang .iconfont-yzg {
+  color: #444;
+  font-size: 22px;
+}
+
+.shoucang .icon-yzg-shoucang {
+  color: #ed3366;
+}
+
+.shoucang .icon-yzg-shouc_no {
+  font-weight: bold;
 }
 
 .goodsTitle p {
   position: relative;
   padding-right: 60px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 .goodsTitle>p>span {
@@ -198,20 +234,20 @@
 }
 
 .cartBottom {
-  background: #f1f1f1;
+  overflow: hidden;
+  background: #fff;
   position: fixed;
   margin-left: -15px;
   bottom: 0;
   z-index: 99;
   max-width: 640px;
   min-width: 320px;
-  padding: 5px 0;
   width: 100%;
 }
 
 .cartImg {
   position: absolute;
-  top: 4px;
+  top: -2px;
   left: 5px;
   float: left;
   width: 40%
@@ -219,11 +255,10 @@
 
 .cart_png {
   display: inline-block;
-  border: 1px solid #c0c0c0;
-  border-radius: 5px;
+  /*border: 1px solid #c0c0c0; border-radius: 5px;*/
   margin-left: 1%;
   padding: 0 4px 0;
-  height: 36px;
+  height: 42px;
   float: left;
   position: relative;
   text-align: center;
@@ -252,9 +287,8 @@
 
 .tbl-cell a {
   display: block;
-  height: 35px;
-  margin: 0 5px;
-  line-height: 35px;
+  height: 42px;
+  line-height: 42px;
   color: #fff;
 }
 
@@ -277,9 +311,31 @@
   padding: 10px 0;
 }
 
+.goodsBrief .detail_title {
+  border-bottom: 1px dotted #ccc;
+}
+
+.goodsBrief .detail_text_obvious {
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 25px;
+  background: #eee;
+  padding: 10px;
+}
+
+.goodsBrief {
+  font-size: 15px;
+  text-align: justify;
+  line-height: 30px;
+}
+
+.goodsBrief p {
+  padding: 10px 0;
+}
+
 .info_goods {
   height: 48px;
-  background: #f8f8f8;
+  background: #fff;
   line-height: 48px;
   padding: 0 15px;
   text-align: center;
@@ -298,16 +354,8 @@
 }
 
 .info_goods {
-  margin-top: 10px;
-}
-
-.info_goods .col-xs-4 {
-  padding: 0;
-}
-
-.info_goods .col-xs-4 img {
-  margin-bottom: -2px;
-  width: 17px;
+  border-top: 5px solid #f8f8f8;
+  border-bottom: 5px solid #f8f8f8;
 }
 
 .addAnimate {
@@ -436,4 +484,124 @@
     height: 16px;
     opacity: 1;
   }
+}
+
+/* 客服弹窗 */
+
+#contactPic img {
+  width: 20px;
+  height: 20px;
+  margin-top: 6px;
+}
+
+.fixed-contact_pic {
+  position: fixed;
+  z-index: 101;
+  max-width: 640px;
+  width: 100%;
+  height: 100%;
+  margin-left: -15px;
+  display: none;
+  top: 10px
+}
+
+.fixed-contact_pic .fixed-wechat_png {
+  position: relative;
+  text-align: center;
+  top: 50%;
+  margin-top: -234px;
+}
+
+.fixed-contact_pic .fixed-wechat_png .close {
+  display: block;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  background: transparent;
+  top: -15px;
+  right: 47%;
+  margin-right: -135px;
+}
+
+#contact_pic_mask {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: none;
+  max-width: 640px;
+  margin-left: -15px;
+  z-index: 100;
+  top: 0
+}
+
+.top_back_container .title-con_link {
+  height: 44px;
+  line-height: 44px;
+  position: relative;
+}
+
+.fixed-contact_pic .fixed-wechat_png img {
+  width: 280px;
+}
+
+@media screen and (max-width:330px) {
+  .fixed-contact_pic .fixed-wechat_png img {
+    /*height: 350px;*/
+    width: 220px;
+  }
+  .fixed-contact_pic .fixed-wechat_png {
+    margin-top: -220px;
+  }
+  .fixed-contact_pic .fixed-wechat_png .close {
+    margin-right: -108px;
+    top: 3px;
+  }
+}
+
+.info_goods img {
+  width: 18px;
+  height: 18px;
+}
+
+.info_goods {
+  height: 60px;
+  padding: 0;
+  padding-top: 10px;
+  padding-bottom: 50px;
+  line-height: 1.5 !important;
+}
+
+.info_goods p {
+  font-size: 12px;
+}
+
+.timeSale .time-count_down .timeSpan {
+  width: 26px;
+  text-align: center;
+  display: inline-block;
+  border-radius: 4px;
+  margin: 0 3px
+}
+
+.storeAddress {
+  border-top: 5px solid #f8f8f8;
+  padding: 7px 15px;
+  color: #555
+}
+
+.storeAddress p {
+  line-height: 1.7;
+  padding-top: 0.2rem;
+  position: relative;
+  padding-left: 1.4rem
+}
+
+.storeAddress p span {
+  position: absolute;
+  left: 0.2rem;
+  font-size: 0.8rem;
+  top: 0;
+  color: #999
 }

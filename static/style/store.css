@@ -7,9 +7,11 @@
   background-position: center;
   vertical-align: middle;
   width: 1.6rem;
+  height: 1.6rem;
   background-color: #fff;
 }
 
+/*s首页头部样式*/
 .index-title {
   background: url(/static/images/index_bg.jpg) no-repeat center top;
   background-size: 100%;
@@ -38,7 +40,7 @@
 .index-title .shop-name .contact_img {
   position: absolute;
   left: 0.55rem;
-  top: 0.25rem;
+  top: 0.05rem;
 }
 
 .shop-name .contact_img .shoper_contact {
@@ -82,13 +84,13 @@
 .index-title .shop-detail .shop-info {
   /*padding-left:50px;*/
   position: relative;
-  padding-bottom: 0.28rem;
+  /*padding-bottom: 0.2rem;*/
 }
 
 .index-title .search-icon {
   position: absolute;
-  right: 18px;
-  top: 0.25rem;
+  right: 14px;
+  top: 0.05rem;
   color: #777;
 }
 
@@ -110,6 +112,7 @@
 }
 
 /*导航条样式*/
+
 .navbar-yzg-default {
   background: #f6f6f6;
   height: 40px;
@@ -131,7 +134,7 @@
 }
 
 .navbar-yzg-default ul li a {
-  color: #777;
+  color: #666;
   position: relative;
 }
 
@@ -156,7 +159,7 @@
 .navbar-yzg-default .active:before {
   content: "";
   position: absolute;
-  width: 0.427rem;
+  width: 1.2rem;
   height: 0.0857rem;
   bottom: 0px;
   left: 0;
@@ -178,11 +181,10 @@
   display: inline;
 }
 
-
 /*商品推荐样式*/
+
 .recommend-goods {
   padding-top: 0.2167rem;
-  background: #f8f8f8;
 }
 
 .recommend-goods .goods-grid_left {
@@ -236,6 +238,7 @@
 }
 
 /*商品种类列表样式*/
+
 .goods-lists {
   background: #fff
 }
@@ -245,9 +248,13 @@
   width: 50%;
   background: #fff;
   position: relative;
-  border: 1px solid #f1f1f1;
-  border-bottom: none;
+  border: 3px solid #f1f1f1;
+  border-top: none;
   border-left: none;
+}
+
+.goods-lists .sub-goods_list:nth-child(even) {
+  border-right: none
 }
 
 .goods-lists .sub-goods_list .list-link {
@@ -257,6 +264,10 @@
 .goods-lists .sub-goods_list:hover {
   text-decoration: none;
 }
+
+/*.goods-lists .goods-img{
+	border-bottom:1px solid #ddd;
+}*/
 
 .goods-lists .goods-title {
   font-size: 0.512rem;
@@ -273,9 +284,9 @@
   font-size: 0.512rem;
   color: #333;
   overflow: hidden;
-  height: 0.512rem;
-  line-height: 0.512rem;
-  margin: 0 0.598rem 0.3rem;
+  height: 0.6rem;
+  line-height: 0.6rem;
+  margin: 0.3rem 0.598rem;
 }
 
 .goods-lists .goods-price {
@@ -329,6 +340,7 @@
 }
 
 /*特卖，限时抢购样式*/
+
 .hot-sale_box {
   margin-top: 0.2167rem;
 }
@@ -392,7 +404,7 @@
   font-size: 0.598rem;
   position: absolute;
   right: 0;
-  bottom: 0.31rem
+  bottom: 0.8rem
 }
 
 .hot-sale_box .hot-sale_info .buy_info .buy_btn:active {
@@ -431,13 +443,13 @@
 }
 
 .hot-sale_box .hot-sale_info .goods_info .goods_detail {
-  margin-bottom: 0.05rem;
   min-height: 35px;
   max-height: 35px;
   overflow: hidden;
   line-height: 1.4;
   color: #666;
   font-size: 0.512rem;
+  margin-bottom: 0.85333333rem;
 }
 
 .hot-sale_box .hot-sale_info {
@@ -473,9 +485,12 @@
 }
 
 /*限时抢购样式*/
+
 .panic-buying_activity {
   margin-top: 44px;
 }
+
+/*sellerIncome.vue和sellerFundUse.vue*/
 
 .fund-box {
   padding-top: 44px;
@@ -509,6 +524,7 @@
 }
 
 /*商品没有时的样式*/
+
 .goods-alert_title {
   text-align: center;
 }
@@ -539,6 +555,7 @@
 }
 
 /*通知栏*/
+
 .notice-box {
   display: flex;
   background: white;
@@ -546,7 +563,7 @@
 
 .notice {
   padding-left: 0.44rem;
-  width: 8.8rem;
+  width: 8rem;
   height: 30px;
   display: inline-block;
   line-height: 2
@@ -579,6 +596,7 @@
 }
 
 /*每日早8点*/
+
 .eight-morning img {
   width: 100%;
   -webkit-background-size: cover;
