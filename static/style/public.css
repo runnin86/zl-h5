@@ -6,7 +6,6 @@
   font-family: '微软雅黑';
 }
 
-
 /**
  * 字号 颜色
  * @type {[type]}
@@ -32,7 +31,6 @@
   color: #ef4b4b
 }
 
-
 /* 红色 */
 
 .c6 {
@@ -56,20 +54,17 @@
   color: #4870f6
 }
 
-
 /* 蓝色 */
 
 .c11 {
   color: #c8975c
 }
 
-
 /* 黄色 */
 
 .h1 {
   font-size: 0.68376rem
 }
-
 
 /* 16px */
 
@@ -82,7 +77,6 @@
   font-size: 0.598rem
 }
 
-
 /* 14px */
 
 .h4 {
@@ -93,7 +87,6 @@
 .h5 {
   font-size: 0.5128rem
 }
-
 
 /* 12px */
 
@@ -111,7 +104,6 @@
   font-size: 0.4274rem
 }
 
-
 /* 10px */
 
 .h8 {
@@ -124,14 +116,12 @@
   font-weight: bold
 }
 
-
 /* 9px */
 
 .h10 {
   font-size: 2.13675rem;
   font-weight: bold
 }
-
 
 /* 50px */
 
@@ -140,14 +130,12 @@
   font-weight: bold
 }
 
-
 /* 29px */
 
 .h13 {
   font-size: 0.598rem;
   font-weight: bold
 }
-
 
 /* 14px */
 
@@ -260,7 +248,6 @@ li {
   padding-left: 10px;
 }
 
-
 /*商城主色调*/
 
 .redColor {
@@ -272,9 +259,9 @@ li {
   color: #fff;
 }
 
-.gaibanBg{
+.gaibanBg {
   background: #c61134;
-  color:#fff;
+  color: #fff;
 }
 
 .redBorderColor {
@@ -294,7 +281,6 @@ li {
 .grayBgColor {
   background: #f8f8f8
 }
-
 
 /*bootsrap.css相关文件*/
 
@@ -513,7 +499,6 @@ th {
   overflow: hidden;
 }
 
-
 /*我的收入选中样式*/
 
 .selectedCss {
@@ -542,7 +527,6 @@ th {
   display: block;
   white-space: nowrap;
 }
-
 
 /*分享提示小弹框*/
 
@@ -580,4 +564,198 @@ th {
   border-color: #ed3366 transparent transparent;
   border-width: 8px;
   border-style: solid;
+}
+
+.quickIcon {
+  position: fixed;
+  right: 0;
+  bottom: 5rem;
+  width: 0.3rem;
+  height: 7rem;
+  z-index: 2
+}
+
+.quickIcon>img {
+  height: 2rem;
+  margin-top: 0.4rem;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+}
+
+.quickCont {
+  position: absolute;
+  width: 0;
+  height: 0;
+  right: 0.5rem;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+}
+
+.quickCont img {
+  width: 35%;
+  position: absolute;
+}
+
+.quickCont .quickBack {
+  left: 0;
+  top: 40%
+}
+
+.quickCont .quickCat {
+  top: 70%;
+  right: 45%;
+}
+
+.quickCont .quickClose {
+  right: 0;
+  top: 40%
+}
+
+.quickCont .quickHome {
+  top: -10%;
+  right: 10%
+}
+
+.quickCont .quickQrcode {
+  right: 10%;
+  bottom: -15%;
+}
+
+.quickCont .quickSearch {
+  top: 10%;
+  right: 50%;
+}
+
+.quickContAni {
+  width: 6rem;
+  height: 8rem;
+  animation: quickContAni 0.3s;
+  -moz-animation: quickContAni 0.3s;
+  /* Firefox */
+  -webkit-animation: quickContAni 0.3s;
+  /* Safari 和 Chrome */
+  -o-animation: quickContAni 0.3s;
+  /* Opera */
+}
+
+@keyframes quickContAni {
+  from {
+    width: 0;
+    height: 0;
+  }
+  to {
+    width: 6rem;
+    height: 8rem;
+  }
+}
+
+@-moz-keyframes quickContAni
+/* Firefox */
+
+  {
+  from {
+    width: 0;
+    height: 0;
+  }
+  to {
+    width: 6rem;
+    height: 8rem;
+  }
+}
+
+@-webkit-keyframes quickContAni
+/* Safari 和 Chrome */
+
+  {
+  from {
+    width: 0;
+    height: 0;
+  }
+  to {
+    width: 6rem;
+    height: 8rem;
+  }
+}
+
+@-o-keyframes quickContAni
+/* Opera */
+
+  {
+  from {
+    width: 0;
+    height: 0;
+  }
+  to {
+    width: 6rem;
+    height: 8rem;
+  }
+}
+
+.quickHideAni {
+  width: 0;
+  height: 0;
+  animation: quickHideAni 0.3s;
+  -moz-animation: quickHideAni 0.3s;
+  /* Firefox */
+  -webkit-animation: quickHideAni 0.3s;
+  /* Safari 和 Chrome */
+  -o-animation: quickHideAni 0.3s;
+  /* Opera */
+}
+
+@keyframes quickHideAni {
+  from {
+    width: 6rem;
+    height: 8rem;
+  }
+  to {
+    width: 0;
+    height: 0;
+  }
+}
+
+@-moz-keyframes quickHideAni
+/* Firefox */
+
+  {
+  from {
+    width: 6rem;
+    height: 8rem;
+  }
+  to {
+    width: 0;
+    height: 0;
+  }
+}
+
+@-webkit-keyframes quickHideAni
+/* Safari 和 Chrome */
+
+  {
+  from {
+    width: 6rem;
+    height: 8rem;
+  }
+  to {
+    width: 0;
+    height: 0;
+  }
+}
+
+@-o-keyframes quickHideAni
+/* Opera */
+
+  {
+  from {
+    width: 6rem;
+    height: 8rem;
+  }
+  to {
+    width: 0;
+    height: 0;
+  }
 }

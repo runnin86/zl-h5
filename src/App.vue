@@ -43,6 +43,37 @@
       </wv-tabbar-item>
     </wv-tabbar>
 
+    <!-- 悬浮导航 -->
+    <div class="quickIcon" v-if = "$route.path!=='/shopGoods/goodsInfo' && $route.path!=='/shopping/goods'">
+      <img v-if="showQuickIcon!=='show'" src="/static/images/smallIcon/entry.png" alt="" @click="showQuickIcon='show'">
+      <div :class="showQuickIcon === 'default' ? 'quickCont' : (showQuickIcon === 'show' ? 'quickCont quickContAni' : 'quickCont quickHideAni')">
+        <!-- back -->
+        <img class="quickBack" @click="back" src="/static/images/smallIcon/back.png" alt="">
+        <!-- classify -->
+        <!-- <router-link :to="{path: '/classify'}" v-if = "$route.path!=='/classify'">
+          <img class="quickCat" src="/static/images/smallIcon/category.png" alt="">
+        </router-link>
+        <img class="quickCat" v-else @click="showQuickIcon='hide'" src="/static/images/smallIcon/category.png" alt=""> -->
+        <!-- home -->
+        <router-link :to="{path: '/index'}" v-if = "$route.path!=='/index'">
+          <img class="quickHome" src="/static/images/smallIcon/home.png" alt="">
+        </router-link>
+        <img v-else @click="showQuickIcon='hide'" class="quickHome" src="/static/images/smallIcon/home.png" alt="">
+        <!-- close -->
+        <img class="quickClose" src="/static/images/smallIcon/close.png" alt="" @click="showQuickIcon='hide'">
+        <!-- search -->
+        <!-- <router-link :to="{path: '/userCenter/myCollect'}" v-if = "$route.path!=='/userCenter/myCollect'">
+          <img class="quickSearch" src="/static/images/smallIcon/collect.png" alt="">
+        </router-link>
+        <img class="quickSearch" v-else @click="showQuickIcon='hide'" src="/static/images/smallIcon/collect.png" alt=""> -->
+        <!-- share or collect -->
+        <!-- <img v-if ="$route.path==='/index'" class="quickQrcode" src="/static/images/smallIcon/share.png" alt="" @click="freshQRCodeShow">
+        <router-link v-else-if="$route.path!=='/searchGoods'" :to="{path: '/searchGoods'}">
+          <img class="quickQrcode" src="/static/images/smallIcon/search_index.png" alt="">
+        </router-link>
+        <img v-else @click="showQuickIcon='hide'" class="quickQrcode" src="/static/images/smallIcon/search_index.png" alt=""> -->
+      </div>
+    </div>
   </div>
 </template>
 
@@ -54,6 +85,13 @@ import thumbSmall from 'static/weui/images/icon_tabbar.png'
 export default {
   // name: 'app',
   mounted () {
+    let self = this
+    setTimeout(function() {
+      self.showQuickIcon = 'show'
+      setTimeout(function() {
+        self.showQuickIcon = 'hide'
+      }, 500)
+    }, 1000)
   },
   computed: {
     ...mapGetters({
@@ -74,6 +112,7 @@ export default {
       thumbSmall,
       toPath: null,
       fromPath: null,
+      showQuickIcon: 'default',  // 快捷按钮是否打开
       imgBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII='
     }
   },
@@ -140,6 +179,7 @@ export default {
           document.body.scrollTop = 0
         }, 300)
       }
+      this.showQuickIcon = 'default'
       // 默认全局分享
       let ignoreUrl = [
         '/index',
