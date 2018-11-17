@@ -4,3 +4,9 @@ dist/
 src/config.js
 npm-debug.log
 yarn-error.log
+
+package-lock.json
+
+config/dev.env.js
+
+config/prod.env.js
